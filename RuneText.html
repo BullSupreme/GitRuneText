@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Adventure Game</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #252526;
+            border: 1px solid #333;
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .top-controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 5px;
+            z-index: 1000;
+        }
+        .top-controls button {
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+         .top-right-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        #mute-toggle-btn { /* No specific style needed if it's just a button in top-right-controls */
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+
+
+        .hud {
+            background-color: #2a2a2d;
+            border: 1px solid #444;
+            padding: 10px;
+            margin-bottom: 15px;
+            margin-top: 50px; /* Make space for top controls */
+        }
+        .section {
+            border: 1px solid #444;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .section-title { font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #555; padding-bottom: 5px; }
+
+        button {
+            background-color: #0e639c;
+            color: white;
+            border: 1px solid #1c7abb;
+            padding: 8px 15px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            border-radius: 3px;
+        }
+        button:hover { background-color: #1177bb; }
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            border-color: #666;
+        }
+        button.red { background-color: #9c0e0e; }
+        button.red:hover { background-color: #bb1111; }
+        button.green { background-color: #0e9c18; }
+        button.green:hover { background-color: #11bb1a; }
+        button.yellow { background-color: #b4a61a; color: #222;}
+        button.yellow:hover { background-color: #d4c62a; }
+
+
+        .log-area {
+            background-color: #1c1c1c;
+            border: 1px dashed #555;
+            padding: 10px;
+            min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+
+        .item, .monster-display, .skill-resource, .perk-entry {
+            border: 1px solid #383838;
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #2d2d30;
+            cursor: pointer;
+        }
+        .item:hover, .skill-resource:hover, .perk-entry:hover:not(.disabled-perk):not(.activated-perk) {
+             background-color: #3a3d41;
+        }
+        .monster-display .emoji { font-size: 2em; }
+        .perk-entry.disabled-perk { cursor: not-allowed; background-color: #444; color: #888; }
+        .perk-entry.activated-perk { cursor: default; background-color: #0e9c18; color: white; }
+        .perk-entry .perk-cost { float: right; color: #dcdcaa;}
+        .perk-entry .perk-desc { font-size: 0.9em; color: #aaa; margin-top: 3px;}
+
+
+        /* Color classes */
+        .fore-blue { color: #569cd6; }
+        .fore-green { color: #6a9955; }
+        .fore-lightblack_ex { color: #999999; }
+        .fore-yellow { color: #dcdcaa; }
+        .fore-cyan { color: #4ec9b0; }
+        .fore-red { color: #f44747; }
+        .fore-lightred_ex { color: #ff7f7f; }
+        .fore-magenta { color: #c586c0; }
+        .fore-white { color: #d4d4d4; }
+        .fore-orange { color: #ce9178; } /* For Blacksmithing */
+
+
+        .hidden { display: none; }
+        .inline-block { display: inline-block; }
+
+        #equipment-display .slot { margin-bottom: 10px;}
+        #equipment-display .slot-name { font-weight: bold; display: inline-block; width: 80px;}
+        #equipment-display .item-name { margin-left: 10px; }
+        #equipment-display .item-art { font-size: 1.5em; margin-left: 10px;}
+
+        #inventory-list .item-entry { margin-bottom: 5px; }
+        #inventory-list .item-name { display: inline-block; width: 150px; }
+        #inventory-list .item-quantity { font-weight: bold; }
+
+        .shop-item, .inv-item-equip, .cookable-item-list, .food-item-list, .smeltable-item-list, .smithable-item-list {
+            cursor: pointer;
+            padding: 5px;
+        }
+        .shop-item:hover, .inv-item-equip:hover, .cookable-item-list:hover, .food-item-list:hover, .smeltable-item-list:hover, .smithable-item-list:hover {
+            background-color: #3a3d41;
+        }
+        .shop-item .price { float: right; color: #dcdcaa; }
+        .shop-item .req { font-size: 0.9em; color: #888; }
+
+        .hud-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        .hud-icon {
+            font-size: 1.2em;
+            margin-right: 8px;
+            display: inline-block;
+            transition: transform 0.2s ease-out, filter 0.2s ease-out;
+            position: relative;
+            cursor: default;
+        }
+        .hud-icon:hover {
+            transform: scale(1.3);
+            filter: drop-shadow(0 0 5px #fff);
+        }
+        .hud-icon .tooltip-text {
+            visibility: hidden;
+            width: max-content;
+            max-width: 150px;
+            background-color: #111;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; 
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8em;
+            pointer-events: none;
+        }
+        .hud-icon:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-controls">
+            <button onclick="exportSaveData()" title="Download current game progress to a file">Save Game</button>
+            <input type="file" id="import-file-input" accept=".json,.txt" style="display: none;" onchange="handleImportFile(event)">
+            <button onclick="document.getElementById('import-file-input').click()" title="Load game progress from a previously saved file">Load Game</button>
+        </div>
+        <div class="top-right-controls">
+             <button id="mute-toggle-btn">Mute Sounds</button>
+        </div>
+
+        <div class="hud" id="hud">
+            <div id="hud-wc" class="hud-item"><span class="hud-icon" title="Woodcutting Skill">🌲<span class="tooltip-text">Woodcutting</span></span>Woodcutting: 1 (XP: 0/0)</div>
+            <div id="hud-mn" class="hud-item"><span class="hud-icon" title="Mining Skill">⛏️<span class="tooltip-text">Mining</span></span>Mining: 1 (XP: 0/0)</div>
+            <div id="hud-ck" class="hud-item"><span class="hud-icon" title="Cooking Skill">🍳<span class="tooltip-text">Cooking</span></span>Cooking: 1 (XP: 0/0)</div>
+            <div id="hud-bs" class="hud-item"><span class="hud-icon" title="Blacksmithing Skill">🛠️<span class="tooltip-text">Blacksmithing</span></span>Blacksmithing: 1 (XP: 0/0)</div>
+            <div id="hud-atk" class="hud-item"><span class="hud-icon" title="Attack Skill">⚔️<span class="tooltip-text">Attack</span></span>Attack: 1 (XP: 0/0)</div>
+            <div id="hud-hp" class="hud-item fore-lightred_ex"><span class="hud-icon" title="Health Points">❤️<span class="tooltip-text">Health</span></span>HP: 10/10</div>
+            <div id="hud-gold" class="hud-item fore-yellow"><span class="hud-icon" title="Your Gold">💰<span class="tooltip-text">Gold</span></span>Gold: 10</div>
+            <div id="hud-perk-points" class="hud-item fore-magenta"><span class="hud-icon" title="Perk Points">✨<span class="tooltip-text">Perk Points</span></span>Perk Points: 0</div>
+        </div>
+
+        <div id="main-menu-section" class="section">
+            <div class="section-title">Main Menu</div>
+            <button onclick="showCharacterInfo()">1. Character Info</button>
+            <button onclick="showInventory()">2. Inventory & Equipment</button>
+            <button onclick="showActionsMenu()">3. Actions</button>
+            <button onclick="showShopMenu()">4. Shop</button>
+            <button onclick="showPerkTreeMenu()">5. Perk Tree</button>
+            <button class="red" onclick="quitGame()">Q. Quit (Save & Close)</button>
+            <hr>
+            <button class="red" style="margin-top: 10px;" onclick="confirmResetGame()">Reset All Progress</button>
+            <hr>
+            <div><input type="text" id="cheat-input" placeholder="Cheat code"><button onclick="applyCheat()">Apply</button></div>
+        </div>
+
+        <div id="character-info-section" class="section hidden">
+            <div class="section-title fore-cyan">Character Information</div>
+            <div id="char-info-details"></div>
+            <p>Total XP Gained (All Skills): <span id="total-xp-all-skills" class="fore-magenta">0</span></p>
+            <button onclick="showMainMenu()">Back</button>
+        </div>
+        
+        <div id="inventory-section" class="section hidden">
+            <div class="section-title fore-magenta">Inventory</div>
+            <div id="inventory-list"></div>
+            <hr>
+            <div class="section-title fore-cyan">Equipped Gear</div>
+            <div id="equipment-display">
+                <div class="slot"><span class="slot-name">Weapon:</span><span class="item-name" id="eq-weapon-name">None</span><span class="item-art" id="eq-weapon-art"></span></div>
+                <div class="slot"><span class="slot-name">Axe:</span><span class="item-name" id="eq-axe-name">None</span><span class="item-art" id="eq-axe-art"></span></div>
+                <div class="slot"><span class="slot-name">Pickaxe:</span><span class="item-name" id="eq-pickaxe-name">None</span><span class="item-art" id="eq-pickaxe-art"></span></div>
+                <div class="slot"><span class="slot-name">Chestplate:</span><span class="item-name" id="eq-chestplate-name">None</span><span class="item-art" id="eq-chestplate-art"></span></div>
+            </div>
+            <div id="equip-options-section">
+                <button onclick="showEquipSelection('weapon')">Equip Weapon</button>
+                <button onclick="showEquipSelection('axe')">Equip Axe</button>
+                <button onclick="showEquipSelection('pickaxe')">Equip Pickaxe</button>
+                <button onclick="showEquipSelection('chestplate')">Equip Chestplate</button>
+            </div>
+            <div id="item-selection-for-equip" class="hidden">
+                <div class="section-title" id="equip-item-type-title">Equip Item</div>
+                <div id="equip-item-list"></div>
+                <button onclick="hideEquipSelection()">Cancel</button>
+            </div>
+            <button onclick="showMainMenu()">Back to Main Menu</button>
+        </div>
+
+
+        <div id="actions-menu-section" class="section hidden">
+            <div class="section-title">Actions Menu</div>
+            <button onclick="showWoodcutting()">1. Woodcutting</button>
+            <button onclick="showMining()">2. Mining</button>
+            <button class="fore-orange" onclick="showBlacksmithingMenu()">3. Blacksmithing</button>
+            <button onclick="showCombat()">4. Attack Monsters</button>
+            <button class="green" onclick="showEatFood()">5. Eat Food</button>
+            <button class="yellow" onclick="showCookFood()">6. Cook Food</button>
+            <button onclick="showMainMenu()">Back to Main Menu</button>
+        </div>
+
+        <div id="shop-menu-section" class="section hidden">
+            <div class="section-title fore-green">Store</div>
+            <div id="shop-gold-display" class="fore-yellow"></div>
+            <button onclick="showBuyMenu()">1. Buy Tools</button> <!-- MODIFIED TEXT -->
+            <button onclick="showSellMenu()">2. Sell Items</button>
+            <button onclick="showMainMenu()">Back to Main Menu</button>
+        </div>
+        
+        <div id="buy-menu-section" class="section hidden">
+            <div class="section-title fore-green">Buy Items</div>
+            <div id="buy-category-selection">
+                 <button onclick="populateShopItems('axe', 'Axes')">Axes</button>
+                 <button onclick="populateShopItems('pickaxe', 'Pickaxes')">Pickaxes</button>
+                 <!-- Armor button removed -->
+            </div>
+            <div id="shop-items-list"></div>
+            <button onclick="showShopMenu()">Back to Shop</button>
+        </div>
+
+        <div id="sell-menu-section" class="section hidden">
+            <div class="section-title fore-green">Sell Items</div>
+            <div id="sellable-items-list"></div>
+            <button onclick="showShopMenu()">Back to Shop</button>
+        </div>
+
+        <div id="woodcutting-section" class="section hidden">
+            <div class="section-title fore-green">Woodcutting</div>
+            <div id="available-trees"></div>
+            <div id="woodcutting-controls" class="hidden">
+                <button id="auto-chop-btn" onclick="toggleAutoWoodcutting()">Start Auto-Chopping</button>
+            </div>
+            <button onclick="showActionsMenu()">Back to Actions</button>
+        </div>
+        
+        <div id="mining-section" class="section hidden">
+            <div class="section-title fore-lightblack_ex">Mining</div>
+            <div id="available-ores"></div>
+            <div id="mining-controls" class="hidden">
+                <button id="auto-mine-btn" onclick="toggleAutoMining()">Start Auto-Mining</button>
+            </div>
+            <button onclick="showActionsMenu()">Back to Actions</button>
+        </div>
+        
+        <div id="blacksmithing-menu-section" class="section hidden">
+            <div class="section-title fore-orange">Blacksmithing</div>
+            <button onclick="showSmeltingMenu()">1. Smelt Bars</button>
+            <button onclick="showSmithingMenu()">2. Smith Weapons</button> <!-- Clarified to Weapons -->
+            <button onclick="showActionsMenu()">Back to Actions</button>
+        </div>
+
+        <div id="smelting-section" class="section hidden">
+            <div class="section-title fore-orange">Smelt Bars</div>
+            <div id="available-bars-to-smelt"></div>
+            <div id="smelting-controls" class="hidden">
+                <button id="auto-smelt-btn" onclick="toggleAutoSmelting()">Start Auto-Smelting</button>
+            </div>
+            <button onclick="showBlacksmithingMenu()">Back to Blacksmithing</button>
+        </div>
+
+        <div id="smithing-section" class="section hidden">
+            <div class="section-title fore-orange">Smith Items</div>
+            <div id="available-items-to-smith"></div>
+            <div id="smithing-controls" class="hidden">
+                <button id="auto-smith-btn" onclick="toggleAutoSmithing()">Start Auto-Smithing</button>
+            </div>
+            <button onclick="showBlacksmithingMenu()">Back to Blacksmithing</button>
+        </div>
+
+
+        <div id="combat-section" class="section hidden">
+            <div class="section-title fore-red">Combat</div>
+            <div id="available-monsters"></div>
+            <div id="combat-controls" class="hidden">
+                 <button id="auto-attack-btn" onclick="toggleAutoAttack()">Auto-Attack Selected</button>
+            </div>
+            <div id="combat-arena" class="hidden">
+                <div id="monster-display-combat" class="monster-display"></div>
+                <div>Player HP: <span id="player-hp-combat" class="fore-green"></span></div>
+                <div>Monster HP: <span id="monster-hp-combat" class="fore-red"></span></div>
+            </div>
+            <button onclick="stopCombatAndReturn()">Back to Actions</button>
+        </div>
+        
+        <div id="eat-food-section" class="section hidden">
+             <div class="section-title fore-green">Eat Food</div>
+             <div id="available-food-list"></div>
+             <button onclick="showActionsMenu()">Back to Actions</button>
+        </div>
+
+        <div id="cook-food-section" class="section hidden">
+            <div class="section-title fore-yellow">Cook Food</div>
+            <div id="cookable-items-list"></div>
+            <div id="cooking-controls" class="hidden">
+                 <button id="auto-cook-btn" onclick="toggleAutoCooking()">Start Auto-Cooking</button>
+            </div>
+            <button onclick="showActionsMenu()">Back to Actions</button>
+        </div>
+
+        <div id="perk-tree-section" class="section hidden">
+            <div class="section-title fore-magenta">Perk Tree</div>
+            <p>Available Perk Points: <span id="available-perk-points" class="fore-magenta">0</span></p>
+            <div id="perk-list"></div>
+            <button onclick="showMainMenu()">Back to Main Menu</button>
+        </div>
+
+
+        <div class="log-area" id="log-area">Welcome to the Adventure!</div>
+    </div>
+
+    <script>
+        // --- Sound Effects ---
+        const monsterKillSound = new Audio('sounds/attack.Hard.mp3'); // Placeholder
+        monsterKillSound.volume = 0.1;
+        const playerDieSound = new Audio('sounds/backround1.mp3'); // Placeholder
+        playerDieSound.volume = 0.5;
+        const sellItemSound = new Audio('sounds/sell_item.wav'); // Placeholder
+        const skillRoundSound = new Audio('sounds/chop.mp3'); // Placeholder
+        skillRoundSound.volume = 0.1;
+        const levelUpSound = new Audio('sounds/ding.mp3'); // Placeholder
+
+        let soundsMuted = false;
+
+        function playSound(sound) {
+            if (soundsMuted) return;
+            if (sound && typeof sound.play === 'function') {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.warn("Sound play prevented:", e));
+            }
+        }
+
+        function toggleMute() {
+            soundsMuted = !soundsMuted;
+            const muteButton = document.getElementById('mute-toggle-btn');
+            muteButton.textContent = soundsMuted ? "Unmute Sounds" : "Mute Sounds";
+            localStorage.setItem('textAdventureSoundsMuted', soundsMuted.toString());
+            logMessage(soundsMuted ? "Sounds Muted" : "Sounds Unmuted", "fore-cyan");
+        }
+
+
+        // --- Data Structures ---
+        const BASE_GATHER_INTERVAL = 1200; // ms for woodcutting, mining
+        const BASE_CRAFT_INTERVAL = 1000; // ms for cooking, smelting, smithing
+        const BASE_COMBAT_INTERVAL = 2000; // ms for combat rounds
+
+
+        const LEVEL_PROGRESSION = [0];
+        let _points = 0;
+        for (let _lvl_idx = 1; _lvl_idx < 99; _lvl_idx++) {
+            _points += Math.floor(_lvl_idx * 1.5 + 300 * (2**(_lvl_idx / 6.5)));
+            const _xp_to_reach_level = Math.floor(_points / 4);
+            LEVEL_PROGRESSION.push(_xp_to_reach_level);
+        }
+
+        const TOOL_DATA = {
+            "axe": { // Nerfed damage, no lifesteal
+                "fists": {"emoji": "👊", "price":0,"level_req":1,"min_dmg":1,"max_dmg":1,"skill_type":"attack","color":"fore-white", "yield_config": { "base": 0, "bonuses": [] }},
+                "bronze": {"emoji": "🪓", "price":15,"level_req":1,"min_dmg":1,"max_dmg":2,"skill_type":"woodcutting","color":"fore-yellow", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.20, "amount": 1 }] } },
+                "iron": {"emoji": "🪓", "price":50,"level_req":15,"min_dmg":2,"max_dmg":3,"skill_type":"woodcutting","color":"fore-lightblack_ex", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.70, "amount": 1 }] } },
+                "steel": {"emoji": "🪓", "price":120,"level_req":30,"min_dmg":3,"max_dmg":5,"skill_type":"woodcutting","color":"fore-cyan", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.30, "amount": 1 }] } },
+                "mithril": {"emoji": "🪓", "price":300,"level_req":45,"min_dmg":5,"max_dmg":8,"skill_type":"woodcutting","color":"fore-blue", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.60, "amount": 1 }] } },
+                "adamant": {"emoji": "🪓", "price":750,"level_req":60,"min_dmg":8,"max_dmg":12,"skill_type":"woodcutting","color":"fore-green", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.40, "amount": 1 }] } },
+                "rune": {"emoji": "🪓", "price":2000,"level_req":75,"min_dmg":12,"max_dmg":18,"skill_type":"woodcutting","color":"fore-magenta", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.90, "amount": 1 }, { "chance": 0.70, "amount": 1 }] } },
+                "dragon": {"emoji": "🪓🔥", "price":10000,"level_req":90,"min_dmg":18,"max_dmg":25,"skill_type":"woodcutting","color":"fore-red", "yield_config": { "base": 3, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.50, "amount": 1 }] } }
+            },
+            "pickaxe": { // Nerfed damage, no lifesteal
+                "bronze": {"emoji": "⛏️", "price":10,"level_req":1,"min_dmg":1,"max_dmg":2,"skill_type":"mining","color":"fore-yellow", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.15, "amount": 1 }] } },
+                "iron": {"emoji": "⛏️", "price":40,"level_req":15,"min_dmg":2,"max_dmg":3,"skill_type":"mining","color":"fore-lightblack_ex", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.60, "amount": 1 }] } },
+                "steel": {"emoji": "⛏️", "price":100,"level_req":30,"min_dmg":3,"max_dmg":5,"skill_type":"mining","color":"fore-cyan", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.25, "amount": 1 }] } },
+                "mithril": {"emoji": "⛏️", "price":280,"level_req":45,"min_dmg":5,"max_dmg":8,"skill_type":"mining","color":"fore-blue", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.50, "amount": 1 }] } },
+                "adamant": {"emoji": "⛏️", "price":700,"level_req":60,"min_dmg":8,"max_dmg":12,"skill_type":"mining","color":"fore-green", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.70, "amount": 1 }, { "chance": 0.35, "amount": 1 }] } },
+                "rune": {"emoji": "⛏️", "price":1900,"level_req":75,"min_dmg":12,"max_dmg":18,"skill_type":"mining","color":"fore-magenta", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.85, "amount": 1 }, { "chance": 0.65, "amount": 1 }] } },
+                "dragon": {"emoji": "⛏️🔥", "price":9500,"level_req":90,"min_dmg":18,"max_dmg":25,"skill_type":"mining","color":"fore-red", "yield_config": { "base": 3, "bonuses": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.45, "amount": 1 }] } }
+            }
+        };
+        
+        const SWORD_DATA = { // New 2H Swords with lifesteal
+            "bronze 2h sword": {"emoji": "🗡️", "smith_level_req":1, "wield_level_req":1, "min_dmg":5,"max_dmg":8,"skill_type":"attack","color":"fore-yellow", "lifesteal_chance": 0.02, "lifesteal_amount": 1, "recipe": {"bronze bar": 5}},
+            "iron 2h sword": {"emoji": "🗡️", "smith_level_req":15, "wield_level_req":15, "min_dmg":10,"max_dmg":16,"skill_type":"attack","color":"fore-lightblack_ex", "lifesteal_chance": 0.03, "lifesteal_amount": [1,2], "recipe": {"iron bar": 5}},
+            "steel 2h sword": {"emoji": "🗡️", "smith_level_req":30, "wield_level_req":30, "min_dmg":18,"max_dmg":28,"skill_type":"attack","color":"fore-cyan", "lifesteal_chance": 0.04, "lifesteal_amount": [2,3], "recipe": {"steel bar": 5}},
+            "mithril 2h sword": {"emoji": "🗡️", "smith_level_req":45, "wield_level_req":45, "min_dmg":30,"max_dmg":45,"skill_type":"attack","color":"fore-blue", "lifesteal_chance": 0.05, "lifesteal_amount": [2,4], "recipe": {"mithril bar": 5}},
+            "adamant 2h sword": {"emoji": "🗡️", "smith_level_req":60, "wield_level_req":60, "min_dmg":48,"max_dmg":70,"skill_type":"attack","color":"fore-green", "lifesteal_chance": 0.06, "lifesteal_amount": [3,5], "recipe": {"adamantite bar": 5}},
+            "rune 2h sword": {"emoji": "🗡️", "smith_level_req":75, "wield_level_req":75, "min_dmg":72,"max_dmg":100,"skill_type":"attack","color":"fore-magenta", "lifesteal_chance": 0.07, "lifesteal_amount": [4,6], "recipe": {"runite bar": 5}},
+            "dragon 2h sword": {"emoji": "🗡️🔥", "smith_level_req":90, "wield_level_req":90, "min_dmg":100,"max_dmg":140,"skill_type":"attack","color":"fore-red", "lifesteal_chance": 0.08, "lifesteal_amount": [5,8], "recipe": {"dragon bar": 5}}
+        };
+
+
+        const FOOD_DATA = {
+            "cooked meat": {"heal_amount": 5, "sell_price": 2, "emoji": "🍖"}, 
+            "bread": {"heal_amount": 3, "sell_price": 1, "emoji": "🍞"},
+            "health potion (s)": {"heal_amount": 15, "sell_price": 10, "emoji": "🧪"}
+        };
+
+        const COOKABLE_ITEMS = {
+            "raw meat": {"cooked_item":"cooked meat","burnt_item":"burnt meat","xp_gain":10,"level_req":1,"difficulty_level":1, "emoji": "🥩"},
+        };
+        
+        const ARMOR_DATA = {
+            "bronze chestplate": {"defense":0.03,"price":40,"level_req":5,"color":"fore-yellow", "emoji":"🛡️"},
+            "iron chestplate":   {"defense":0.06,"price":100,"level_req":15,"color":"fore-lightblack_ex", "emoji":"🛡️"},
+            "steel chestplate":  {"defense":0.09,"price":250,"level_req":30,"color":"fore-cyan", "emoji":"🛡️"},
+            "mithril chestplate":{"defense":0.12,"price":600,"level_req":45,"color":"fore-blue", "emoji":"🛡️"},
+            "adamant chestplate":{"defense":0.15,"price":1500,"level_req":60,"color":"fore-green", "emoji":"🛡️"},
+            "rune chestplate":   {"defense":0.18,"price":5000,"level_req":75,"color":"fore-magenta", "emoji":"🛡️"},
+            "dragon chestplate": {"defense":0.22,"price":20000,"level_req":90,"color":"fore-red", "emoji":"🛡️🔥"}
+        };
+        
+        const BAR_DATA = { // For Blacksmithing - Smelting
+            "bronze bar": {"emoji": "🧱", "level_req": 1, "xp_gain": 10, "color": "fore-yellow", "recipe": {"copper ore": 1, "tin ore": 1}},
+            "iron bar": {"emoji": "🧱", "level_req": 15, "xp_gain": 20, "color": "fore-lightblack_ex", "recipe": {"iron ore": 1}},
+            "steel bar": {"emoji": "🧱", "level_req": 30, "xp_gain": 30, "color": "fore-cyan", "recipe": {"iron ore": 1, "coal": 2}}, 
+            "mithril bar": {"emoji": "🧱", "level_req": 45, "xp_gain": 50, "color": "fore-blue", "recipe": {"mithril ore": 1, "coal": 4}},
+            "adamantite bar": {"emoji": "🧱", "level_req": 60, "xp_gain": 70, "color": "fore-green", "recipe": {"adamantite ore": 1, "coal": 6}},
+            "runite bar": {"emoji": "🧱", "level_req": 75, "xp_gain": 100, "color": "fore-magenta", "recipe": {"runite ore": 1, "coal": 8}},
+            "dragon bar": {"emoji": "🧱🔥", "level_req": 90, "xp_gain": 150, "color": "fore-red", "recipe": {"special dragon ore": 1, "coal": 10}}
+        };
+
+        const ORE_DATA = { 
+            "copper": {"level_req": 1, "xp": 15, "item_name": "copper ore", "color": "fore-yellow", "emoji": "⛏️<span class='fore-yellow'>🪨</span>"},
+            "tin": {"level_req": 1, "xp": 15, "item_name": "tin ore", "color": "fore-lightblack_ex", "emoji": "⛏️<span class='fore-lightblack_ex'>🪨</span>"},
+            "iron": {"level_req": 15, "xp": 35, "item_name": "iron ore", "color": "fore-white", "emoji": "⛏️<span class='fore-white'>🪨</span>"},
+            "coal": {"level_req": 20, "xp": 40, "item_name": "coal", "color": "fore-lightblack_ex", "emoji": "⛏️<span class='fore-lightblack_ex'>⚫</span>"},
+            "mithril": {"level_req": 45, "xp": 80, "item_name": "mithril ore", "color": "fore-blue", "emoji": "⛏️<span class='fore-blue'>💎</span>"},
+            "adamantite": {"level_req": 60, "xp": 120, "item_name": "adamantite ore", "color": "fore-green", "emoji": "⛏️<span class='fore-green'>💎</span>"},
+            "runite": {"level_req": 75, "xp": 200, "item_name": "runite ore", "color": "fore-magenta", "emoji": "⛏️<span class='fore-magenta'>💎</span>"},
+            "special dragon ore": {"level_req": 90, "xp": 300, "item_name": "special dragon ore", "color": "fore-red", "emoji": "⛏️<span class='fore-red'>🔥💎</span>"}
+        };
+
+        const DEFAULT_PLAYER = {
+            "name":"PlayerOne","woodcutting_xp":0,"attack_xp":0,"mining_xp":0,"cooking_xp":0, "blacksmithing_xp":0,
+            "hp":10,"gold":10, "total_skill_xp": 0, "perk_points_earned": 0, "perk_points_spent": 0, "active_perks": {},
+            "inventory": {
+                "weapon":"none", "axe":"none","pickaxe":"none","chestplate":"none", 
+                "normal logs":0,"oak logs":0,"willow logs":0,
+                "copper ore":0,"tin ore":0,"iron ore":0,"coal":0,"mithril ore":0,"adamantite ore":0,"runite ore":0,"special dragon ore":0,
+                "bronze bar":0, "iron bar":0, "steel bar":0, "mithril bar":0, "adamantite bar":0, "runite bar":0, "dragon bar":0,
+                "egg":0,"goblin beads":0,"dragon gem":0,
+                "raw meat":0,"cooked meat":0,"bread":0,"burnt meat":0,"health potion (s)":0,
+                "wolf fang":0,"bear claw":0,"ogre club fragment":0,"troll hide":0,"giant's toe":0,"demon heart":0,
+            },
+        };
+        Object.keys(ARMOR_DATA).forEach(armor_name => {
+            if (!(armor_name in DEFAULT_PLAYER.inventory)) DEFAULT_PLAYER.inventory[armor_name] = 0;
+        });
+        Object.keys(SWORD_DATA).forEach(sword_name => {
+            if (!(sword_name in DEFAULT_PLAYER.inventory)) DEFAULT_PLAYER.inventory[sword_name] = 0;
+        });
+
+
+        const ITEM_SELL_PRICES = {
+            "normal logs":1,"oak logs":3,"willow logs":5,
+            "copper ore":2,"tin ore":3,"iron ore":5,"coal":4,"mithril ore":10,"adamantite ore":20,"runite ore":50,"special dragon ore":100,
+            "bronze bar": 8, "iron bar": 15, "steel bar": 30, "mithril bar": 70, "adamantite bar": 150, "runite bar": 300, "dragon bar": 750,
+            "egg":1,"goblin beads":10,"dragon gem":30000,
+            "raw meat":1,"burnt meat":0,
+            "wolf fang":15,"bear claw":30,"ogre club fragment":70,"troll hide":120,"giant's toe":250,"demon heart":500,
+        };
+        for (const food_name in FOOD_DATA) ITEM_SELL_PRICES[food_name] = FOOD_DATA[food_name].sell_price;
+        for (const armor_name in ARMOR_DATA) ITEM_SELL_PRICES[armor_name] = Math.floor(ARMOR_DATA[armor_name].price*0.4);
+        for (const sword_name in SWORD_DATA) { 
+            let totalBarCost = 0;
+            for(const bar in SWORD_DATA[sword_name].recipe){
+                totalBarCost += (ITEM_SELL_PRICES[bar] || (BAR_DATA[bar] ? BAR_DATA[bar].level_req * 5 : 0) ) * SWORD_DATA[sword_name].recipe[bar];
+            }
+            ITEM_SELL_PRICES[sword_name] = Math.floor(totalBarCost * 0.8); 
+        }
+        
+        const MONSTER_DATA = { 
+            "chicken": {"level_req":1,"hp":5,"attack_xp":5,"color":"fore-white","emoji":"🐔","drops":[{"item_name":"egg","base_chance":0.9,"quantity":[1,2],"always_drop_one":true},{"item_name":"raw meat","base_chance":0.7,"quantity":[1,1]}]},
+            "goblin": {"level_req":5,"hp":20,"attack_xp":15,"color":"fore-green","emoji":"👺","drops":[{"item_name":"goblin beads","base_chance":0.5,"quantity":[1,1]},{"item_name":"bread","base_chance":0.2,"quantity":[1,1]}, {"item_name":"bronze chestplate", "base_chance":0.02, "quantity":[1,1]}]},
+            "wolf": {"level_req":10,"hp":35,"attack_xp":25,"color":"fore-lightblack_ex","emoji":"🐺","drops":[{"item_name":"raw meat","base_chance":0.8,"quantity":[1,2]},{"item_name":"wolf fang","base_chance":0.3,"quantity":[1,1]}]},
+            "bear": {"level_req":20,"hp":70,"attack_xp":50,"color":"fore-yellow","emoji":"🐻","drops":[{"item_name":"raw meat","base_chance":0.9,"quantity":[2,3]},{"item_name":"bear claw","base_chance":0.25,"quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.1,"quantity":[1,1]}, {"item_name":"iron chestplate", "base_chance":0.025, "quantity":[1,1]}]},
+            "ogre": {"level_req":30,"hp":120,"attack_xp":90,"color":"fore-green","emoji":"👹","drops":[{"item_name":"ogre club fragment","base_chance":0.4,"quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.3,"quantity":[1,2]}, {"item_name":"steel chestplate", "base_chance":0.03, "quantity":[1,1]}]},
+            "troll": {"level_req":40,"hp":200,"attack_xp":150,"color":"fore-cyan","emoji":"🧌","drops":[{"item_name":"troll hide","base_chance":0.35,"quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.15,"quantity":[1,1]}, {"item_name":"mithril chestplate", "base_chance":0.02, "quantity":[1,1]}]},
+            "giant": {"level_req":55,"hp":350,"attack_xp":280,"color":"fore-blue","emoji":"🗿","drops":[{"item_name":"giant's toe","base_chance":0.2,"quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.5,"quantity":[2,4]}, {"item_name":"adamant chestplate", "base_chance":0.025, "quantity":[1,1]}]},
+            "demon": {"level_req":70,"hp":500,"attack_xp":500,"color":"fore-magenta","emoji":"😈","drops":[{"item_name":"demon heart","base_chance":0.04,"quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.3,"quantity":[1,2]}, {"item_name":"rune chestplate", "base_chance":0.015, "quantity":[1,1]}]},
+            "dark_dragon": {"level_req":85,"hp":1200,"attack_xp":2500,"color":"fore-red","emoji":"🐉","drops":[{"item_name":"dragon gem","base_chance":0.02,"quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.5,"quantity":[2,3]}, {"item_name":"dragon chestplate", "base_chance":0.01, "quantity":[1,1]}, {"item_name":"special dragon ore", "base_chance":0.1, "quantity":[1,2]}]}
+        };
+        const ALL_MONSTER_NAMES = Object.keys(MONSTER_DATA);
+        const ALL_ORE_NAMES = Object.keys(ORE_DATA);
+
+        const TREE_DATA = { 
+            "normal": {"exp":25,"log":"normal logs","level":1, "emoji": "🌲"},
+            "oak": {"exp":60,"log":"oak logs","level":15, "emoji": "🌳"},
+            "willow": {"exp":90,"log":"willow logs","level":30, "emoji": "🌿"}
+        };
+        
+        const MAX_PERK_POINTS = 25;
+        const PERK_POINT_XP_THRESHOLDS = []; 
+        function calculateCumulativeXpThresholds() {
+            let current_cumulative_xp = 0;
+            for (let i = 0; i < MAX_PERK_POINTS; i++) {
+                let increment;
+                if (i === 0) increment = 1000;
+                else if (i === 1) increment = 2500;
+                else increment = 2500 + (i - 1) * 1000; 
+                
+                current_cumulative_xp += increment;
+                PERK_POINT_XP_THRESHOLDS.push(current_cumulative_xp);
+            }
+        }
+        calculateCumulativeXpThresholds(); 
+
+        const PERK_DATA = {
+            "efficientGatherer1": {
+                id: "efficientGatherer1", name: "Efficient Gatherer I",
+                description: "Woodcutting and Mining actions are 5% faster.",
+                cost: 1, tier: 1, type: "gathering_speed_boost", value: 0.05, requires: []
+            },
+            "weaponMaster1": {
+                id: "weaponMaster1", name: "Weapon Master I",
+                description: "2H Swords you wield deal +10% damage.",
+                cost: 1, tier: 1, type: "sword_damage_boost", value: 0.10, requires: []
+            },
+            "preciseStrikes1": {
+                id: "preciseStrikes1", name: "Precise Strikes I",
+                description: "Gain a 5% chance to deal 1.5x damage in combat.",
+                cost: 1, tier: 1, type: "crit_chance_boost", value: 0.05, crit_multiplier: 1.5, requires: []
+            },
+            "vampiricEdge1": {
+                id: "vampiricEdge1", name: "Vampiric Edge I",
+                description: "2H Swords you wield gain +1% lifesteal chance.",
+                cost: 2, tier: 2, type: "sword_lifesteal_boost", value: 0.01, requires: ["weaponMaster1"]
+            },
+             "advancedSmelting": {
+                id: "advancedSmelting", name: "Advanced Smelting",
+                description: "10% chance to smelt an extra bar (doesn't consume extra ore).",
+                cost: 2, tier: 2, type: "bonus_smelt_chance", value: 0.10, requires: []
+            },
+            "masterSmith": {
+                id: "masterSmith", name: "Master Smith",
+                description: "Smithing 2H swords requires 1 less bar (minimum 1 bar).",
+                cost: 3, tier: 3, type: "smithing_bar_reduction", value: 1, requires: ["vampiricEdge1", "advancedSmelting"]
+            }
+        };
+
+
+        // --- Global Game State ---
+        let playerData = {};
+        let currentSection = 'main-menu-section';
+        
+        let isAutoAttacking = false;
+        let autoAttackInterval = null;
+        let currentMonsterTarget = null;
+        let currentMonsterHP = 0;
+        let currentSessionKillCount = 0; // Added for kill tracking
+        
+        let isAutoWoodcutting = false;
+        let autoWoodcuttingInterval = null;
+        let currentWoodcuttingTarget = null;
+
+        let isAutoMining = false;
+        let autoMiningInterval = null;
+        let currentMiningTarget = null;
+
+        let isAutoCooking = false;
+        let autoCookingInterval = null;
+        let currentCookingTarget = null;
+
+        let isAutoSmelting = false;
+        let autoSmeltingInterval = null;
+        let currentSmeltingTarget = null; 
+        let maxSmeltableForCurrentTarget = 0; // For auto-smelting tracking
+
+
+        let isAutoSmithing = false;
+        let autoSmithingInterval = null;
+        let currentSmithingTarget = null; 
+
+
+        // --- Utility Functions ---
+        function getLevelFromXp(xp) {
+            for (let i = LEVEL_PROGRESSION.length - 1; i >= 0; i--) {
+                if (xp >= LEVEL_PROGRESSION[i]) return i + 1;
+            }
+            return 1;
+        }
+
+        function getXpForDisplay(totalXp, currentLevel) {
+            if (currentLevel >= 99) {
+                const xpAtLevelStart = LEVEL_PROGRESSION[98];
+                const currentProgressInLevel = totalXp - xpAtLevelStart;
+                return `${currentProgressInLevel} / --- (Max Level)`;
+            }
+            const xpAtLevelStart = LEVEL_PROGRESSION[currentLevel - 1];
+            const xpForNextLevelTotal = LEVEL_PROGRESSION[currentLevel];
+            const currentProgressInLevel = totalXp - xpAtLevelStart;
+            const xpNeededForThisLevelUp = xpForNextLevelTotal - xpAtLevelStart;
+            return `${currentProgressInLevel} / ${xpNeededForThisLevelUp}`;
+        }
+
+        function getMaxHp(attackLevel) { return 10 + (attackLevel - 1); }
+
+        function logMessage(message, colorClass = "fore-white") {
+            const logArea = document.getElementById('log-area');
+            const D = new Date();
+            const timestamp = `${D.getHours().toString().padStart(2,'0')}:${D.getMinutes().toString().padStart(2,'0')}:${D.getSeconds().toString().padStart(2,'0')}`;
+            logArea.innerHTML = `<span class="${colorClass}">${timestamp} - ${message}</span>\n` + logArea.innerHTML;
+            if (logArea.children.length > 50) { 
+                logArea.removeChild(logArea.lastChild);
+            }
+        }
+        
+        function capitalize(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        }
+        
+        function titleCase(str) {
+            if (!str) return '';
+            return str.toLowerCase().split(' ').map(word => capitalize(word)).join(' ');
+        }
+
+        function grantUniversalXP(amount) {
+            playerData.total_skill_xp = (playerData.total_skill_xp || 0) + amount;
+            updatePerkPoints();
+        }
+
+        function updatePerkPoints() {
+            let new_points_earned = 0;
+            for (const threshold of PERK_POINT_XP_THRESHOLDS) {
+                if (playerData.total_skill_xp >= threshold) new_points_earned++;
+                else break;
+            }
+            if (new_points_earned > playerData.perk_points_earned) {
+                const gained = new_points_earned - playerData.perk_points_earned;
+                logMessage(`You earned ${gained} new Perk Point(s)! (${playerData.total_skill_xp.toLocaleString()} total XP)`, "fore-magenta");
+                playerData.perk_points_earned = new_points_earned;
+            }
+            updateHud(); 
+        }
+        
+        function isPerkActive(perkId) {
+            return !!playerData.active_perks[perkId];
+        }
+
+
+        // --- Player Data Management & Save/Load/Reset ---
+        function migratePlayerData(data) {
+            let dataChanged = false;
+            const skills = ["woodcutting", "attack", "mining", "cooking", "blacksmithing"]; 
+            skills.forEach(skill => {
+                const xpField = `${skill}_xp`;
+                if (!(xpField in data)) { data[xpField] = 0; dataChanged = true; }
+            });
+            
+            if (!("total_skill_xp" in data)) { data.total_skill_xp = 0; dataChanged = true; }
+            if (!("perk_points_earned" in data)) { data.perk_points_earned = 0; dataChanged = true; }
+            if (!("perk_points_spent" in data)) { data.perk_points_spent = 0; dataChanged = true; }
+            if (!("active_perks" in data) || typeof data.active_perks !== 'object') { data.active_perks = {}; dataChanged = true; }
+
+
+            if (!("hp" in data)) { data.hp = getMaxHp(getLevelFromXp(data.attack_xp || 0)); dataChanged = true; }
+            if (!("gold" in data)) { data.gold = DEFAULT_PLAYER.gold; dataChanged = true; }
+            if (!("inventory" in data)) { data.inventory = JSON.parse(JSON.stringify(DEFAULT_PLAYER.inventory)); dataChanged = true; }
+            else {
+                for (const itemKey in DEFAULT_PLAYER.inventory) {
+                    if (!(itemKey in data.inventory)) {
+                        data.inventory[itemKey] = DEFAULT_PLAYER.inventory[itemKey];
+                        dataChanged = true;
+                    }
+                }
+                ["weapon", "axe", "pickaxe", "chestplate"].forEach(slot => {
+                    if (data.inventory[slot] === null || data.inventory[slot] === undefined) {
+                         data.inventory[slot] = "none"; dataChanged = true;
+                    }
+                });
+                if (typeof data.inventory.fishing_rod === 'string') {
+                    delete data.inventory.fishing_rod; dataChanged = true;
+                }
+                if ("fishing_xp" in data) { delete data.fishing_xp; dataChanged = true;}
+            }
+            return { data, dataChanged };
+        }
+
+        function loadPlayerData() {
+            const savedData = localStorage.getItem('textAdventurePlayerData');
+            if (savedData) {
+                try {
+                    let parsedData = JSON.parse(savedData);
+                    const migrationResult = migratePlayerData(parsedData);
+                    playerData = migrationResult.data;
+                    if (migrationResult.dataChanged) {
+                        logMessage("Player data migrated to new format.", "fore-yellow");
+                        savePlayerData(); 
+                    }
+                } catch (e) {
+                    console.error("Error parsing player data:", e);
+                    logMessage("Error loading saved data. Starting new game.", "fore-red");
+                    playerData = JSON.parse(JSON.stringify(DEFAULT_PLAYER)); 
+                    savePlayerData(); 
+                }
+            } else {
+                playerData = JSON.parse(JSON.stringify(DEFAULT_PLAYER)); 
+            }
+        }
+
+        function savePlayerData() {
+            localStorage.setItem('textAdventurePlayerData', JSON.stringify(playerData));
+        }
+
+        function exportSaveData() {
+            const saveDataString = localStorage.getItem('textAdventurePlayerData');
+            if (!saveDataString) {
+                logMessage("No save data found to export.", "fore-yellow");
+                alert("No save data found to export.");
+                return;
+            }
+            const blob = new Blob([saveDataString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'textAdventurePlayerData_' + new Date().toISOString().slice(0, 10) + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            logMessage("Game progress saved to " + a.download, "fore-green");
+            alert("Game progress saved to " + a.download + "\nKeep this file safe to load your game later.");
+        }
+
+        function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                logMessage("No file selected for import.", "fore-yellow");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fileContent = e.target.result;
+                try {
+                    const jsonData = JSON.parse(fileContent);
+                    if (!jsonData || typeof jsonData.gold === 'undefined' || typeof jsonData.inventory === 'undefined' || typeof jsonData.attack_xp === 'undefined') {
+                        throw new Error("File does not appear to be valid player data.");
+                    }
+                    if (confirm("Loading this save will OVERWRITE your current game in this browser. This cannot be undone. Are you sure?")) {
+                        localStorage.setItem('textAdventurePlayerData', fileContent);
+                        logMessage("Game data loaded successfully! Reloading game to apply changes...", "fore-green");
+                        alert("Game data loaded successfully! The game will now reload.");
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    logMessage("Load failed: Invalid save file. Error: " + error.message, "fore-red");
+                    alert("Load failed: The selected file is not a valid save file.\nError: " + error.message);
+                }
+            };
+            reader.onerror = function() {
+                logMessage("Error reading the import file.", "fore-red");
+                alert("Error reading the import file.");
+            };
+            reader.readAsText(file);
+            event.target.value = null; 
+        }
+
+        function confirmResetGame() {
+            if (confirm("Are you sure you want to ERASE ALL current game progress in this browser and start over? This cannot be undone.")) {
+                resetGame();
+            }
+        }
+
+        function resetGame() {
+            stopAllAutoActions();
+            localStorage.removeItem('textAdventurePlayerData');
+            logMessage("All game data has been reset. Reloading to start fresh...", "fore-yellow");
+            alert("All game data has been reset. The game will now reload.");
+            window.location.reload();
+        }
+
+        // --- UI Update Functions ---
+        function updateHud() {
+            if (!playerData || playerData.attack_xp === undefined) { 
+                console.warn("updateHud called before playerData is fully initialized or is malformed.");
+                if (!playerData || Object.keys(playerData).length === 0) {
+                    loadPlayerData(); 
+                    if (!playerData || Object.keys(playerData).length === 0) { 
+                        console.error("FATAL: playerData could not be initialized.");
+                        alert("Error: Game data is corrupted and could not be loaded. Please try resetting the game or importing a valid save.");
+                        document.querySelectorAll('button').forEach(btn => {
+                            if (!['Save Game', 'Load Game', 'Reset All Progress', 'Mute Sounds'].includes(btn.textContent)) {
+                                btn.disabled = true;
+                            }
+                        });
+                        return;
+                    }
+                }
+            }
+
+            const atkLvl = getLevelFromXp(playerData.attack_xp);
+            const maxHp = getMaxHp(atkLvl);
+            playerData.hp = Math.min(playerData.hp, maxHp); 
+
+            const wcLvl = getLevelFromXp(playerData.woodcutting_xp);
+            const mnLvl = getLevelFromXp(playerData.mining_xp);
+            const ckLvl = getLevelFromXp(playerData.cooking_xp);
+            const bsLvl = getLevelFromXp(playerData.blacksmithing_xp); 
+
+            document.getElementById('hud-wc').innerHTML = `<span class="hud-icon" title="Woodcutting Skill">🌲<span class="tooltip-text">Woodcutting</span></span><span class="fore-green">Woodcutting: ${wcLvl} (XP: ${getXpForDisplay(playerData.woodcutting_xp, wcLvl)})</span>`;
+            document.getElementById('hud-mn').innerHTML = `<span class="hud-icon" title="Mining Skill">⛏️<span class="tooltip-text">Mining</span></span><span class="fore-lightblack_ex">Mining: ${mnLvl} (XP: ${getXpForDisplay(playerData.mining_xp, mnLvl)})</span>`;
+            document.getElementById('hud-ck').innerHTML = `<span class="hud-icon" title="Cooking Skill">🍳<span class="tooltip-text">Cooking</span></span><span class="fore-yellow">Cooking: ${ckLvl} (XP: ${getXpForDisplay(playerData.cooking_xp, ckLvl)})</span>`;
+            document.getElementById('hud-bs').innerHTML = `<span class="hud-icon" title="Blacksmithing Skill">🛠️<span class="tooltip-text">Blacksmithing</span></span><span class="fore-orange">Blacksmithing: ${bsLvl} (XP: ${getXpForDisplay(playerData.blacksmithing_xp, bsLvl)})</span>`;
+            document.getElementById('hud-atk').innerHTML = `<span class="hud-icon" title="Attack Skill">⚔️<span class="tooltip-text">Attack</span></span><span class="fore-red">Attack: ${atkLvl} (XP: ${getXpForDisplay(playerData.attack_xp, atkLvl)})</span>`;
+            document.getElementById('hud-hp').innerHTML = `<span class="hud-icon" title="Health Points">❤️<span class="tooltip-text">Health</span></span><span class="fore-lightred_ex">HP: ${playerData.hp}/${maxHp}</span>`;
+            document.getElementById('hud-gold').innerHTML = `<span class="hud-icon" title="Your Gold">💰<span class="tooltip-text">Gold</span></span><span class="fore-yellow">Gold: ${playerData.gold}</span>`;
+            
+            const availablePerkPoints = (playerData.perk_points_earned || 0) - (playerData.perk_points_spent || 0);
+            document.getElementById('hud-perk-points').innerHTML = `<span class="hud-icon" title="Perk Points">✨<span class="tooltip-text">Perk Points</span></span><span class="fore-magenta">Perk Points: ${availablePerkPoints}</span>`;
+        }
+
+        function showSection(sectionId) {
+            document.getElementById(currentSection).classList.add('hidden');
+            document.getElementById(sectionId).classList.remove('hidden');
+            currentSection = sectionId;
+        }
+        
+        function hideAllActionSubsections() {
+            ['woodcutting-section', 'mining-section', 'combat-section', 'eat-food-section', 'cook-food-section', 
+             'blacksmithing-menu-section', 'smelting-section', 'smithing-section', 'perk-tree-section'
+            ].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+        }
+
+        // --- Menu Navigation ---
+        function stopAllAutoActions() { 
+            stopAutoAttack();
+            stopAutoWoodcutting();
+            stopAutoMining();
+            stopAutoCooking();
+            stopAutoSmelting();
+            stopAutoSmithing();
+        }
+
+        function showMainMenu() { 
+            stopAllAutoActions();
+            hideAllActionSubsections(); 
+            showSection('main-menu-section'); 
+        }
+        function showCharacterInfo() { 
+            const atkLvl = getLevelFromXp(playerData.attack_xp);
+            const wcLvl = getLevelFromXp(playerData.woodcutting_xp);
+            const mnLvl = getLevelFromXp(playerData.mining_xp);
+            const ckLvl = getLevelFromXp(playerData.cooking_xp);
+            const bsLvl = getLevelFromXp(playerData.blacksmithing_xp); 
+            const maxHp = getMaxHp(atkLvl);
+            const detailsDiv = document.getElementById('char-info-details');
+            detailsDiv.innerHTML = `
+                <p>Name: ${playerData.name}</p>
+                <p><span class="fore-red">Attack Level: ${atkLvl} (XP: ${getXpForDisplay(playerData.attack_xp, atkLvl)})</span></p>
+                <p><span class="fore-green">Woodcutting Level: ${wcLvl} (XP: ${getXpForDisplay(playerData.woodcutting_xp, wcLvl)})</span></p>
+                <p><span class="fore-lightblack_ex">Mining Level: ${mnLvl} (XP: ${getXpForDisplay(playerData.mining_xp, mnLvl)})</span></p>
+                <p><span class="fore-yellow">Cooking Level: ${ckLvl} (XP: ${getXpForDisplay(playerData.cooking_xp, ckLvl)})</span></p>
+                <p><span class="fore-orange">Blacksmithing Level: ${bsLvl} (XP: ${getXpForDisplay(playerData.blacksmithing_xp, bsLvl)})</span></p>
+                <p><span class="fore-lightred_ex">HP: ${playerData.hp}/${maxHp}</span></p>
+                <p class="fore-green">Max HP increases with Attack Level. Heal by leveling up Attack or eating food.</p>
+            `;
+            document.getElementById('total-xp-all-skills').textContent = (playerData.total_skill_xp || 0).toLocaleString();
+            showSection('character-info-section'); 
+        }
+        
+        function showInventory() {
+            populateInventoryDisplay();
+            populateEquipmentDisplay();
+            showSection('inventory-section');
+            hideEquipSelection(); 
+        }
+        
+        function showActionsMenu() { 
+            stopAllAutoActions();
+            showSection('actions-menu-section'); 
+        }
+        
+        function showShopMenu() { // MODIFIED - Button text already changed in HTML
+            document.getElementById('shop-gold-display').textContent = `Your Gold: ${playerData.gold}`;
+            showSection('shop-menu-section');
+        }
+
+        // --- Inventory & Equipment ---
+        function populateInventoryDisplay() {
+            const invListDiv = document.getElementById('inventory-list');
+            invListDiv.innerHTML = `<div class="section-title fore-magenta">Items (excluding equipment)</div>`;
+            let hasItems = false;
+            const equipSlots = ["weapon", "axe", "pickaxe", "chestplate"]; 
+            for (const itemName in playerData.inventory) {
+                const quantity = playerData.inventory[itemName];
+                if (equipSlots.includes(itemName) && typeof quantity === 'string') continue; 
+                
+                const isArmor = ARMOR_DATA[itemName];
+                const isSword = SWORD_DATA[itemName];
+
+                if (typeof quantity === 'number' && quantity > 0) {
+                    if ((isArmor || isSword) && quantity > 0) { 
+                        invListDiv.innerHTML += `<div class="item-entry"><span class="item-name">${titleCase(itemName)}</span>: <span class="item-quantity">${quantity}</span></div>`;
+                         hasItems = true;
+                    } else if (!isArmor && !isSword) { 
+                        invListDiv.innerHTML += `<div class="item-entry"><span class="item-name">${titleCase(itemName)}</span>: <span class="item-quantity">${quantity}</span></div>`;
+                        hasItems = true;
+                    }
+                }
+            }
+            if (!hasItems) {
+                invListDiv.innerHTML += "<p>No loose items.</p>";
+            }
+        }
+
+        function populateEquipmentDisplay() { // MODIFIED - Lifesteal Display
+            const eqSlots = {
+                weapon: { data: SWORD_DATA, artEl: 'eq-weapon-art', nameEl: 'eq-weapon-name' }, 
+                axe: { data: TOOL_DATA.axe, artEl: 'eq-axe-art', nameEl: 'eq-axe-name' },
+                pickaxe: { data: TOOL_DATA.pickaxe, artEl: 'eq-pickaxe-art', nameEl: 'eq-pickaxe-name' },
+                chestplate: { data: ARMOR_DATA, artEl: 'eq-chestplate-art', nameEl: 'eq-chestplate-name' }
+            };
+
+            for (const slotKey in eqSlots) {
+                const slotInfo = eqSlots[slotKey];
+                const itemName = playerData.inventory[slotKey];
+                const itemArtEl = document.getElementById(slotInfo.artEl);
+                const itemNameEl = document.getElementById(slotInfo.nameEl);
+
+                if (itemName && itemName !== "none" && slotInfo.data[itemName]) {
+                    const itemProps = slotInfo.data[itemName];
+                    itemNameEl.textContent = titleCase(itemName);
+                    itemNameEl.className = `item-name ${itemProps.color || 'fore-white'}`;
+                    itemArtEl.innerHTML = itemProps.emoji || '';
+                    itemArtEl.className = `item-art ${itemProps.color || 'fore-white'}`;
+                    
+                    let details = "";
+                    if (slotKey === "chestplate") {
+                        details += ` <span class="fore-cyan">(-${(itemProps.defense * 100).toFixed(0)}% Mob Hit)</span>`;
+                    }
+                     if (slotKey === "weapon" && itemProps.min_dmg) {
+                        let baseDmgText = `${itemProps.min_dmg}-${itemProps.max_dmg}`;
+                        if(isPerkActive("weaponMaster1")) {
+                            const boostedMin = Math.floor(itemProps.min_dmg * (1 + PERK_DATA.weaponMaster1.value));
+                            const boostedMax = Math.floor(itemProps.max_dmg * (1 + PERK_DATA.weaponMaster1.value));
+                            baseDmgText = `${boostedMin}-${boostedMax}*`;
+                        }
+                        details += ` <span class="fore-yellow">(Dmg: ${baseDmgText})</span>`;
+
+                        let effectiveLifestealChance = itemProps.lifesteal_chance || 0;
+                        if(isPerkActive("vampiricEdge1")) {
+                             effectiveLifestealChance += PERK_DATA.vampiricEdge1.value;
+                        }
+                        if (effectiveLifestealChance > 0) {
+                             details += ` <span class="fore-green">(LS: ${(effectiveLifestealChance * 100).toFixed(1)}%)</span>`;
+                        }
+                    }
+                    itemNameEl.innerHTML = `${titleCase(itemName)} ${details}`; // Update with all details
+
+                } else {
+                    itemNameEl.textContent = "None";
+                    itemNameEl.className = 'item-name fore-white';
+                    itemArtEl.textContent = "";
+                    itemArtEl.className = 'item-art fore-white';
+                }
+            }
+        }
+
+        function showEquipSelection(itemType) {
+            const listDiv = document.getElementById('equip-item-list');
+            document.getElementById('equip-item-type-title').textContent = `Equip ${titleCase(itemType)}`;
+            listDiv.innerHTML = "";
+            let eligibleItems = [];
+
+            let itemSource;
+            if (itemType === 'chestplate') itemSource = ARMOR_DATA;
+            else if (itemType === 'weapon') itemSource = SWORD_DATA; 
+            else if (TOOL_DATA[itemType]) itemSource = TOOL_DATA[itemType];
+            
+            if (!itemSource) {
+                logMessage(`Invalid item type for equipping: ${itemType}`, "fore-red");
+                return;
+            }
+            
+            for (const itemName in playerData.inventory) {
+                const quantity = playerData.inventory[itemName];
+                if (itemSource[itemName] && typeof quantity === 'number' && quantity > 0) {
+                     eligibleItems.push(itemName);
+                }
+            }
+            
+            if (eligibleItems.length === 0) {
+                listDiv.innerHTML = `<p>No ${itemType}s in inventory to equip.</p>`;
+            } else {
+                eligibleItems.forEach(itemName => {
+                    const itemProps = itemSource[itemName];
+                    const levelReq = itemProps.level_req || itemProps.wield_level_req || 1; 
+                    const skillType = itemType === 'chestplate' || itemType === 'weapon' ? 'attack' : itemProps.skill_type;
+                    const playerSkillLevel = getLevelFromXp(playerData[`${skillType}_xp`] || 0);
+                    const canEquip = playerSkillLevel >= levelReq;
+                    const reqColor = canEquip ? 'fore-green' : 'fore-red';
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = `inv-item-equip ${itemProps.color || 'fore-white'}`;
+                    itemDiv.innerHTML = `${itemProps.emoji || ''} ${titleCase(itemName)} 
+                                        (<span class="${reqColor}">Req Lvl: ${levelReq} ${titleCase(skillType)}</span>)`;
+                    if (canEquip) {
+                        itemDiv.onclick = () => equipItem(itemType, itemName);
+                    } else {
+                        itemDiv.style.cursor = 'not-allowed';
+                        itemDiv.title = 'Level requirement not met.';
+                    }
+                    listDiv.appendChild(itemDiv);
+                });
+            }
+            if (playerData.inventory[itemType] !== "none") {
+                const unequipDiv = document.createElement('div');
+                unequipDiv.className = 'inv-item-equip fore-yellow';
+                unequipDiv.textContent = `Unequip Current ${titleCase(itemType)}`;
+                unequipDiv.onclick = () => unequipItem(itemType);
+                listDiv.appendChild(unequipDiv);
+            }
+
+            document.getElementById('item-selection-for-equip').classList.remove('hidden');
+        }
+        
+        function hideEquipSelection() {
+            document.getElementById('item-selection-for-equip').classList.add('hidden');
+        }
+
+        function equipItem(itemType, itemName) {
+            let itemSource;
+            if (itemType === 'chestplate') itemSource = ARMOR_DATA;
+            else if (itemType === 'weapon') itemSource = SWORD_DATA;
+            else if (TOOL_DATA[itemType]) itemSource = TOOL_DATA[itemType];
+            else { logMessage("Cannot identify item source.", "fore-red"); return; }
+
+            const itemProps = itemSource[itemName];
+            const levelReq = itemProps.level_req || itemProps.wield_level_req || 1;
+            const skillType = (itemType === 'chestplate' || itemType === 'weapon') ? 'attack' : itemProps.skill_type;
+            const playerSkillLevel = getLevelFromXp(playerData[`${skillType}_xp`] || 0);
+
+            if (playerSkillLevel < levelReq) {
+                logMessage(`Your ${titleCase(skillType)} Lvl (${playerSkillLevel}) is too low for ${titleCase(itemName)} (Requires Lvl ${levelReq}).`, "fore-red");
+                return;
+            }
+
+            const currentlyEquipped = playerData.inventory[itemType];
+
+            if (currentlyEquipped !== "none" && itemSource[currentlyEquipped]) {
+                 playerData.inventory[currentlyEquipped] = (playerData.inventory[currentlyEquipped] || 0) + 1;
+            }
+
+            playerData.inventory[itemType] = itemName;
+            playerData.inventory[itemName] = (playerData.inventory[itemName] || 0) - 1;
+            if (playerData.inventory[itemName] < 0) playerData.inventory[itemName] = 0; 
+
+            logMessage(`Equipped ${titleCase(itemName)}.`, "fore-green");
+            savePlayerData();
+            populateInventoryDisplay();
+            populateEquipmentDisplay();
+            hideEquipSelection();
+            updateHud();
+        }
+
+        function unequipItem(itemType) {
+            const currentlyEquipped = playerData.inventory[itemType];
+            let itemSource;
+            if (itemType === 'chestplate') itemSource = ARMOR_DATA;
+            else if (itemType === 'weapon') itemSource = SWORD_DATA;
+            else if (TOOL_DATA[itemType]) itemSource = TOOL_DATA[itemType];
+            else { logMessage("Cannot identify item source for unequip.", "fore-red"); return; }
+
+
+            if (currentlyEquipped !== "none" && itemSource[currentlyEquipped]) {
+                playerData.inventory[itemType] = "none"; 
+                playerData.inventory[currentlyEquipped] = (playerData.inventory[currentlyEquipped] || 0) + 1; 
+                logMessage(`Unequipped ${titleCase(currentlyEquipped)}.`, "fore-yellow");
+                savePlayerData();
+                populateInventoryDisplay();
+                populateEquipmentDisplay();
+                hideEquipSelection();
+                updateHud();
+            } else {
+                logMessage(`Nothing to unequip from ${itemType} slot.`, "fore-yellow");
+            }
+        }
+
+        // --- Shop Logic ---
+        function showBuyMenu() { // Armor category button is removed in HTML
+            document.getElementById('shop-items-list').innerHTML = ''; 
+            showSection('buy-menu-section');
+        }
+        
+        function populateShopItems(categoryKey, categoryName) {
+            const listDiv = document.getElementById('shop-items-list');
+            listDiv.innerHTML = `<div class="section-title">${categoryName} for Sale</div>`;
+            
+            const sourceData = TOOL_DATA[categoryKey]; // Only tools are bought now
+            if (!sourceData) {
+                listDiv.innerHTML += "<p>No items in this category.</p>";
+                return;
+            }
+
+            for (const itemName in sourceData) {
+                if (categoryKey === 'axe' && itemName === 'fists') continue; 
+
+                const item = sourceData[itemName];
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `shop-item ${item.color || 'fore-white'}`;
+                
+                let skillReqText = `Req Lvl: ${item.level_req} ${titleCase(item.skill_type)}`;
+                
+                let damageText = '';
+                if (item.min_dmg) {
+                    damageText = `Dmg: ${item.min_dmg}-${item.max_dmg}`;
+                }
+                
+                itemDiv.innerHTML = `
+                    ${item.emoji || ''} ${titleCase(itemName)} 
+                    <span class="price">${item.price}g</span><br>
+                    <small class="req">${skillReqText} ${damageText}</small>
+                `;
+                itemDiv.onclick = () => buyItem(categoryKey, itemName);
+                listDiv.appendChild(itemDiv);
+            }
+        }
+        
+        function buyItem(categoryKey, itemName) { // Logic for chestplate buying is now unused from shop
+            const sourceData = TOOL_DATA[categoryKey]; // Simplified as only tools are bought
+            const itemToBuy = sourceData[itemName];
+
+            const skillType = itemToBuy.skill_type;
+            const playerSkillLevel = getLevelFromXp(playerData[`${skillType}_xp`] || 0);
+            
+            if (playerSkillLevel < itemToBuy.level_req) {
+                logMessage(`Your ${titleCase(skillType)} Lvl (${playerSkillLevel}) is too low for ${titleCase(itemName)} (Req: ${itemToBuy.level_req}).`, "fore-red");
+                return;
+            }
+
+            if (playerData.gold < itemToBuy.price) {
+                logMessage("Not enough gold.", "fore-red");
+                return;
+            }
+
+            playerData.gold -= itemToBuy.price;
+            
+            const oldItemName = playerData.inventory[categoryKey]; // categoryKey will be 'axe' or 'pickaxe'
+            if (oldItemName && oldItemName !== "none" && sourceData[oldItemName]) {
+                const oldItemData = sourceData[oldItemName];
+                const sellBackPrice = Math.floor(oldItemData.price * 0.4);
+                playerData.gold += sellBackPrice;
+                logMessage(`Sold old ${titleCase(oldItemName)} for ${sellBackPrice} gold.`, "fore-yellow");
+            }
+            playerData.inventory[categoryKey] = itemName; 
+            
+            logMessage(`Bought ${titleCase(itemName)}!`, "fore-green");
+            savePlayerData();
+            updateHud();
+            populateEquipmentDisplay(); 
+            populateInventoryDisplay();
+            document.getElementById('shop-gold-display').textContent = `Your Gold: ${playerData.gold}`; 
+        }
+
+        function showSellMenu() {
+            const listDiv = document.getElementById('sellable-items-list');
+            listDiv.innerHTML = `<div class="section-title">Your Sellable Items</div>`;
+            let hasSellable = false;
+            for (const itemName in playerData.inventory) {
+                const quantity = playerData.inventory[itemName];
+                const sellPrice = ITEM_SELL_PRICES[itemName];
+
+                const isEquipped = (playerData.inventory.weapon === itemName || 
+                                   playerData.inventory.axe === itemName || 
+                                   playerData.inventory.pickaxe === itemName || 
+                                   playerData.inventory.chestplate === itemName) && 
+                                   (typeof quantity === 'string'); 
+
+                if (!isEquipped && typeof quantity === 'number' && quantity > 0 && sellPrice !== undefined && sellPrice > 0) {
+                    hasSellable = true;
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'shop-item'; 
+                    itemDiv.innerHTML = `${titleCase(itemName)} (x${quantity}) <span class="price">${sellPrice}g each</span>`;
+                    itemDiv.onclick = () => sellItem(itemName, quantity, sellPrice);
+                    listDiv.appendChild(itemDiv);
+                }
+            }
+            if (!hasSellable) {
+                listDiv.innerHTML += "<p>You have no items to sell.</p>";
+            }
+            showSection('sell-menu-section');
+        }
+
+        function sellItem(itemName, currentQuantity, pricePerItem) {
+            const amountToSell = parseInt(prompt(`How many ${titleCase(itemName)} to sell? (Max ${currentQuantity})`, currentQuantity));
+            if (isNaN(amountToSell) || amountToSell <= 0) {
+                logMessage("Invalid amount.", "fore-red");
+                return;
+            }
+            if (amountToSell > currentQuantity) {
+                logMessage("You don't have that many to sell.", "fore-red");
+                return;
+            }
+
+            playerData.inventory[itemName] -= amountToSell;
+            const goldEarned = amountToSell * pricePerItem;
+            playerData.gold += goldEarned;
+
+            logMessage(`Sold ${amountToSell} ${titleCase(itemName)} for ${goldEarned} gold.`, "fore-yellow");
+            playSound(sellItemSound); 
+            savePlayerData();
+            updateHud();
+            showSellMenu(); 
+            populateInventoryDisplay(); 
+            document.getElementById('shop-gold-display').textContent = `Your Gold: ${playerData.gold}`;
+        }
+
+        // --- Action: Woodcutting ---
+        function showWoodcutting() {
+            stopAllAutoActions(); 
+            const treeListDiv = document.getElementById('available-trees');
+            treeListDiv.innerHTML = '<div class="section-title">Available Trees</div>';
+            document.getElementById('woodcutting-controls').classList.add('hidden');
+            currentWoodcuttingTarget = null;
+
+            const wcLvl = getLevelFromXp(playerData.woodcutting_xp);
+            let available = false;
+            for (const treeName in TREE_DATA) {
+                const tree = TREE_DATA[treeName];
+                if (wcLvl >= tree.level) {
+                    available = true;
+                    const treeDiv = document.createElement('div');
+                    treeDiv.className = 'skill-resource fore-green'; 
+                    treeDiv.innerHTML = `${tree.emoji} ${titleCase(treeName)} (Lvl: ${tree.level}, XP: ${tree.exp})`;
+                    treeDiv.onclick = () => selectTreeForWoodcutting(treeName);
+                    treeListDiv.appendChild(treeDiv);
+                }
+            }
+            if (!available) treeListDiv.innerHTML += "<p>No trees available at your level.</p>";
+            showSection('woodcutting-section');
+        }
+
+        function selectTreeForWoodcutting(treeName) {
+            currentWoodcuttingTarget = treeName;
+            logMessage(`Selected ${titleCase(treeName)}. Click 'Auto-Chop' to begin.`, "fore-cyan");
+            const btn = document.getElementById('auto-chop-btn');
+            btn.textContent = `Auto-Chop ${titleCase(treeName)}`;
+            btn.classList.remove('red');
+            document.getElementById('woodcutting-controls').classList.remove('hidden');
+        }
+        
+        function toggleAutoWoodcutting() {
+            if (isAutoWoodcutting) {
+                stopAutoWoodcutting();
+            } else {
+                startAutoWoodcutting();
+            }
+        }
+
+        function startAutoWoodcutting() {
+            if (!currentWoodcuttingTarget) { logMessage("No tree selected.", "fore-red"); return; }
+            const equippedAxeName = playerData.inventory.axe;
+            if (equippedAxeName === "none") { logMessage("You need an axe to chop wood.", "fore-red"); return; }
+            
+            const axeProps = TOOL_DATA.axe[equippedAxeName];
+            if (!axeProps) { logMessage("Error: Equipped axe data not found.", "fore-red"); stopAutoWoodcutting(); return; }
+            
+            const currentWcLvl = getLevelFromXp(playerData.woodcutting_xp);
+            if (currentWcLvl < axeProps.level_req) {
+                logMessage(`Your Woodcutting Lvl (${currentWcLvl}) is too low for ${titleCase(equippedAxeName)}. Req: ${axeProps.level_req}`, "fore-red");
+                return;
+            }
+
+            isAutoWoodcutting = true;
+            const btn = document.getElementById('auto-chop-btn');
+            btn.textContent = `Stop Auto-Chopping ${titleCase(currentWoodcuttingTarget)}`;
+            btn.classList.add('red');
+            logMessage(`Auto-chopping ${titleCase(currentWoodcuttingTarget)}...`, "fore-cyan");
+
+            let interval = BASE_GATHER_INTERVAL;
+            if(isPerkActive("efficientGatherer1")) interval *= (1 - PERK_DATA.efficientGatherer1.value);
+            autoWoodcuttingInterval = setInterval(singleChopAction, interval);
+        }
+
+        function stopAutoWoodcutting() {
+            if (isAutoWoodcutting) {
+                isAutoWoodcutting = false;
+                clearInterval(autoWoodcuttingInterval);
+                autoWoodcuttingInterval = null;
+                const btn = document.getElementById('auto-chop-btn');
+                btn.textContent = currentWoodcuttingTarget ? `Auto-Chop ${titleCase(currentWoodcuttingTarget)}` : `Start Auto-Chopping`;
+                btn.classList.remove('red');
+                logMessage("Auto-chopping stopped.", "fore-yellow");
+            }
+        }
+        
+        function singleChopAction() {
+            if (!isAutoWoodcutting || !currentWoodcuttingTarget) { stopAutoWoodcutting(); return; }
+            const equippedAxeName = playerData.inventory.axe; 
+            if (equippedAxeName === "none") { logMessage("No axe equipped. Stopping.", "fore-red"); stopAutoWoodcutting(); return; }
+            
+            const axeProps = TOOL_DATA.axe[equippedAxeName];
+            if (!axeProps || !axeProps.yield_config) { logMessage("Error with axe data.", "fore-red"); stopAutoWoodcutting(); return; }
+
+            const treeData = TREE_DATA[currentWoodcuttingTarget];
+            const oldLevel = getLevelFromXp(playerData.woodcutting_xp);
+            playerData.woodcutting_xp += treeData.exp;
+            grantUniversalXP(treeData.exp);
+            
+            let logsGained = axeProps.yield_config.base;
+            if (axeProps.yield_config.bonuses) {
+                axeProps.yield_config.bonuses.forEach(bonus => {
+                    if (Math.random() < bonus.chance) logsGained += bonus.amount;
+                });
+            }
+            if (logsGained < 0) logsGained = 0; 
+
+            if (logsGained > 0) {
+                playerData.inventory[treeData.log] = (playerData.inventory[treeData.log] || 0) + logsGained;
+                logMessage(`+${treeData.exp} WC XP. Got ${logsGained} ${titleCase(treeData.log)}.`, "fore-green");
+            } else {
+                 logMessage(`+${treeData.exp} WC XP. Got no logs this time.`, "fore-yellow");
+            }
+            
+            playSound(skillRoundSound); 
+            handleLevelUp("woodcutting_xp", oldLevel);
+            savePlayerData();
+            updateHud();
+        }
+
+        // --- Action: Mining ---
+        function showMining() {
+            stopAllAutoActions();
+            const oreListDiv = document.getElementById('available-ores');
+            oreListDiv.innerHTML = '<div class="section-title">Available Ores</div>';
+            document.getElementById('mining-controls').classList.add('hidden');
+            currentMiningTarget = null;
+
+            const mnLvl = getLevelFromXp(playerData.mining_xp);
+            let available = false;
+            for (const oreName in ORE_DATA) {
+                const ore = ORE_DATA[oreName];
+                if (mnLvl >= ore.level_req) {
+                    available = true;
+                    const oreDiv = document.createElement('div');
+                    oreDiv.className = `skill-resource ${ore.color}`;
+                    oreDiv.innerHTML = `${ore.emoji} ${titleCase(oreName)} (Lvl: ${ore.level_req}, XP: ${ore.xp})`;
+                    oreDiv.onclick = () => selectOreForMining(oreName);
+                    oreListDiv.appendChild(oreDiv);
+                }
+            }
+            if (!available) oreListDiv.innerHTML += "<p>No ores available at your level.</p>";
+            showSection('mining-section');
+        }
+
+        function selectOreForMining(oreName) {
+            currentMiningTarget = oreName;
+            logMessage(`Selected ${titleCase(oreName)}. Click 'Auto-Mine' to begin.`, "fore-cyan");
+            const btn = document.getElementById('auto-mine-btn');
+            btn.textContent = `Auto-Mine ${titleCase(oreName)}`;
+            btn.classList.remove('red');
+            document.getElementById('mining-controls').classList.remove('hidden');
+        }
+
+        function toggleAutoMining() {
+            if (isAutoMining) stopAutoMining();
+            else startAutoMining();
+        }
+
+        function startAutoMining() {
+            if (!currentMiningTarget) { logMessage("No ore selected.", "fore-red"); return; }
+            const equippedPickaxeName = playerData.inventory.pickaxe;
+            if (equippedPickaxeName === "none") { logMessage("You need a pickaxe to mine.", "fore-red"); return; }
+            
+            const pickaxeProps = TOOL_DATA.pickaxe[equippedPickaxeName];
+            if (!pickaxeProps) { logMessage("Error: Pickaxe data missing.", "fore-red"); stopAutoMining(); return; }
+            
+            const currentMnLvl = getLevelFromXp(playerData.mining_xp);
+            if (currentMnLvl < pickaxeProps.level_req) {
+                logMessage(`Mining Lvl (${currentMnLvl}) too low for ${titleCase(equippedPickaxeName)}. Req: ${pickaxeProps.level_req}`, "fore-red");
+                return;
+            }
+
+            isAutoMining = true;
+            const btn = document.getElementById('auto-mine-btn');
+            btn.textContent = `Stop Auto-Mining ${titleCase(currentMiningTarget)}`;
+            btn.classList.add('red');
+            logMessage(`Auto-mining ${titleCase(currentMiningTarget)}...`, "fore-cyan");
+            
+            let interval = BASE_GATHER_INTERVAL;
+            if(isPerkActive("efficientGatherer1")) interval *= (1 - PERK_DATA.efficientGatherer1.value);
+            autoMiningInterval = setInterval(singleMineAction, interval);
+        }
+
+        function stopAutoMining() {
+            if (isAutoMining) {
+                isAutoMining = false;
+                clearInterval(autoMiningInterval);
+                autoMiningInterval = null;
+                const btn = document.getElementById('auto-mine-btn');
+                btn.textContent = currentMiningTarget ? `Auto-Mine ${titleCase(currentMiningTarget)}` : `Start Auto-Mining`;
+                btn.classList.remove('red');
+                logMessage("Auto-mining stopped.", "fore-yellow");
+            }
+        }
+
+        function singleMineAction() {
+            if (!isAutoMining || !currentMiningTarget) { stopAutoMining(); return; }
+            const equippedPickaxeName = playerData.inventory.pickaxe;
+            if (equippedPickaxeName === "none") { logMessage("No pickaxe. Stopping.", "fore-red"); stopAutoMining(); return; }
+            
+            const pickaxeProps = TOOL_DATA.pickaxe[equippedPickaxeName];
+            if (!pickaxeProps || !pickaxeProps.yield_config) { logMessage("Error with pickaxe data.", "fore-red"); stopAutoMining(); return; }
+
+            const oreData = ORE_DATA[currentMiningTarget];
+            const oldLevel = getLevelFromXp(playerData.mining_xp);
+            playerData.mining_xp += oreData.xp;
+            grantUniversalXP(oreData.xp);
+            
+            let oreGained = pickaxeProps.yield_config.base;
+            if (pickaxeProps.yield_config.bonuses) {
+                pickaxeProps.yield_config.bonuses.forEach(bonus => {
+                    if (Math.random() < bonus.chance) oreGained += bonus.amount;
+                });
+            }
+            if (oreGained < 0) oreGained = 0; 
+
+            if (oreGained > 0) {
+                playerData.inventory[oreData.item_name] = (playerData.inventory[oreData.item_name] || 0) + oreGained;
+                logMessage(`+${oreData.xp} Mining XP. Got ${oreGained} ${titleCase(oreData.item_name)}.`, oreData.color);
+            } else {
+                 logMessage(`+${oreData.xp} Mining XP. Got no ore this time.`, "fore-yellow");
+            }
+            
+            playSound(skillRoundSound); 
+            handleLevelUp("mining_xp", oldLevel);
+            savePlayerData();
+            updateHud();
+        }
+
+        // --- Action: Blacksmithing ---
+        function showBlacksmithingMenu() {
+            stopAllAutoActions();
+            showSection('blacksmithing-menu-section');
+        }
+        
+        function calculateMaxCraftableForBar(barName) {
+            const bar = BAR_DATA[barName];
+            if (!bar) return 0;
+            let maxSets = Infinity;
+            for (const ore in bar.recipe) {
+                const oreOnHand = playerData.inventory[ore] || 0;
+                const oreNeededPerSet = bar.recipe[ore];
+                if (oreNeededPerSet === 0) continue; // Avoid division by zero if recipe is malformed
+                maxSets = Math.min(maxSets, Math.floor(oreOnHand / oreNeededPerSet));
+            }
+            return maxSets === Infinity ? 0 : maxSets;
+        }
+
+
+        // Smelting // MODIFIED - showSmeltingMenu, selectBarForSmelting, startAutoSmelting, singleSmeltAction
+        function showSmeltingMenu() {
+            stopAllAutoActions(); // Stop any ongoing auto actions, including smelting itself if menu is re-entered
+            const listDiv = document.getElementById('available-bars-to-smelt');
+            listDiv.innerHTML = '<div class="section-title">Available Bars to Smelt</div>';
+            document.getElementById('smelting-controls').classList.add('hidden');
+            // currentSmeltingTarget should persist if auto-smelting was active and we are just refreshing the view
+            // However, for simplicity, we'll clear it if not auto-smelting. If auto-smelting, it will be set by selectBar.
+            if (!isAutoSmelting) {
+                 currentSmeltingTarget = null;
+            }
+
+
+            const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
+            let canSmeltAnythingAtAll = false; // Checks if any recipe is potentially available
+
+            for (const barName in BAR_DATA) {
+                const bar = BAR_DATA[barName];
+                let recipeString = "";
+                for(const ore in bar.recipe) {
+                    recipeString += `${bar.recipe[ore]} ${titleCase(ore)} (${playerData.inventory[ore] || 0}), `;
+                }
+                recipeString = recipeString.slice(0, -2); 
+
+                const maxCraftableNow = calculateMaxCraftableForBar(barName);
+                const canMakeAtLeastOne = maxCraftableNow > 0;
+                
+                const levelReqColor = bsLvl >= bar.level_req ? 'fore-green' : 'fore-red';
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `smeltable-item-list item ${bar.color}`;
+                itemDiv.id = `smeltable-item-div-${barName.replace(/\s+/g, '-')}`; // Unique ID for updates
+                
+                itemDiv.innerHTML = `
+                    ${bar.emoji} ${titleCase(barName)} (XP: ${bar.xp_gain})
+                    <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${bar.level_req} BS</span></small>
+                    <br><small>Max craftable: <span id="max-craftable-${barName.replace(/\s+/g, '-')}">${maxCraftableNow}</span></small>
+                `;
+
+                if (bsLvl >= bar.level_req && canMakeAtLeastOne) {
+                    itemDiv.onclick = () => selectBarForSmelting(barName);
+                    canSmeltAnythingAtAll = true;
+                } else {
+                    itemDiv.style.cursor = 'not-allowed';
+                    itemDiv.title = bsLvl < bar.level_req ? 'BS level too low' : 'Not enough materials';
+                    itemDiv.style.opacity = "0.6";
+                }
+                listDiv.appendChild(itemDiv);
+            }
+
+            if (!canSmeltAnythingAtAll && Object.keys(BAR_DATA).length > 0) listDiv.innerHTML += "<p>No bars you can currently smelt (check level & materials).</p>";
+            else if (Object.keys(BAR_DATA).length === 0) listDiv.innerHTML += "<p>No bar recipes known.</p>";
+            
+            // If returning to menu while auto-smelting, re-select the current target to show controls
+            if (isAutoSmelting && currentSmeltingTarget) {
+                selectBarForSmelting(currentSmeltingTarget, true); // Pass a flag to skip logging
+            }
+
+            showSection('smelting-section');
+        }
+
+        function selectBarForSmelting(barName, isReselect = false) {
+            currentSmeltingTarget = barName;
+            maxSmeltableForCurrentTarget = calculateMaxCraftableForBar(barName);
+
+            if (!isReselect) { // Only log if it's a new manual selection
+                 logMessage(`Selected ${titleCase(barName)} for smelting. Max craftable: ${maxSmeltableForCurrentTarget}`, "fore-cyan");
+            }
+
+            const btn = document.getElementById('auto-smelt-btn');
+            btn.textContent = isAutoSmelting ? `Stop Auto-Smelting ${titleCase(barName)}` : `Auto-Smelt ${titleCase(barName)}`;
+            btn.classList.toggle('red', isAutoSmelting);
+            document.getElementById('smelting-controls').classList.remove('hidden');
+        }
+
+
+        function toggleAutoSmelting() {
+            if(isAutoSmelting) {
+                stopAutoSmelting();
+            } else {
+                startAutoSmelting();
+            }
+        }
+
+        function startAutoSmelting() {
+            if(!currentSmeltingTarget) { logMessage("No bar selected to smelt.", "fore-red"); return; }
+            
+            const barData = BAR_DATA[currentSmeltingTarget];
+            const currentBsLvl = getLevelFromXp(playerData.blacksmithing_xp);
+
+            if(currentBsLvl < barData.level_req) {
+                logMessage(`BS Lvl (${currentBsLvl}) too low for ${titleCase(currentSmeltingTarget)}. Req: ${barData.level_req}`, "fore-red");
+                return;
+            }
+
+            maxSmeltableForCurrentTarget = calculateMaxCraftableForBar(currentSmeltingTarget);
+            if (maxSmeltableForCurrentTarget <= 0) {
+                logMessage(`Not enough materials to smelt any ${titleCase(currentSmeltingTarget)}.`, "fore-red");
+                return;
+            }
+
+            isAutoSmelting = true;
+            const btn = document.getElementById('auto-smelt-btn');
+            btn.textContent = `Stop Auto-Smelting ${titleCase(currentSmeltingTarget)}`;
+            btn.classList.add('red');
+            logMessage(`Auto-smelting ${titleCase(currentSmeltingTarget)}... (Up to ${maxSmeltableForCurrentTarget} times)`, "fore-cyan");
+            autoSmeltingInterval = setInterval(singleSmeltAction, BASE_CRAFT_INTERVAL);
+        }
+
+        function stopAutoSmelting() {
+            if(isAutoSmelting) {
+                isAutoSmelting = false;
+                clearInterval(autoSmeltingInterval);
+                autoSmeltingInterval = null;
+                const btn = document.getElementById('auto-smelt-btn');
+                // Ensure button text reflects non-auto state only if a target is still selected
+                if (currentSmeltingTarget) {
+                    btn.textContent = `Auto-Smelt ${titleCase(currentSmeltingTarget)}`;
+                    btn.classList.remove('red');
+                } else { // If no target (e.g. ran out completely and it was cleared)
+                    btn.textContent = 'Start Auto-Smelting';
+                    btn.classList.remove('red');
+                    document.getElementById('smelting-controls').classList.add('hidden');
+                }
+                logMessage("Auto-smelting stopped.", "fore-yellow");
+            }
+        }
+
+        function singleSmeltAction() {
+            if(!isAutoSmelting || !currentSmeltingTarget) { 
+                stopAutoSmelting(); 
+                return; 
+            }
+
+            const barData = BAR_DATA[currentSmeltingTarget];
+            maxSmeltableForCurrentTarget = calculateMaxCraftableForBar(currentSmeltingTarget); // Recalculate before each craft
+
+            if (maxSmeltableForCurrentTarget <= 0) {
+                logMessage(`Ran out of materials for ${titleCase(currentSmeltingTarget)}. Stopping.`, "fore-red");
+                stopAutoSmelting();
+                showSmeltingMenu(); // Refresh the menu to show 0 craftable
+                return;
+            }
+
+            // Consume materials
+            for(const ore in barData.recipe) {
+                playerData.inventory[ore] -= barData.recipe[ore];
+            }
+
+            let barsMade = 1;
+            if(isPerkActive("advancedSmelting") && Math.random() < PERK_DATA.advancedSmelting.value) {
+                barsMade++;
+                logMessage("Bonus! Advanced Smelting produced an extra bar!", "fore-magenta");
+            }
+
+            playerData.inventory[currentSmeltingTarget] = (playerData.inventory[currentSmeltingTarget] || 0) + barsMade;
+            const oldLevel = getLevelFromXp(playerData.blacksmithing_xp);
+            playerData.blacksmithing_xp += barData.xp_gain;
+            grantUniversalXP(barData.xp_gain);
+            logMessage(`Smelted ${barsMade} ${titleCase(currentSmeltingTarget)}! (+${barData.xp_gain} BS XP)`, barData.color);
+            
+            playSound(skillRoundSound); 
+            handleLevelUp("blacksmithing_xp", oldLevel);
+            savePlayerData();
+            updateHud();
+            
+            // Update the specific item's display in the smelting menu
+            const itemDivId = `smeltable-item-div-${currentSmeltingTarget.replace(/\s+/g, '-')}`;
+            const itemDiv = document.getElementById(itemDivId);
+            if (itemDiv) {
+                 let recipeString = "";
+                for(const ore in barData.recipe) {
+                    recipeString += `${barData.recipe[ore]} ${titleCase(ore)} (${playerData.inventory[ore] || 0}), `;
+                }
+                recipeString = recipeString.slice(0, -2);
+                const newMaxCraftable = calculateMaxCraftableForBar(currentSmeltingTarget);
+                const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
+                const levelReqColor = bsLvl >= barData.level_req ? 'fore-green' : 'fore-red';
+
+                itemDiv.innerHTML = `
+                    ${barData.emoji} ${titleCase(currentSmeltingTarget)} (XP: ${barData.xp_gain})
+                    <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${barData.level_req} BS</span></small>
+                    <br><small>Max craftable: <span id="max-craftable-${currentSmeltingTarget.replace(/\s+/g, '-')}">${newMaxCraftable}</span></small>
+                `;
+                if (newMaxCraftable === 0 || bsLvl < barData.level_req) { // Disable if cannot make more
+                    itemDiv.style.cursor = 'not-allowed';
+                    itemDiv.title = bsLvl < barData.level_req ? 'BS level too low' : 'Not enough materials';
+                    itemDiv.style.opacity = "0.6";
+                    itemDiv.onclick = null; // Remove click listener
+                }
+            }
+
+
+            if (calculateMaxCraftableForBar(currentSmeltingTarget) <= 0) { // Check again after crafting
+                 logMessage(`No more materials to smelt ${titleCase(currentSmeltingTarget)}. Auto-smelting will stop.`, "fore-yellow");
+                 stopAutoSmelting();
+                 showSmeltingMenu(); // Refresh to reflect the final state
+            }
+        }
+
+
+        // Smithing (2H Swords for now)
+        function showSmithingMenu() {
+            stopAllAutoActions();
+            const listDiv = document.getElementById('available-items-to-smith');
+            listDiv.innerHTML = '<div class="section-title">Available Items to Smith</div>';
+            document.getElementById('smithing-controls').classList.add('hidden');
+            currentSmithingTarget = null;
+
+            const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
+            let canSmithAnything = false;
+
+            for (const swordName in SWORD_DATA) {
+                const sword = SWORD_DATA[swordName];
+                let recipeString = "";
+                let canMake = true;
+                
+                for(const bar in sword.recipe) { 
+                    const requiredAmount = isPerkActive("masterSmith") && sword.recipe[bar] > 1 ? 
+                                          Math.max(1, sword.recipe[bar] - PERK_DATA.masterSmith.value) : 
+                                          sword.recipe[bar];
+                    recipeString += `${requiredAmount} ${titleCase(bar)} (${playerData.inventory[bar] || 0}), `;
+                    if((playerData.inventory[bar] || 0) < requiredAmount) canMake = false;
+                }
+                recipeString = recipeString.slice(0, -2);
+
+                const levelReqColor = bsLvl >= sword.smith_level_req ? 'fore-green' : 'fore-red';
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `smithable-item-list item ${sword.color}`;
+                itemDiv.innerHTML = `
+                    ${sword.emoji} ${titleCase(swordName)} (XP: ${sword.smith_level_req * 5}) 
+                    <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${sword.smith_level_req} BS</span></small>
+                `;
+                if (bsLvl >= sword.smith_level_req && canMake) {
+                    itemDiv.onclick = () => selectItemForSmithing(swordName);
+                    canSmithAnything = true;
+                } else {
+                    itemDiv.style.cursor = 'not-allowed';
+                    itemDiv.title = bsLvl < sword.smith_level_req ? 'BS level too low' : 'Not enough materials';
+                    itemDiv.style.opacity = "0.6";
+                }
+                listDiv.appendChild(itemDiv);
+            }
+             if (!canSmithAnything && Object.keys(SWORD_DATA).length > 0) listDiv.innerHTML += "<p>No items you can currently smith (check level & materials).</p>";
+            else if (Object.keys(SWORD_DATA).length === 0) listDiv.innerHTML += "<p>No item recipes known for smithing.</p>";
+            
+            showSection('smithing-section');
+        }
+        
+        function selectItemForSmithing(itemName) {
+            currentSmithingTarget = itemName; 
+            logMessage(`Selected ${titleCase(itemName)} for smithing.`, "fore-cyan");
+            const btn = document.getElementById('auto-smith-btn');
+            btn.textContent = `Auto-Smith ${titleCase(itemName)}`;
+            btn.classList.remove('red');
+            document.getElementById('smithing-controls').classList.remove('hidden');
+        }
+
+        function toggleAutoSmithing() {
+            if(isAutoSmithing) stopAutoSmithing();
+            else startAutoSmithing();
+        }
+
+        function startAutoSmithing() {
+            if(!currentSmithingTarget) { logMessage("No item selected to smith.", "fore-red"); return; }
+            
+            const itemData = SWORD_DATA[currentSmithingTarget]; 
+            const currentBsLvl = getLevelFromXp(playerData.blacksmithing_xp);
+            if(currentBsLvl < itemData.smith_level_req) {
+                logMessage(`BS Lvl (${currentBsLvl}) too low for ${titleCase(currentSmithingTarget)}. Req: ${itemData.smith_level_req}`, "fore-red");
+                return;
+            }
+
+            for(const bar in itemData.recipe) {
+                const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ? 
+                                      Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) : 
+                                      itemData.recipe[bar];
+                if((playerData.inventory[bar] || 0) < requiredAmount) {
+                    logMessage(`Not enough ${titleCase(bar)} to smith ${titleCase(currentSmithingTarget)}.`, "fore-red");
+                    return;
+                }
+            }
+
+            isAutoSmithing = true;
+            const btn = document.getElementById('auto-smith-btn');
+            btn.textContent = `Stop Auto-Smithing ${titleCase(currentSmithingTarget)}`;
+            btn.classList.add('red');
+            logMessage(`Auto-smithing ${titleCase(currentSmithingTarget)}...`, "fore-cyan");
+            autoSmithingInterval = setInterval(singleSmithAction, BASE_CRAFT_INTERVAL);
+        }
+
+        function stopAutoSmithing() {
+            if(isAutoSmithing) {
+                isAutoSmithing = false;
+                clearInterval(autoSmithingInterval);
+                autoSmithingInterval = null;
+                const btn = document.getElementById('auto-smith-btn');
+                btn.textContent = currentSmithingTarget ? `Auto-Smith ${titleCase(currentSmithingTarget)}` : `Start Auto-Smithing`;
+                btn.classList.remove('red');
+                logMessage("Auto-smithing stopped.", "fore-yellow");
+            }
+        }
+
+        function singleSmithAction() {
+            if(!isAutoSmithing || !currentSmithingTarget) { stopAutoSmithing(); return; }
+            
+            const itemData = SWORD_DATA[currentSmithingTarget]; 
+            for(const bar in itemData.recipe) {
+                 const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ? 
+                                      Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) : 
+                                      itemData.recipe[bar];
+                if((playerData.inventory[bar] || 0) < requiredAmount) {
+                    logMessage(`Ran out of ${titleCase(bar)} for ${titleCase(currentSmithingTarget)}. Stopping.`, "fore-red");
+                    stopAutoSmithing();
+                    showSmithingMenu(); 
+                    return;
+                }
+            }
+
+            for(const bar in itemData.recipe) {
+                const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ? 
+                                      Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) : 
+                                      itemData.recipe[bar];
+                playerData.inventory[bar] -= requiredAmount;
+            }
+            
+            playerData.inventory[currentSmithingTarget] = (playerData.inventory[currentSmithingTarget] || 0) + 1;
+            const xpGain = itemData.smith_level_req * 5; 
+            const oldLevel = getLevelFromXp(playerData.blacksmithing_xp);
+            playerData.blacksmithing_xp += xpGain;
+            grantUniversalXP(xpGain);
+            logMessage(`Smithed 1 ${titleCase(currentSmithingTarget)}! (+${xpGain} BS XP)`, itemData.color);
+            
+            playSound(skillRoundSound); 
+            handleLevelUp("blacksmithing_xp", oldLevel);
+            savePlayerData();
+            updateHud();
+            showSmithingMenu(); // Refresh the list to update material counts
+        }
+
+
+        // --- Action: Combat --- // MODIFIED - singleCombatRound
+        function showCombat() {
+            stopAllAutoActions();
+            const monsterListDiv = document.getElementById('available-monsters');
+            monsterListDiv.innerHTML = '<div class="section-title">Attackable Monsters</div>';
+            document.getElementById('combat-controls').classList.add('hidden');
+            document.getElementById('combat-arena').classList.add('hidden');
+
+            const atkLvl = getLevelFromXp(playerData.attack_xp);
+            let available = false;
+            ALL_MONSTER_NAMES.forEach(monsterName => {
+                const monster = MONSTER_DATA[monsterName];
+                if (atkLvl >= monster.level_req) {
+                    available = true;
+                    const monsterDiv = document.createElement('div');
+                    monsterDiv.className = `item ${monster.color}`; 
+                    monsterDiv.innerHTML = `${monster.emoji} ${titleCase(monsterName)} (Lvl: ${monster.level_req}, HP: ${monster.hp})`;
+                    monsterDiv.onclick = () => selectMonsterForCombat(monsterName);
+                    monsterListDiv.appendChild(monsterDiv);
+                }
+            });
+            if (!available) monsterListDiv.innerHTML += "<p>No monsters available at your level.</p>";
+            showSection('combat-section');
+        }
+
+        function selectMonsterForCombat(monsterName) {
+            currentMonsterTarget = monsterName; 
+            logMessage(`Selected ${titleCase(monsterName)}. Click 'Auto-Attack' to engage.`, "fore-cyan");
+            const btn = document.getElementById('auto-attack-btn');
+            btn.textContent = `Auto-Attack ${titleCase(monsterName)}`;
+            btn.classList.remove('red'); 
+            document.getElementById('combat-controls').classList.remove('hidden');
+        }
+        
+        function stopCombatAndReturn() {
+            stopAutoAttack(); 
+            showActionsMenu();
+        }
+
+        function toggleAutoAttack() {
+            if (!currentMonsterTarget) { logMessage("No monster selected.", "fore-red"); return; }
+            if (isAutoAttacking) stopAutoAttack();
+            else startAutoAttack(currentMonsterTarget); 
+        }
+
+        function startAutoAttack(monsterName) { 
+            if (playerData.hp <= 0) { logMessage("You are too weak to fight.", "fore-red"); return; }
+            isAutoAttacking = true;
+            document.getElementById('auto-attack-btn').textContent = `Stop Auto-Attacking ${titleCase(monsterName)}`;
+            currentSessionKillCount = 0; // Reset kill count for new session
+            document.getElementById('auto-attack-btn').classList.add('red');
+            logMessage(`Auto-attacking ${titleCase(monsterName)}...`, "fore-red");
+            
+            prepareCombatArena(monsterName); 
+            autoAttackInterval = setInterval(singleCombatRound, BASE_COMBAT_INTERVAL); 
+        }
+
+        function stopAutoAttack() {
+            if (isAutoAttacking) {
+                isAutoAttacking = false;
+                clearInterval(autoAttackInterval);
+                autoAttackInterval = null;
+                const btn = document.getElementById('auto-attack-btn');
+                btn.textContent = currentMonsterTarget ? `Auto-Attack ${titleCase(currentMonsterTarget)}` : `Auto-Attack Selected`;
+                btn.classList.remove('red');
+                logMessage("Auto-attack stopped.", "fore-yellow");
+            }
+        }
+        
+        function prepareCombatArena(monsterName, isRespawn = false, originalColorIfRespawn = null) {
+            const monster = MONSTER_DATA[monsterName];
+            currentMonsterHP = monster.hp;
+            const killCountDisplay = currentSessionKillCount > 0 ? ` <span class="fore-yellow">x${currentSessionKillCount}</span>` : '';
+            const monsterDisplayEl = document.getElementById('monster-display-combat');
+            const monsterHpDisplayEl = document.getElementById('monster-hp-combat');
+
+            if (isRespawn) {
+                monsterDisplayEl.innerHTML = `<span class="emoji">✨</span>${killCountDisplay} Spawning ${titleCase(monsterName)}...`;
+                monsterDisplayEl.className = `monster-display ${originalColorIfRespawn || monster.color} fore-yellow`; // Use original color, add yellow
+                monsterHpDisplayEl.textContent = `---/${monster.hp}`; // Indicate loading
+
+                setTimeout(() => {
+                    monsterDisplayEl.innerHTML = `<span class="emoji">${monster.emoji}</span>${killCountDisplay} ${titleCase(monsterName)}`;
+                    monsterDisplayEl.className = `monster-display ${monster.color}`; // Restore normal class
+                    monsterHpDisplayEl.textContent = `${currentMonsterHP}/${monster.hp}`;
+                }, 750); // 0.75s delay for spawning message
+            } else {
+                monsterDisplayEl.innerHTML = `<span class="emoji">${monster.emoji}</span>${killCountDisplay} ${titleCase(monsterName)}`;
+                monsterDisplayEl.className = `monster-display ${monster.color}`;
+                monsterHpDisplayEl.textContent = `${currentMonsterHP}/${monster.hp}`;
+            }
+            
+            document.getElementById('player-hp-combat').textContent = `${playerData.hp}/${getMaxHp(getLevelFromXp(playerData.attack_xp))}`;
+            document.getElementById('combat-arena').classList.remove('hidden');
+        }
+        
+        function singleCombatRound() {
+            if (!currentMonsterTarget || playerData.hp <= 0) {
+                stopAutoAttack();
+                if (playerData.hp <= 0 && currentMonsterTarget) {
+                    logMessage("Player defeated. Combat ended.", "fore-red");
+                    playSound(playerDieSound); 
+                }
+                else if (!currentMonsterTarget && isAutoAttacking) logMessage("Auto-attack stopped: No target.", "fore-yellow");
+                return;
+            }
+
+            const monster = MONSTER_DATA[currentMonsterTarget];
+            const playerAtkLvl = getLevelFromXp(playerData.attack_xp);
+            const playerMaxHp = getMaxHp(playerAtkLvl);
+
+            let weaponName = "fists";
+            let weaponStats = TOOL_DATA.axe.fists; 
+            
+            const equippedWeapon = playerData.inventory.weapon;
+            const equippedAxe = playerData.inventory.axe;
+            const equippedPickaxe = playerData.inventory.pickaxe;
+
+            if (equippedWeapon !== "none" && SWORD_DATA[equippedWeapon]) {
+                weaponName = equippedWeapon;
+                weaponStats = SWORD_DATA[equippedWeapon];
+            } else if (equippedAxe !== "none" && TOOL_DATA.axe[equippedAxe]) {
+                weaponName = equippedAxe;
+                weaponStats = TOOL_DATA.axe[equippedAxe];
+            } else if (equippedPickaxe !== "none" && TOOL_DATA.pickaxe[equippedPickaxe]) {
+                weaponName = equippedPickaxe;
+                weaponStats = TOOL_DATA.pickaxe[equippedPickaxe];
+            }
+            
+            let playerDmg = Math.floor(Math.random() * (weaponStats.max_dmg - weaponStats.min_dmg + 1)) + weaponStats.min_dmg;
+            
+            let finalPlayerDmg = playerDmg;
+            if (weaponName.includes("2h sword")) { 
+                if(isPerkActive("weaponMaster1")) {
+                    finalPlayerDmg *= (1 + PERK_DATA.weaponMaster1.value);
+                }
+            }
+
+            let critMultiplier = 1.0;
+            if(isPerkActive("preciseStrikes1") && Math.random() < PERK_DATA.preciseStrikes1.value) {
+                critMultiplier = PERK_DATA.preciseStrikes1.crit_multiplier;
+                logMessage("CRITICAL HIT!", "fore-lightred_ex");
+            }
+            playerDmg = Math.floor(finalPlayerDmg * critMultiplier);
+
+
+            let hitChance = 0.80 + Math.max(0, (playerAtkLvl - monster.level_req) * 0.001);
+            hitChance = Math.min(0.95, hitChance);
+
+            if (Math.random() < hitChance) {
+                currentMonsterHP -= playerDmg;
+                logMessage(`You hit ${titleCase(currentMonsterTarget)} with ${titleCase(weaponName)} for ${playerDmg} damage!`, "fore-yellow");
+                
+                let effectiveLifestealChance = weaponStats.lifesteal_chance || 0;
+                let effectiveLifestealAmount = weaponStats.lifesteal_amount || 0;
+
+                if (weaponName.includes("2h sword")) { 
+                    if(isPerkActive("vampiricEdge1")) {
+                        effectiveLifestealChance += PERK_DATA.vampiricEdge1.value;
+                    }
+                }
+
+                if (effectiveLifestealChance > 0 && Math.random() < effectiveLifestealChance) {
+                    let stolenHp = 0;
+                    if (Array.isArray(effectiveLifestealAmount)) {
+                        stolenHp = Math.floor(Math.random() * (effectiveLifestealAmount[1] - effectiveLifestealAmount[0] + 1)) + effectiveLifestealAmount[0];
+                    } else {
+                        stolenHp = effectiveLifestealAmount;
+                    }
+                    const oldHp = playerData.hp;
+                    playerData.hp = Math.min(playerMaxHp, playerData.hp + stolenHp);
+                    if (playerData.hp > oldHp) {
+                        logMessage(`Lifesteal! +${playerData.hp - oldHp} HP.`, "fore-green");
+                    }
+                }
+
+            } else {
+                logMessage(`You missed ${titleCase(currentMonsterTarget)}!`, "fore-blue");
+            }
+            document.getElementById('monster-hp-combat').textContent = `${Math.max(0,currentMonsterHP)}/${monster.hp}`;
+
+            if (currentMonsterHP <= 0) {
+                logMessage(`${titleCase(currentMonsterTarget)} defeated!`, monster.color);
+                playSound(monsterKillSound); 
+                currentSessionKillCount++; // Increment kill count for this session
+                const oldAtkLvl = playerAtkLvl;
+                playerData.attack_xp += monster.attack_xp;
+                grantUniversalXP(monster.attack_xp);
+                logMessage(`Gained ${monster.attack_xp} Attack XP!`, "fore-green");
+                
+                // REMOVED HP on kill
+                // const hpOnKill = 3; 
+                // const oldHpKillHeal = playerData.hp;
+                // playerData.hp = Math.min(playerMaxHp, playerData.hp + hpOnKill);
+                // if (playerData.hp > oldHpKillHeal) {
+                //      logMessage(`Recovered ${playerData.hp - oldHpKillHeal} HP from kill!`, "fore-cyan");
+                // }
+
+                handleLevelUp("attack_xp", oldAtkLvl);
+
+                monster.drops.forEach(drop => {
+                    const isRare = drop.item_name.includes("gem") || drop.item_name.includes("heart") || ARMOR_DATA[drop.item_name]; // Sword check removed
+                    const bonus = (playerAtkLvl * (isRare ? 0.001 : 0.005));
+                    const capBonus = isRare ? 0.05 : 0.20;
+                    const effBonus = Math.min(bonus, capBonus);
+                    const dropChance = Math.min(0.95, drop.base_chance + effBonus);
+
+                    if (Math.random() < dropChance || drop.always_drop_one) {
+                        const quantity = Math.floor(Math.random() * (drop.quantity[1] - drop.quantity[0] + 1)) + drop.quantity[0];
+                        
+                        if ( ARMOR_DATA[drop.item_name] && 
+                             (playerData.inventory[drop.item_name] > 0 || 
+                              playerData.inventory.chestplate === drop.item_name) 
+                            ) {
+                             return; 
+                        }
+                        playerData.inventory[drop.item_name] = (playerData.inventory[drop.item_name] || 0) + quantity;
+                        logMessage(`Received ${quantity} ${titleCase(drop.item_name)}!`, "fore-magenta");
+                    }
+                });
+
+                savePlayerData();
+                updateHud();
+                if (!isAutoAttacking) { 
+                    currentMonsterTarget = null; 
+                    document.getElementById('combat-controls').classList.add('hidden');
+                    showCombat(); 
+                } else {
+                     prepareCombatArena(currentMonsterTarget, true, monster.color); // Respawn with updated kill count
+                }
+                return; 
+            }
+
+            let monsterDmg;
+            if (currentMonsterTarget === "chicken") { 
+                monsterDmg = (Math.random() < 0.125) ? 2 : 1; 
+            } else {
+                const monsterMinDmg = Math.max(1, Math.floor(monster.level_req / 4));
+                const monsterMaxDmg = Math.max(monsterMinDmg + 1, Math.floor(monster.level_req / 2));
+                monsterDmg = Math.floor(Math.random() * (monsterMaxDmg - monsterMinDmg + 1)) + monsterMinDmg;
+            }
+
+            let monsterHitChance = 0.70 + Math.max(0, (monster.level_req - playerAtkLvl) * 0.01);
+            const equippedChestplate = playerData.inventory.chestplate;
+            if (equippedChestplate !== "none" && ARMOR_DATA[equippedChestplate]) {
+                monsterHitChance -= ARMOR_DATA[equippedChestplate].defense;
+            }
+            monsterHitChance = Math.max(0.05, Math.min(0.95, monsterHitChance));
+            
+            if (Math.random() < monsterHitChance) {
+                playerData.hp -= monsterDmg;
+                logMessage(`${titleCase(currentMonsterTarget)} hits you for ${monsterDmg} damage!`, "fore-red");
+            } else {
+                logMessage(`${titleCase(currentMonsterTarget)} missed!`, "fore-blue");
+            }
+            document.getElementById('player-hp-combat').textContent = `${Math.max(0,playerData.hp)}/${playerMaxHp}`;
+
+            if (playerData.hp <= 0) {
+                logMessage("YOU DIED!", "fore-red");
+                playSound(playerDieSound); 
+                playerData.hp = Math.floor(playerMaxHp / 2); 
+                playerData.gold = Math.max(0, playerData.gold - Math.floor(playerData.gold / 10) - 10); 
+                logMessage("Respawned with penalty.", "fore-yellow");
+                stopAutoAttack();
+                savePlayerData();
+                updateHud();
+                currentMonsterTarget = null; 
+                document.getElementById('combat-controls').classList.add('hidden');
+                showCombat(); 
+                return;
+            }
+            
+            savePlayerData();
+            updateHud();
+        }
+        
+        // --- Action: Eat Food ---
+        function showEatFood() {
+            const foodListDiv = document.getElementById('available-food-list');
+            foodListDiv.innerHTML = '<div class="section-title">Your Food</div>';
+            const playerMaxHp = getMaxHp(getLevelFromXp(playerData.attack_xp));
+
+            if (playerData.hp >= playerMaxHp) {
+                foodListDiv.innerHTML += "<p class='fore-green'>HP is full!</p>";
+                showSection('eat-food-section');
+                return;
+            }
+            
+            let hasFood = false;
+            for (const itemName in playerData.inventory) {
+                if (FOOD_DATA[itemName] && playerData.inventory[itemName] > 0) {
+                    hasFood = true;
+                    const food = FOOD_DATA[itemName];
+                    const foodDiv = document.createElement('div');
+                    foodDiv.className = 'food-item-list item'; 
+                    foodDiv.innerHTML = `${food.emoji || ''} ${titleCase(itemName)} (x${playerData.inventory[itemName]}) - Heals: ${food.heal_amount}HP`;
+                    foodDiv.onclick = () => eatFoodItem(itemName);
+                    foodListDiv.appendChild(foodDiv);
+                }
+            }
+            if (!hasFood) foodListDiv.innerHTML += "<p>You have no food.</p>";
+            showSection('eat-food-section');
+        }
+
+        function eatFoodItem(itemName) {
+            const food = FOOD_DATA[itemName];
+            const playerMaxHp = getMaxHp(getLevelFromXp(playerData.attack_xp));
+            
+            if (playerData.hp >= playerMaxHp) {
+                logMessage("HP is already full.", "fore-green");
+                return;
+            }
+            if (playerData.inventory[itemName] > 0) {
+                const oldHp = playerData.hp;
+                playerData.hp = Math.min(playerMaxHp, playerData.hp + food.heal_amount);
+                const actualHealed = playerData.hp - oldHp;
+                playerData.inventory[itemName]--;
+                
+                logMessage(`Ate ${titleCase(itemName)}, +${actualHealed}HP. Current HP: ${playerData.hp}/${playerMaxHp}`, "fore-green");
+                savePlayerData();
+                updateHud();
+                showEatFood(); 
+            }
+        }
+        
+        // --- Action: Cook Food ---
+        function showCookFood() {
+            stopAllAutoActions();
+            const cookListDiv = document.getElementById('cookable-items-list');
+            cookListDiv.innerHTML = '<div class="section-title">Cookable Items</div>';
+            document.getElementById('cooking-controls').classList.add('hidden');
+            currentCookingTarget = null;
+
+            const ckLvl = getLevelFromXp(playerData.cooking_xp);
+            let hasCookable = false;
+            for (const rawItemName in COOKABLE_ITEMS) {
+                if (playerData.inventory[rawItemName] > 0) {
+                    hasCookable = true;
+                    const cookDetails = COOKABLE_ITEMS[rawItemName];
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'cookable-item-list item'; 
+                    const canCook = ckLvl >= cookDetails.level_req;
+                    const reqColor = canCook ? 'fore-green' : 'fore-red';
+
+                    itemDiv.innerHTML = `${cookDetails.emoji || ''} ${titleCase(rawItemName)} (x${playerData.inventory[rawItemName]}) 
+                                         - <span class="${reqColor}">Req Lvl: ${cookDetails.level_req}</span>`;
+                    if (canCook) {
+                        itemDiv.onclick = () => selectRawItemForCooking(rawItemName);
+                    } else {
+                        itemDiv.style.cursor = 'not-allowed';
+                        itemDiv.title = 'Cooking level too low';
+                    }
+                    cookListDiv.appendChild(itemDiv);
+                }
+            }
+            if (!hasCookable) cookListDiv.innerHTML += "<p>You have nothing to cook.</p>";
+            showSection('cook-food-section');
+        }
+        
+        function selectRawItemForCooking(rawItemName) {
+            currentCookingTarget = rawItemName;
+            logMessage(`Selected ${titleCase(rawItemName)}. Click 'Auto-Cook' to begin.`, "fore-cyan");
+            const btn = document.getElementById('auto-cook-btn');
+            btn.textContent = `Auto-Cook ${titleCase(rawItemName)}`;
+            btn.classList.remove('red');
+            document.getElementById('cooking-controls').classList.remove('hidden');
+        }
+
+        function toggleAutoCooking() {
+            if(isAutoCooking) stopAutoCooking();
+            else startAutoCooking();
+        }
+        
+        function startAutoCooking() {
+            if (!currentCookingTarget) { logMessage("No item selected for cooking.", "fore-red"); return; }
+            if (playerData.inventory[currentCookingTarget] <= 0) {
+                logMessage(`No ${titleCase(currentCookingTarget)} to cook.`, "fore-red");
+                stopAutoCooking(); 
+                document.getElementById('cooking-controls').classList.add('hidden'); 
+                return;
+            }
+            const cookDetails = COOKABLE_ITEMS[currentCookingTarget];
+            const currentCookLvl = getLevelFromXp(playerData.cooking_xp);
+            if (currentCookLvl < cookDetails.level_req) {
+                 logMessage(`Cooking Lvl (${currentCookLvl}) too low for ${titleCase(currentCookingTarget)}. Req: ${cookDetails.level_req}`, "fore-red");
+                return;
+            }
+
+            isAutoCooking = true;
+            const btn = document.getElementById('auto-cook-btn');
+            btn.textContent = `Stop Auto-Cooking ${titleCase(currentCookingTarget)}`;
+            btn.classList.add('red');
+            logMessage(`Auto-cooking ${titleCase(currentCookingTarget)}...`, "fore-cyan");
+            autoCookingInterval = setInterval(singleCookAction, BASE_CRAFT_INTERVAL);
+        }
+
+        function stopAutoCooking() {
+            if (isAutoCooking) {
+                isAutoCooking = false;
+                clearInterval(autoCookingInterval);
+                autoCookingInterval = null;
+                const btn = document.getElementById('auto-cook-btn');
+                btn.textContent = currentCookingTarget ? `Auto-Cook ${titleCase(currentCookingTarget)}` : `Start Auto-Cooking`;
+                btn.classList.remove('red');
+                logMessage("Auto-cooking stopped.", "fore-yellow");
+            }
+        }
+
+        function singleCookAction() {
+            if (!isAutoCooking || !currentCookingTarget) { stopAutoCooking(); return; }
+            if (playerData.inventory[currentCookingTarget] <= 0) {
+                logMessage(`Ran out of ${titleCase(currentCookingTarget)} to cook.`, "fore-yellow");
+                stopAutoCooking();
+                showCookFood(); 
+                return;
+            }
+
+            const cookDetails = COOKABLE_ITEMS[currentCookingTarget];
+            playerData.inventory[currentCookingTarget]--;
+            const oldLevel = getLevelFromXp(playerData.cooking_xp);
+            
+            const currentCookLvlForThisItem = getLevelFromXp(playerData.cooking_xp); 
+            let successChance = 0.60 + (currentCookLvlForThisItem - cookDetails.difficulty_level) * 0.02;
+            successChance = Math.max(0.10, Math.min(0.98, successChance));
+
+            if (Math.random() < successChance) {
+                playerData.inventory[cookDetails.cooked_item] = (playerData.inventory[cookDetails.cooked_item] || 0) + 1;
+                playerData.cooking_xp += cookDetails.xp_gain; 
+                grantUniversalXP(cookDetails.xp_gain);
+                logMessage(`Cooked 1 ${titleCase(cookDetails.cooked_item)}! (+${cookDetails.xp_gain} Cook XP)`, "fore-green");
+                if (currentCookLvlForThisItem >= cookDetails.difficulty_level + 15 && Math.random() < 0.10) {
+                    playerData.inventory[cookDetails.cooked_item]++;
+                    logMessage(`Bonus! Extra ${titleCase(cookDetails.cooked_item)}!`, "fore-yellow");
+                }
+            } else {
+                playerData.inventory[cookDetails.burnt_item] = (playerData.inventory[cookDetails.burnt_item] || 0) + 1;
+                logMessage(`Burnt the ${titleCase(currentCookingTarget)}.`, "fore-red");
+            }
+            
+            playSound(skillRoundSound); 
+            handleLevelUp("cooking_xp", oldLevel); 
+            savePlayerData();
+            updateHud();
+            if (currentCookingTarget) { 
+                 const cookListDiv = document.getElementById('cookable-items-list');
+                 const items = cookListDiv.getElementsByClassName('cookable-item-list');
+                 for(let itemDiv of items) {
+                     if (itemDiv.innerHTML.includes(titleCase(currentCookingTarget))) {
+                         const newQuantity = playerData.inventory[currentCookingTarget] || 0;
+                         const canCook = getLevelFromXp(playerData.cooking_xp) >= cookDetails.level_req;
+                         const reqColor = canCook ? 'fore-green' : 'fore-red';
+                         itemDiv.innerHTML = `${cookDetails.emoji || ''} ${titleCase(currentCookingTarget)} (x${newQuantity}) 
+                                         - <span class="${reqColor}">Req Lvl: ${cookDetails.level_req}</span>`;
+                         if (newQuantity === 0 || !canCook) {
+                            itemDiv.onclick = null; 
+                            itemDiv.style.cursor = 'not-allowed';
+                            itemDiv.style.opacity = "0.6";
+                         }
+                         break;
+                     }
+                 }
+            }
+        }
+
+        // --- Perk Tree ---
+        function showPerkTreeMenu() {
+            stopAllAutoActions();
+            const perkListDiv = document.getElementById('perk-list');
+            perkListDiv.innerHTML = "";
+            const availablePoints = (playerData.perk_points_earned || 0) - (playerData.perk_points_spent || 0);
+            document.getElementById('available-perk-points').textContent = availablePoints;
+
+            for (const perkId in PERK_DATA) {
+                const perk = PERK_DATA[perkId];
+                const perkDiv = document.createElement('div');
+                perkDiv.className = 'perk-entry';
+                
+                const isUnlocked = playerData.active_perks[perkId];
+                const canAfford = availablePoints >= perk.cost;
+                const reqsMet = perk.requires.every(reqId => playerData.active_perks[reqId]);
+
+                let statusText = "";
+                if (isUnlocked) {
+                    perkDiv.classList.add('activated-perk');
+                    statusText = " (Activated)";
+                } else if (!reqsMet) {
+                    perkDiv.classList.add('disabled-perk');
+                    statusText = " (Locked - Requires: " + perk.requires.map(r => PERK_DATA[r] ? PERK_DATA[r].name : r).join(', ') + ")";
+                } else if (!canAfford) {
+                    perkDiv.classList.add('disabled-perk');
+                    statusText = " (Locked - Not enough points)";
+                } else {
+                    perkDiv.onclick = () => activatePerk(perkId);
+                }
+
+                perkDiv.innerHTML = `
+                    <span class="perk-name">${perk.name}</span>
+                    <span class="perk-cost">Cost: ${perk.cost} PP</span>
+                    <div class="perk-desc">${perk.description}${statusText}</div>
+                `;
+                perkListDiv.appendChild(perkDiv);
+            }
+            showSection('perk-tree-section');
+        }
+
+        function activatePerk(perkId) {
+            const perk = PERK_DATA[perkId];
+            const availablePoints = (playerData.perk_points_earned || 0) - (playerData.perk_points_spent || 0);
+
+            if (playerData.active_perks[perkId]) {
+                logMessage("Perk already activated.", "fore-yellow");
+                return;
+            }
+            if (availablePoints < perk.cost) {
+                logMessage("Not enough perk points.", "fore-red");
+                return;
+            }
+            if (!perk.requires.every(reqId => playerData.active_perks[reqId])) {
+                logMessage("Prerequisites not met for this perk.", "fore-red");
+                return;
+            }
+
+            playerData.active_perks[perkId] = true;
+            playerData.perk_points_spent += perk.cost;
+            logMessage(`Activated Perk: ${perk.name}!`, "fore-magenta");
+            playSound(levelUpSound); 
+            savePlayerData();
+            updateHud();
+            showPerkTreeMenu(); 
+            populateEquipmentDisplay(); // Re-populate equipment if perks affect weapon stats
+        }
+
+
+        // --- Level Up ---
+        function handleLevelUp(skillXpField, oldLevel) {
+            const newLevel = getLevelFromXp(playerData[skillXpField]);
+            if (newLevel > oldLevel) {
+                const skillName = titleCase(skillXpField.replace('_xp', ''));
+                logMessage(`Congrats! ${skillName} Level ${newLevel}!`, "fore-yellow");
+                playSound(levelUpSound); 
+                if (skillName === "Attack") {
+                    const oldMaxHp = getMaxHp(oldLevel);
+                    playerData.hp += (getMaxHp(newLevel) - oldMaxHp); 
+                    playerData.hp = Math.min(playerData.hp, getMaxHp(newLevel)); 
+                    logMessage("HP increased and restored!", "fore-green");
+                }
+                updateHud(); 
+                
+                if (currentSection === 'woodcutting-section') showWoodcutting();
+                else if (currentSection === 'mining-section') showMining();
+                else if (currentSection === 'cook-food-section') showCookFood();
+                else if (currentSection === 'smelting-section') showSmeltingMenu();
+                else if (currentSection === 'smithing-section') showSmithingMenu();
+                else if (currentSection === 'combat-section') showCombat();
+                
+                return true;
+            }
+            return false;
+        }
+
+
+        // --- Cheats ---
+        function applyCheat() {
+            const cheatInput = document.getElementById('cheat-input');
+            const cheatCode = cheatInput.value.trim();
+            cheatInput.value = ''; 
+
+            if (cheatCode === "rosebud") {
+                playerData.gold += 50000;
+                logMessage("+50,000 Gold! Shhh...", "fore-magenta");
+            } else if (cheatCode === "xpboost") {
+                const xpToAdd = 10000; 
+                const skillsToBoost = ["attack_xp", "woodcutting_xp", "mining_xp", "cooking_xp", "blacksmithing_xp"];
+                
+                skillsToBoost.forEach(skillField => {
+                    const oldLevel = getLevelFromXp(playerData[skillField]);
+                    playerData[skillField] += xpToAdd;
+                    grantUniversalXP(xpToAdd); 
+                    handleLevelUp(skillField, oldLevel); 
+                });
+                logMessage("XP Boost applied to all skills!", "fore-magenta");
+
+            } else if (cheatCode === "perkmeup") {
+                playerData.perk_points_earned += 5;
+                 logMessage("+5 Perk Points! Total XP may not reflect this.", "fore-magenta"); // Clarify total XP not directly boosted
+            }
+            else {
+                logMessage("Invalid cheat code.", "fore-red");
+                return; 
+            }
+            savePlayerData();
+            updateHud();
+        }
+
+
+        // --- Game Control ---
+        function quitGame() {
+            stopAllAutoActions(); 
+            savePlayerData();
+            logMessage("Game saved. Thanks for playing!", "fore-blue");
+        }
+
+        // --- Initialization ---
+        function initGame() {
+            loadPlayerData();
+
+            const isFirstTime = !localStorage.getItem('textAdventurePlayerData');
+            if (isFirstTime || Object.keys(playerData).length < 5) { 
+                playerData = JSON.parse(JSON.stringify(DEFAULT_PLAYER)); 
+                savePlayerData(); 
+                logMessage("Welcome to the Adventure! New game started.", "fore-blue");
+            } else {
+                logMessage("Game loaded. Welcome back, " + (playerData.name || "Adventurer") + "!", "fore-blue");
+            }
+            updatePerkPoints();
+
+
+            const savedMuteState = localStorage.getItem('textAdventureSoundsMuted');
+            if (savedMuteState !== null) {
+                soundsMuted = savedMuteState === 'true';
+            }
+            const muteButton = document.getElementById('mute-toggle-btn');
+            muteButton.textContent = soundsMuted ? "Unmute Sounds" : "Mute Sounds";
+            muteButton.onclick = toggleMute;
+
+            updateHud();
+            showMainMenu();
+        }
+
+        document.addEventListener('DOMContentLoaded', initGame);
+
+    </script>
+</body>
+</html>
