@@ -1,67 +1,106 @@
-## Acquiring Tools & Weapons
+# RuneText Adventure Game
 
-This table outlines how to obtain primary tools and weapons. Note that Axes and Pickaxes can also be used for combat if a dedicated 2H Sword is not equipped.
+Welcome to RuneText, a text-based adventure and skilling game! Explore, gather resources, craft items, fight monsters, and level up your skills.
 
-| Item Type         | How to Acquire                                     | Notes                                                                 |
-|-------------------|----------------------------------------------------|-----------------------------------------------------------------------|
-| Fists (Weapon)    | Default starting weapon                            | Low damage. Used if no Axe, Pickaxe, or 2H Sword is equipped.         |
-| Axes (Tool/Weapon)| Purchase from Shop (e.g., Bronze Axe, Iron Axe)    | Used for Woodcutting. Higher tiers yield more logs.                   |
-| Pickaxes (Tool/Weapon)| Purchase from Shop (e.g., Bronze Pickaxe, Iron Pickaxe)| Used for Mining. Higher tiers yield more ores.                    |
-| 2H Swords (Weapon)| Craft via Smithing (e.g., Bronze 2H Sword)         | Primary combat weapons, offer lifesteal. See Crafting table.          |
-| Chestplates (Armor)| Monster Drops (e.g., Bronze Chestplate from Goblin) | Provides defense by reducing monster hit chance. See Drops table.     |
+## Gameplay Overview
 
+RuneText is an incremental game where you perform actions to gain experience (XP) in various skills, collect items, and improve your character.
 
-## Acquiring Drops
+**Core Mechanics:**
 
-This section details how to obtain various items through drops in your game/system. Remember to replace the example data with your actual project details!
-This section details how to obtain various items through monster drops and skilling actions. Drop rates for monsters are base chances and can be influenced by player level. Resource gathering yields depend on the equipped tool.
+*   **Skills:** Level up skills like Woodcutting, Mining, Blacksmithing, Cooking, and Attack. Higher levels unlock new actions and better items.
+*   **Combat:** Fight monsters to gain Attack XP and valuable loot.
+*   **Crafting:**
+    *   **Blacksmithing:** Smelt ores into bars, then smith bars into powerful 2H (Two-Handed) Swords.
+    *   **Cooking:** Cook raw food to create healing items.
+*   **Inventory & Equipment:** Manage your items and equip tools, weapons (2H Swords), and armor (Chestplates).
+*   **Shop:** Buy basic tools and sell your hard-earned items for gold.
+*   **Perk Tree:** Earn Perk Points by gaining total XP across all skills. Spend these points on powerful passive bonuses to enhance your gameplay.
+*   **Auto-Actions:** Many skilling and combat actions can be set to "auto" mode, allowing for idle progress.
 
-| Item          | Source (Monster/Location/Event) | Drop Rate | Notes                               |
-|---------------|---------------------------------|-----------|-------------------------------------|
-| *Example Item 1* | *Example Monster A*             | *e.g., 5%*  | *e.g., Only drops on Hard difficulty* |
-| *Example Item 2* | *Example Location B*            | *e.g., 10%* | *e.g., Requires a specific quest*   |
-| *Example Item 3* | *Example Event C*               | *e.g., 1%*  | *e.g., Limited time availability*   |
-| *Fill this in*| *Fill this in*                  | *Fill this in*| *Fill this in*                      |
-| Item                 | Source (Monster/Action)       | Drop Rate / Yield                                                       | Notes                                     |
-|----------------------|-------------------------------|-------------------------------------------------------------------------|-------------------------------------------|
-| `egg`                | `Chicken` (Monster)           | 90% base chance (1-2 quantity), 1 always drops                          | Common food ingredient                    |
-| `raw meat`           | `Chicken`, `Wolf`, `Bear` (Monster) | Chicken: 70% (1), Wolf: 80% (1-2), Bear: 90% (2-3)                    | Used for Cooking                          |
-| `goblin beads`       | `Goblin` (Monster)            | 50% base chance (1 quantity)                                            | Sellable item                             |
-| `bronze chestplate`  | `Goblin` (Monster)            | 2% base chance (1 quantity)                                             | Starter armor                             |
-| `dragon gem`         | `Dark Dragon` (Monster)       | 2% base chance (1 quantity)                                             | Very rare, valuable item                  |
-| `normal logs`        | `Normal Tree` (Woodcutting)   | Base 1 + bonuses (e.g., Bronze Axe: 20% for +1) per chop                | Requires Woodcutting Lvl 1 & an Axe       |
-| `oak logs`           | `Oak Tree` (Woodcutting)      | Base 1 + bonuses (tool-dependent) per chop                              | Requires Woodcutting Lvl 15 & an Axe      |
-| `copper ore`         | `Copper Rock` (Mining)        | Base 1 + bonuses (e.g., Bronze Pickaxe: 15% for +1) per mine            | Requires Mining Lvl 1 & a Pickaxe         |
-| `iron ore`           | `Iron Rock` (Mining)          | Base 1 + bonuses (tool-dependent) per mine                              | Requires Mining Lvl 15 & a Pickaxe        |
-| `coal`               | `Coal Rock` (Mining)          | Base 1 + bonuses (tool-dependent) per mine                              | Requires Mining Lvl 20 & a Pickaxe        |
+## Getting Started
 
-## Crafting
+1.  **Main Menu:** This is your central hub.
+2.  **Actions:**
+    *   Start by Woodcutting or Mining to gather basic resources.
+    *   Once you have some resources, try Blacksmithing to smelt ores into bars.
+    *   Attack weaker monsters like Chickens to gain Attack XP and some starting loot.
+3.  **Inventory & Equipment:**
+    *   Equip any tools you buy or craft.
+    *   Crafted 2H Swords are your primary combat weapons.
+    *   Chestplates (dropped by monsters) provide defense.
+4.  **Shop:**
+    *   Buy better Axes and Pickaxes to improve gathering speed and yield.
+    *   Sell excess resources and items for Gold.
+5.  **Perk Tree:** As you gain total XP, you'll earn Perk Points. Spend them wisely to boost your progress!
 
-This section explains how to craft items, including the necessary ingredients and where to find the recipes. Please update the table with your project's crafting information.
-This section explains how to craft items, including the necessary ingredients and skill requirements.
+## How to Get 2H Swords (Weapons)
 
-| Crafted Item    | Ingredients                                  | Recipe Source (Vendor/Drop/Quest) | Notes                                      |
-|-----------------|----------------------------------------------|-----------------------------------|--------------------------------------------|
-| *Example Craft 1* | *Ingredient X (5), Ingredient Y (2)*         | *Example Vendor Z*                | *e.g., Requires Crafting Skill Level 50*   |
-| *Example Craft 2* | *Material A (10), Material B (3), Item C (1)* | *Dropped by Example Boss D*       | *e.g., Recipe is a rare drop*              |
-| *Example Craft 3* | *Component P (1), Component Q (1)*           | *Quest Reward from Example NPC E* | *e.g., One-time craftable per character*   |
-| *Fill this in*  | *Fill this in*                               | *Fill this in*                    | *Fill this in*                             |
-| Crafted Item        | Ingredients                                     | Skill Required                      | Notes                                                         |
-|---------------------|-------------------------------------------------|-------------------------------------|---------------------------------------------------------------|
-| `cooked meat`       | `raw meat (1)`                                  | Cooking Lvl 1                       | Basic food, heals 5 HP. Chance to burn.                         |
-| `bronze bar`        | `copper ore (1), tin ore (1)`                   | Blacksmithing Lvl 1 (Smelting)      | Basic metal bar.                                              |
-| `iron bar`          | `iron ore (1)`                                  | Blacksmithing Lvl 15 (Smelting)     |                                                               |
-| `steel bar`         | `iron ore (1), coal (2)`                        | Blacksmithing Lvl 30 (Smelting)     |                                                               |
-| `bronze 2h sword`   | `bronze bar (5)`                                | Blacksmithing Lvl 1 (Smithing)      | Wield: Attack Lvl 1. Dmg: 5-8. Lifesteal: 2% (1 HP).          |
-| `iron 2h sword`     | `iron bar (5)`                                  | Blacksmithing Lvl 15 (Smithing)     | Wield: Attack Lvl 15. Dmg: 10-16. Lifesteal: 3% (1-2 HP).     |
-| `steel 2h sword`    | `steel bar (5)`                                 | Blacksmithing Lvl 30 (Smithing)     | Wield: Attack Lvl 30. Dmg: 18-28. Lifesteal: 4% (2-3 HP).     |
-| `mithril 2h sword`  | `mithril bar (5)`                               | Blacksmithing Lvl 45 (Smithing)     | Wield: Attack Lvl 45. Dmg: 30-45. Lifesteal: 5% (2-4 HP).     |
-| `adamant 2h sword`  | `adamantite bar (5)`                            | Blacksmithing Lvl 60 (Smithing)     | Wield: Attack Lvl 60. Dmg: 48-70. Lifesteal: 6% (3-5 HP).     |
-| `rune 2h sword`     | `runite bar (5)`                                | Blacksmithing Lvl 75 (Smithing)     | Wield: Attack Lvl 75. Dmg: 72-100. Lifesteal: 7% (4-6 HP).    |
-| `dragon 2h sword`   | `dragon bar (5)`                                | Blacksmithing Lvl 90 (Smithing)     | Wield: Attack Lvl 90. Dmg: 100-140. Lifesteal: 8% (5-8 HP).   |
+2H Swords are the primary combat weapons in RuneText and are **crafted through the Blacksmithing skill**. They are **not** bought from the shop or typically dropped by monsters (except for very rare specific monster drops, if any were re-added).
 
-*Note on Lifesteal for 2H Swords: The listed lifesteal chance and amount are base values. Perks like "Vampiric Edge" can increase the chance.*
-*Note on Smithing 2H Swords: The "Master Smith" perk can reduce the number of bars required.*
-*Note on Smelting Bars: The "Advanced Smelting" perk gives a chance to smelt an extra bar.*
+**Steps to Craft 2H Swords:**
 
-## Installation (Optional)
+1.  **Level up Mining:** Mine Copper Ore, Tin Ore, Iron Ore, Coal, etc.
+2.  **Level up Blacksmithing (Smelting):**
+    *   Go to `Actions -> Blacksmithing -> Smelt Bars`.
+    *   Smelt your collected ores into metal bars (e.g., Bronze Bar, Iron Bar, Steel Bar). You'll need specific ores and Blacksmithing levels for each bar type.
+    *   **Example:**
+        *   `Bronze Bar`: Requires Copper Ore + Tin Ore (BS Lvl 1)
+        *   `Iron Bar`: Requires Iron Ore (BS Lvl 15)
+        *   `Steel Bar`: Requires Iron Ore + Coal (BS Lvl 30)
+3.  **Level up Blacksmithing (Smithing):**
+    *   Go to `Actions -> Blacksmithing -> Smith Weapons`.
+    *   Use your crafted metal bars to smith 2H Swords. Each sword tier requires specific bars and a certain Blacksmithing level.
+    *   **Example Recipes:**
+        *   `Bronze 2H Sword`: Requires 5 Bronze Bars (BS Lvl 1 to smith, Attack Lvl 1 to wield)
+        *   `Iron 2H Sword`: Requires 5 Iron Bars (BS Lvl 15 to smith, Attack Lvl 15 to wield)
+        *   `Steel 2H Sword`: Requires 5 Steel Bars (BS Lvl 30 to smith, Attack Lvl 30 to wield)
+        *   ...and so on for Mithril, Adamant, Rune, and Dragon tiers.
+
+**Key 2H Sword Tiers & Recipes:**
+
+| 2H Sword          | Smithing Lvl Req | Wield Lvl Req (Attack) | Recipe             | Lifesteal (Base) |
+| :---------------- | :--------------- | :--------------------- | :----------------- | :--------------- |
+| Bronze 2H Sword   | 1                | 1                      | 5 Bronze Bar       | 2.0%             |
+| Iron 2H Sword     | 15               | 15                     | 5 Iron Bar         | 3.0%             |
+| Steel 2H Sword    | 30               | 30                     | 5 Steel Bar        | 4.0%             |
+| Mithril 2H Sword  | 45               | 45                     | 5 Mithril Bar      | 5.0%             |
+| Adamant 2H Sword  | 60               | 60                     | 5 Adamantite Bar   | 6.0%             |
+| Rune 2H Sword     | 75               | 75                     | 5 Runite Bar       | 7.0%             |
+| Dragon 2H Sword   | 90               | 90                     | 5 Dragon Bar       | 8.0%             |
+
+*Lifesteal can be further increased by perks.*
+
+## Loot Tables (Notable Drops)
+
+This is not an exhaustive list, but highlights key items and how to obtain specific gear. Many monsters also drop common resources (raw meat, etc.) and unique "junk" items for selling.
+
+**Chestplates are primarily obtained as drops from monsters.**
+
+| Monster       | Attack Lvl Req | Notable Drops                                                                                                |
+| :------------ | :------------- | :----------------------------------------------------------------------------------------------------------- |
+| Chicken       | 1              | Egg, Raw Meat                                                                                                |
+| Goblin        | 5              | Goblin Beads, Bread, **Bronze Chestplate**                                                                     |
+| Wolf          | 10             | Raw Meat, Wolf Fang                                                                                          |
+| Bear          | 20             | Raw Meat, Bear Claw, Cooked Meat, **Iron Chestplate**                                                          |
+| Ogre          | 30             | Ogre Club Fragment, Cooked Meat, **Steel Chestplate**                                                          |
+| Troll         | 40             | Troll Hide, Health Potion (s), **Mithril Chestplate**                                                          |
+| Giant         | 55             | Giant's Toe, Cooked Meat, **Adamant Chestplate**                                                               |
+| Demon         | 70             | Demon Heart, Health Potion (s), **Rune Chestplate**                                                            |
+| Dark Dragon   | 85             | Dragon Gem, Health Potion (s), **Dragon Chestplate**, Special Dragon Ore (used for Dragon Bar/2H Sword)         |
+
+**Drop Mechanics:**
+
+*   Drop chances increase slightly based on your Attack level relative to the monster's level.
+*   Specific unique equipment (like a particular tier of chestplate) will generally not drop if you already possess one (either equipped or in your inventory) to encourage progression through tiers.
+
+## Tips for Success
+
+*   **Balance Skilling:** Don't neglect any skill. Mining provides ores for Blacksmithing, Woodcutting provides logs (can be sold for gold), and Combat provides unique drops and Attack XP for better weapons/armor.
+*   **Upgrade Tools & Weapons:** Always aim to use the best Axe, Pickaxe, and 2H Sword you can wield and craft/buy. This significantly speeds up progress.
+*   **Use Food:** Cooked food is essential for healing during combat, especially against tougher monsters.
+*   **Perks Matter:** Spend your Perk Points strategically. Early game, "Efficient Gatherer" or "Weapon Master" can be very beneficial.
+*   **Save Often:** Use the "Save Game" button to download your progress. You can "Load Game" later using this file.
+*   **Be Patient:** RuneText is an incremental game. Progress takes time!
+
+Good luck on your adventure!
