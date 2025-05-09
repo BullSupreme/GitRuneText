@@ -94,13 +94,4 @@ This is not an exhaustive list, but highlights key items and how to obtain speci
 *   Drop chances increase slightly based on your Attack level relative to the monster's level.
 *   Specific unique equipment (like a particular tier of chestplate) will generally not drop if you already possess one (either equipped or in your inventory) to encourage progression through tiers.
 
-## Tips for Success
-
-*   **Balance Skilling:** Don't neglect any skill. Mining provides ores for Blacksmithing, Woodcutting provides logs (can be sold for gold), and Combat provides unique drops and Attack XP for better weapons/armor.
-*   **Upgrade Tools & Weapons:** Always aim to use the best Axe, Pickaxe, and 2H Sword you can wield and craft/buy. This significantly speeds up progress.
-*   **Use Food:** Cooked food is essential for healing during combat, especially against tougher monsters.
-*   **Perks Matter:** Spend your Perk Points strategically. Early game, "Efficient Gatherer" or "Weapon Master" can be very beneficial.
-*   **Save Often:** Use the "Save Game" button to download your progress. You can "Load Game" later using this file.
-*   **Be Patient:** RuneText is an incremental game. Progress takes time!
-
 Good luck on your adventure!
