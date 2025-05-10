@@ -2070,15 +2070,6 @@
             logMessage(`Auto-mining ${titleCase(currentMiningTarget)}...`, "fore-cyan");
             
             let interval = BASE_GATHER_INTERVAL;
-                return false;
-            }
-
-            isAutoMining = true;
-            const oreListItem = document.getElementById(`ore-list-item-${currentMiningTarget.replace(/\s+/g, '-')}`);
-            if (oreListItem) oreListItem.classList.add('active-mining-item');
-            logMessage(`Auto-mining ${titleCase(currentMiningTarget)}...`, "fore-cyan");
-            
-            let interval = BASE_GATHER_INTERVAL;
             if(isPerkActive("efficientGatherer1")) interval *= (1 - PERK_DATA.efficientGatherer1.value);
             if (playerData.built_structures.stronghold) {
                 const speedPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "global_skill_speed_boost");
@@ -2405,10 +2396,12 @@
             return maxSets === Infinity ? 0 : maxSets;
         }
         function showSmithingMenu() {
-            stopAllAutoActions();
+            if (!isAutoSmithing) { // Only stop if not currently auto-smithing (i.e., user navigated here)
+                stopAllAutoActions();
+                currentSmithingTarget = null;
+            }
             const listDiv = document.getElementById('available-items-to-smith');
             listDiv.innerHTML = '<div class="section-title">Available Items to Smith</div>';
-            currentSmithingTarget = null;
 
             const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
             let canSmithAnything = false;
