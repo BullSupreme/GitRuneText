@@ -35,8 +35,7 @@
             z-index: 1000;
         }
         .top-controls button {
-            padding: 5px 10px;
-            padding: 7px 12px; /* Made a little bigger */
+            padding: 7px 12px; 
             font-size: 0.9em;
         }
          .top-right-controls {
@@ -46,7 +45,7 @@
             z-index: 1000;
         }
         #mute-toggle-btn {
-            padding: 7px 12px; /* Made a little bigger */
+            padding: 7px 12px; 
             font-size: 0.9em;
         }
 
@@ -72,16 +71,15 @@
 
         button {
             background-color: #0e639c;
-            color: #222; /* Dark font for all buttons */
+            color: #222; 
             border: 1px solid #1c7abb;
-            padding: 10px 18px; /* Made a little bigger */
+            padding: 10px 18px; 
             margin: 5px;
             cursor: pointer;
             font-family: inherit;
             border-radius: 3px;
-            font-size: 1.05em; /* Made a little bigger */
-            font-weight: bold; /* Make button text bold */
-            /* text-shadow removed for no outline */
+            font-size: 1.05em; 
+            font-weight: bold; 
         }
         button:hover { background-color: #1177bb; }
         button:disabled {
@@ -95,8 +93,6 @@
         button.green:hover { background-color: #11bb1a; }
         button.yellow {
             background-color: #b4a61a;
-            /* color: #222; Inherits from general button */
-            /* text-shadow: none; Inherits from general button (no shadow) */
         }
         button.yellow:hover {
             background-color: #d4c62a;
@@ -158,13 +154,11 @@
             box-shadow: 0 0 8px #ffcc00;
         }
 
-        /* For button icon hover effect */
         .button-icon {
-            display: inline-block; /* Important for transform */
+            display: inline-block; 
             transition: transform 0.2s ease-out, filter 0.2s ease-out;
-            margin-right: 4px; /* Space between icon and text */
+            margin-right: 4px; 
         }
-
         button:hover .button-icon {
             transform: scale(1.3);
             filter: drop-shadow(0 0 5px #fff);
@@ -181,7 +175,7 @@
         .fore-magenta { color: #c586c0; }
         .fore-white { color: #d4d4d4; }
         .fore-orange { color: #ce9178; }
-        .fore-dark-grey { color: #666666; } /* New color for burnt items */
+        .fore-dark-grey { color: #666666; }
 
 
         .hidden { display: none; }
@@ -199,13 +193,12 @@
         }
         #inventory-list .inv-item-emoji {
             display: inline-block;
-            width: 2.2em; /* Ensures space for emoji or placeholder */
+            width: 2.2em; 
             text-align: left;
             margin-right: 5px;
         }
         #inventory-list .item-name { 
-            /* flex-grow: 1; Takes up remaining space */ 
-            margin-right: 10px; /* Add some space between name and quantity */
+            margin-right: 10px; 
         }
         #inventory-list .item-quantity { font-weight: bold; }
 
@@ -272,8 +265,9 @@
         .main-menu-buttons-container button {
             flex: 1; 
             margin: 0; 
-            padding: 10px 12px; /* Made a little bigger */
+            padding: 10px 12px; 
             text-align: center; 
+            min-width: 0; /* Allow buttons to shrink */
         }
         #main-menu-section .btn-actions { background-color: #0e9c18; border-color: #0c8314; }
         #main-menu-section .btn-actions:hover { background-color: #11bb1a; }
@@ -293,8 +287,9 @@
         .submenu-buttons-container button {
             flex: 1; 
             margin: 0; 
-            padding: 10px 12px; /* Made a little bigger */
+            padding: 10px 12px; 
             text-align: center; 
+            min-width: 0; /* Allow buttons to shrink */
         }
 
         #actions-menu-section .btn-woodcutting { background-color: #588f46; border-color: #4a7a3a; }
@@ -310,7 +305,6 @@
         #actions-menu-section .btn-cook {
             background-color: #eea236;
             border-color: #d58d20;
-            /* color: #222; Inherits */
         }
         #actions-menu-section .btn-cook:hover { background-color: #f0ad4e; }
         #actions-menu-section .btn-build-structures { background-color: #795548; border-color: #6a4a3e; }
@@ -318,13 +312,13 @@
 
         #shop-menu-section .btn-buy-tools {
             background-color: #d4af37;
-            color: #3e300b; /* Dark text */
+            /* color: #3e300b; Inherited */
             border-color: #c09d31;
         }
         #shop-menu-section .btn-buy-tools:hover { background-color: #e6c350; }
         #shop-menu-section .btn-sell-items {
             background-color: #a7b0b9;
-            color: #2a2d30; /* Dark text - specific dark shade */
+            /* color: #2a2d30; Inherited */
             border-color: #979fa6;
         }
         #shop-menu-section .btn-sell-items:hover { background-color: #c1c8cf; }
@@ -334,16 +328,15 @@
         #blacksmithing-menu-section .btn-smith-weapons { background-color: #8d6e63; border-color: #7b5f55; }
         #blacksmithing-menu-section .btn-smith-weapons:hover { background-color: #a18278; }
 
-        /* Styling for structure items in build menu */
         #available-structures-list .item {
-            border-left: 5px solid #569cd6; /* Blue accent for structures */
+            border-left: 5px solid #569cd6;
         }
         #available-structures-list .item h3 {
             margin-top: 0;
             color: #569cd6;
         }
-        #available-structures-list .item p em { /* Perk description */
-            color: #6a9955; /* Green for perk text */
+        #available-structures-list .item p em {
+            color: #6a9955; 
         }
 
     </style>
@@ -589,14 +582,58 @@
 
         const TOOL_DATA = {
             "axe": {
-                "fists":   {"emoji": "👊",    "price":0,     "level_req":1,  "min_dmg":1,  "max_dmg":1,  "skill_type":"attack",      "color":"fore-white",         "yield_config": { "base": 0, "bonuses": [] }},
-                "bronze":  {"emoji": "🪓",    "price":15,    "level_req":1,  "min_dmg":1,  "max_dmg":2,  "skill_type":"woodcutting", "color":"fore-yellow",        "yield_config": { "base": 1, "bonuses": [{ "chance": 0.20, "amount": 1 }] } },
-                "iron":    {"emoji": "🪓",    "price":50,    "level_req":15, "min_dmg":2,  "max_dmg":3,  "skill_type":"woodcutting", "color":"fore-lightblack_ex", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.70, "amount": 1 }] } },
-                "steel":   {"emoji": "🪓",    "price":120,   "level_req":30, "min_dmg":3,  "max_dmg":5,  "skill_type":"woodcutting", "color":"fore-cyan",          "yield_config": { "base": 1, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.30, "amount": 1 }] } },
-                "mithril": {"emoji": "🪓",    "price":300,   "level_req":45, "min_dmg":5,  "max_dmg":8,  "skill_type":"woodcutting", "color":"fore-blue",          "yield_config": { "base": 2, "bonuses": [{ "chance": 0.60, "amount": 1 }] } },
-                "adamant": {"emoji": "🪓",    "price":750,   "level_req":60, "min_dmg":8,  "max_dmg":12, "skill_type":"woodcutting", "color":"fore-green",         "yield_config": { "base": 2, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.40, "amount": 1 }] } },
-                "rune":    {"emoji": "🪓",    "price":2000,  "level_req":75, "min_dmg":12, "max_dmg":18, "skill_type":"woodcutting", "color":"fore-magenta",       "yield_config": { "base": 2, "bonuses": [{ "chance": 0.90, "amount": 1 }, { "chance": 0.70, "amount": 1 }] } },
-                "dragon":  {"emoji": "🪓🔥",  "price":10000, "level_req":90, "min_dmg":18, "max_dmg":25, "skill_type":"woodcutting", "color":"fore-red",           "yield_config": { "base": 3, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.50, "amount": 1 }] } }
+                "fists":   {"emoji": "👊",    "price":0,     "level_req":1,  "min_dmg":1,  "max_dmg":1,  "skill_type":"attack",      "color":"fore-white", "tier": "fists",
+                    "yield_config": { "base": 0, "bonuses_by_tree": {"normal":[], "oak":[], "willow":[]} }
+                },
+                "bronze":  {"emoji": "🪓",    "price":15,    "level_req":1,  "min_dmg":1,  "max_dmg":2,  "skill_type":"woodcutting", "color":"fore-yellow", "tier": "bronze",
+                    "yield_config": { "base": 1, "bonuses_by_tree": {
+                        "normal": [{ "chance": 0.20, "amount": 1 }],
+                        "oak":    [{ "chance": 0.05, "amount": 1 }],
+                        "willow": [{ "chance": 0.01, "amount": 1 }]
+                    }}
+                },
+                "iron":    {"emoji": "🪓",    "price":50,    "level_req":15, "min_dmg":2,  "max_dmg":3,  "skill_type":"woodcutting", "color":"fore-lightblack_ex", "tier": "iron",
+                    "yield_config": { "base": 1, "bonuses_by_tree": {
+                        "normal": [{ "chance": 0.70, "amount": 1 }],
+                        "oak":    [{ "chance": 0.25, "amount": 1 }],
+                        "willow": [{ "chance": 0.05, "amount": 1 }]
+                    }}
+                },
+                "steel":   {"emoji": "🪓",    "price":120,   "level_req":30, "min_dmg":3,  "max_dmg":5,  "skill_type":"woodcutting", "color":"fore-cyan", "tier": "steel",
+                    "yield_config": { "base": 1, "bonuses_by_tree": {
+                        "normal": [{ "chance": 0.85, "amount": 1 }, { "chance": 0.35, "amount": 1 }],
+                        "oak":    [{ "chance": 0.80, "amount": 1 }, { "chance": 0.30, "amount": 1 }],
+                        "willow": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.25, "amount": 1 }]
+                    }}
+                },
+                "mithril": {"emoji": "🪓",    "price":300,   "level_req":45, "min_dmg":5,  "max_dmg":8,  "skill_type":"woodcutting", "color":"fore-blue", "tier": "mithril",
+                    "yield_config": { "base": 2, "bonuses_by_tree": {
+                        "normal": [{ "chance": 0.80, "amount": 1 }],
+                        "oak":    [{ "chance": 0.70, "amount": 1 }],
+                        "willow": [{ "chance": 0.60, "amount": 1 }]
+                    }}
+                },
+                "adamant": {"emoji": "🪓",    "price":750,   "level_req":60, "min_dmg":8,  "max_dmg":12, "skill_type":"woodcutting", "color":"fore-green", "tier": "adamant",
+                    "yield_config": { "base": 2, "bonuses_by_tree": {
+                        "normal": [{ "chance": 0.90, "amount": 1 }, { "chance": 0.50, "amount": 1 }],
+                        "oak":    [{ "chance": 0.85, "amount": 1 }, { "chance": 0.45, "amount": 1 }],
+                        "willow": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.40, "amount": 1 }]
+                    }}
+                },
+                "rune":    {"emoji": "🪓",    "price":2000,  "level_req":75, "min_dmg":12, "max_dmg":18, "skill_type":"woodcutting", "color":"fore-magenta", "tier": "rune",
+                    "yield_config": { "base": 2, "bonuses_by_tree": {
+                        "normal": [{ "chance": 0.95, "amount": 1 }, { "chance": 0.75, "amount": 1 }],
+                        "oak":    [{ "chance": 0.90, "amount": 1 }, { "chance": 0.70, "amount": 1 }],
+                        "willow": [{ "chance": 0.85, "amount": 1 }, { "chance": 0.65, "amount": 1 }]
+                    }}
+                },
+                "dragon":  {"emoji": "🪓🔥",  "price":10000, "level_req":90, "min_dmg":18, "max_dmg":25, "skill_type":"woodcutting", "color":"fore-red", "tier": "dragon",
+                    "yield_config": { "base": 3, "bonuses_by_tree": {
+                        "normal": [{ "chance": 0.90, "amount": 1 }, { "chance": 0.60, "amount": 1 }],
+                        "oak":    [{ "chance": 0.85, "amount": 1 }, { "chance": 0.55, "amount": 1 }],
+                        "willow": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.50, "amount": 1 }]
+                    }}
+                }
             },
             "pickaxe": {
                 "bronze":  {"emoji": "⛏️",    "price":10,    "level_req":1,  "min_dmg":1,  "max_dmg":2,  "skill_type":"mining",      "color":"fore-yellow",        "yield_config": { "base": 1, "bonuses": [{ "chance": 0.15, "amount": 1 }] } },
@@ -689,11 +726,10 @@
             "house": {
                 name: "House", emoji: "🏠",
                 cost: { "willow logs": 2500, "iron bar": 100, "tin bar": 50 },
-                // Combined description for UI clarity
                 perk_desc: "Increases all Skill XP gain by +2%. Also grants a 5% chance for non-chicken monsters to drop bonus gold equal to 10% of their base gold drop.",
-                perks: [ // Array of perk objects
+                perks: [ 
                     { type: "global_xp_boost", value: 0.02 },
-                    { type: "scaled_bonus_mob_gold_drop_chance", value: 0.05, bonus_gold_percentage_of_base: 0.10 } // 5% chance of +10% base gold
+                    { type: "scaled_bonus_mob_gold_drop_chance", value: 0.05, bonus_gold_percentage_of_base: 0.10 }
                 ],
                 requires_structure: "cabin",
                 rent_value: 15 
@@ -702,8 +738,8 @@
                 name: "Mansion", emoji: "🏯",
                 cost: { "willow logs": 5000, "steel bar": 200, "coal": 100 },
                 perk_desc: "Grants a 10% chance for monster kills to drop double their normal gold amount.",
-                perks: [ // Array for Mansion perks
-                    { type: "monster_gold_drop_multiplier_chance", value: 0.10, multiplier: 2 } // 10% chance
+                perks: [
+                    { type: "monster_gold_drop_multiplier_chance", value: 0.10, multiplier: 2 }
                 ],
                 requires_structure: "house",
                 rent_value: 40 
@@ -789,23 +825,24 @@
         }
         
         const MONSTER_DATA = { 
-            "chicken":     {"level_req":1,  "hp":5,    "attack_xp":5,   "gold_drop": [0,1], "color":"fore-white", "emoji":"🐔", "drops":[{"item_name":"egg","base_chance":0.9, "quantity":[1,2], "always_drop_one":true},{"item_name":"raw meat","base_chance":0.7, "quantity":[1,1]}]},
-            "goblin":      {"level_req":5,  "hp":20,   "attack_xp":15,  "gold_drop": [1,5], "color":"fore-green", "emoji":"👺", "drops":[{"item_name":"goblin beads","base_chance":0.5, "quantity":[1,1]},{"item_name":"bread","base_chance":0.2, "quantity":[1,1]}, {"item_name":"bronze chestplate",  "base_chance":0.02, "quantity":[1,1]}]},
-            "wolf":        {"level_req":10, "hp":35,   "attack_xp":25,  "gold_drop": [3,8], "color":"fore-lightblack_ex", "emoji":"🐺", "drops":[{"item_name":"raw meat","base_chance":0.8, "quantity":[1,2]},{"item_name":"wolf fang","base_chance":0.3, "quantity":[1,1]}]},
-            "bear":        {"level_req":20, "hp":70,   "attack_xp":50,  "gold_drop": [10,25],"color":"fore-yellow","emoji":"🐻", "drops":[{"item_name":"raw meat","base_chance":0.9, "quantity":[2,3]},{"item_name":"bear claw","base_chance":0.25, "quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.1, "quantity":[1,1]}, {"item_name":"iron chestplate",    "base_chance":0.025, "quantity":[1,1]}]},
-            "ogre":        {"level_req":30, "hp":120,  "attack_xp":90,  "gold_drop": [20,50],"color":"fore-green", "emoji":"👹", "drops":[{"item_name":"ogre club fragment","base_chance":0.4, "quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.3, "quantity":[1,2]}, {"item_name":"steel chestplate",   "base_chance":0.03, "quantity":[1,1]}]},
-            "troll":       {"level_req":40, "hp":200,  "attack_xp":150, "gold_drop": [40,100],"color":"fore-cyan","emoji":"🧌", "drops":[{"item_name":"troll hide","base_chance":0.35, "quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.15, "quantity":[1,1]}, {"item_name":"mithril chestplate", "base_chance":0.02, "quantity":[1,1]}]},
-            "giant":       {"level_req":55, "hp":350,  "attack_xp":280, "gold_drop": [75,150],"color":"fore-blue","emoji":"🗿", "drops":[{"item_name":"giant's toe","base_chance":0.2, "quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.5, "quantity":[2,4]}, {"item_name":"adamant chestplate", "base_chance":0.025, "quantity":[1,1]}]},
-            "demon":       {"level_req":70, "hp":500,  "attack_xp":500, "gold_drop": [150,300],"color":"fore-magenta","emoji":"😈", "drops":[{"item_name":"demon heart","base_chance":0.04, "quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.3, "quantity":[1,2]}, {"item_name":"rune chestplate",    "base_chance":0.015, "quantity":[1,1]}]},
-            "dark_dragon": {"level_req":85, "hp":1200, "attack_xp":2500,"gold_drop": [500,2000],"color":"fore-red","emoji":"🐉", "drops":[{"item_name":"dragon gem","base_chance":0.02, "quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.5, "quantity":[2,3]}, {"item_name":"dragon chestplate",  "base_chance":0.01, "quantity":[1,1]}, {"item_name":"special dragon ore", "base_chance":0.1, "quantity":[1,2]}]}
+            "chicken":     {"name":"Chicken", "level_req":1,  "hp":5,    "attack_xp":5,   "gold_drop": [0,1], "color":"fore-white", "emoji":"🐔", "drops":[{"item_name":"egg","base_chance":0.9, "quantity":[1,2], "always_drop_one":true},{"item_name":"raw meat","base_chance":0.7, "quantity":[1,1]}]},
+            "goblin":      {"name":"Goblin", "level_req":5,  "hp":20,   "attack_xp":15,  "gold_drop": [1,5], "color":"fore-green", "emoji":"👺", "drops":[{"item_name":"goblin beads","base_chance":0.5, "quantity":[1,1]},{"item_name":"bread","base_chance":0.2, "quantity":[1,1]}, {"item_name":"bronze chestplate",  "base_chance":0.02, "quantity":[1,1]}]},
+            "wolf":        {"name":"Wolf", "level_req":10, "hp":35,   "attack_xp":25,  "gold_drop": [3,8], "color":"fore-lightblack_ex", "emoji":"🐺", "drops":[{"item_name":"raw meat","base_chance":0.8, "quantity":[1,2]},{"item_name":"wolf fang","base_chance":0.3, "quantity":[1,1]}]},
+            "bear":        {"name":"Bear", "level_req":20, "hp":70,   "attack_xp":50,  "gold_drop": [10,25],"color":"fore-yellow","emoji":"🐻", "drops":[{"item_name":"raw meat","base_chance":0.9, "quantity":[2,3]},{"item_name":"bear claw","base_chance":0.25, "quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.1, "quantity":[1,1]}, {"item_name":"iron chestplate",    "base_chance":0.025, "quantity":[1,1]}]},
+            "ogre":        {"name":"Ogre", "level_req":30, "hp":120,  "attack_xp":90,  "gold_drop": [20,50],"color":"fore-green", "emoji":"👹", "drops":[{"item_name":"ogre club fragment","base_chance":0.4, "quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.3, "quantity":[1,2]}, {"item_name":"steel chestplate",   "base_chance":0.03, "quantity":[1,1]}]},
+            "troll":       {"name":"Troll", "level_req":40, "hp":200,  "attack_xp":150, "gold_drop": [40,100],"color":"fore-cyan","emoji":"🧌", "drops":[{"item_name":"troll hide","base_chance":0.35, "quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.15, "quantity":[1,1]}, {"item_name":"mithril chestplate", "base_chance":0.02, "quantity":[1,1]}]},
+            "giant":       {"name":"Giant", "level_req":55, "hp":350,  "attack_xp":280, "gold_drop": [75,150],"color":"fore-blue","emoji":"🗿", "drops":[{"item_name":"giant's toe","base_chance":0.2, "quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.5, "quantity":[2,4]}, {"item_name":"adamant chestplate", "base_chance":0.025, "quantity":[1,1]}]},
+            "demon":       {"name":"Demon", "level_req":70, "hp":500,  "attack_xp":500, "gold_drop": [150,300],"color":"fore-magenta","emoji":"😈", "drops":[{"item_name":"demon heart","base_chance":0.04, "quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.3, "quantity":[1,2]}, {"item_name":"rune chestplate",    "base_chance":0.015, "quantity":[1,1]}]},
+            "dark_dragon": {"name":"Dark Dragon", "level_req":85, "hp":1200, "attack_xp":2500,"gold_drop": [500,2000],"color":"fore-red","emoji":"🐉", "drops":[{"item_name":"dragon gem","base_chance":0.02, "quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.5, "quantity":[2,3]}, {"item_name":"dragon chestplate",  "base_chance":0.01, "quantity":[1,1]}, {"item_name":"special dragon ore", "base_chance":0.1, "quantity":[1,2]}]}
         };
         const ALL_MONSTER_NAMES = Object.keys(MONSTER_DATA);
         const ALL_ORE_NAMES = Object.keys(ORE_DATA);
 
+        const AXE_TIER_ORDER = ["fists", "bronze", "iron", "steel", "mithril", "adamant", "rune", "dragon"];
         const TREE_DATA = { 
             "normal": {"exp":25, "log":"normal logs", "level":1,  "emoji": "🌲"},
             "oak":    {"exp":60, "log":"oak logs",    "level":15, "emoji": "🌳"},
-            "willow": {"exp":90, "log":"willow logs", "level":30, "emoji": "🌿"}
+            "willow": {"exp":90, "log":"willow logs", "level":30, "emoji": "🌿", "required_axe_tier": "steel"}
         };
         
         const MAX_PERK_POINTS = 25;
@@ -956,7 +993,7 @@
 
         function grantUniversalXP(amount) {
             let actualAmount = amount;
-            if (playerData && playerData.built_structures && playerData.built_structures.house) {
+            if (playerData && playerData.built_structures && playerData.built_structures.house && STRUCTURE_DATA.house.perks) {
                 STRUCTURE_DATA.house.perks.forEach(perk => {
                     if (perk.type === "global_xp_boost") {
                         actualAmount *= (1 + perk.value);
@@ -966,6 +1003,7 @@
             playerData.total_skill_xp = (playerData.total_skill_xp || 0) + Math.floor(actualAmount);
             updatePerkPoints();
         }
+
 
         function updatePerkPoints() {
             let new_points_earned = 0;
@@ -1226,7 +1264,7 @@
                 <p><span class="char-info-label">Cooking Level:</span> <span class="char-info-value fore-yellow">${ckLvl}</span> <span class="char-info-xp fore-yellow">(XP: ${getXpForDisplay(playerData.cooking_xp, ckLvl)})</span></p>
                 <p><span class="char-info-label">Blacksmithing Level:</span> <span class="char-info-value fore-orange">${bsLvl}</span> <span class="char-info-xp fore-orange">(XP: ${getXpForDisplay(playerData.blacksmithing_xp, bsLvl)})</span></p>
                 <p><span class="char-info-label">HP:</span> <span class="char-info-value fore-lightred_ex">${playerData.hp}/${maxHp}</span></p>
-                <p class="fore-cyan" style="font-size:0.9em; margin-top:10px;">Max HP increases with Attack Level and Cabin. Heal by leveling Attack or eating food.</p>
+                <p class="fore-cyan" style="font-size:0.9em; margin-top:10px;">Max HP increases with Attack Level and Cabin/Stronghold. Heal by leveling Attack or eating food.</p>
             `;
             document.getElementById('total-xp-all-skills').textContent = (playerData.total_skill_xp || 0).toLocaleString();
             showSection('character-info-section');
@@ -1271,57 +1309,38 @@
                         if (itemName.endsWith(" ore") && ORE_DATA[baseNameFromParts]) emoji = ORE_DATA[baseNameFromParts].emoji || "&nbsp;";
                         else if (itemName.endsWith(" logs") && TREE_DATA[baseNameFromParts]) emoji = TREE_DATA[baseNameFromParts].emoji || "&nbsp;";
                         // For tools like "Bronze Axe", "Iron Pickaxe"
-                        else if (itemName.endsWith(" Axe") && TOOL_DATA.axe[baseName] && TOOL_DATA.axe[baseName].emoji) {
-                            emoji = TOOL_DATA.axe[baseNameFromParts].emoji || "&nbsp;"; // Use baseNameFromParts
-                        } else if (itemName.endsWith(" Pickaxe") && TOOL_DATA.pickaxe[baseName] && TOOL_DATA.pickaxe[baseName].emoji) {
-                            emoji = TOOL_DATA.pickaxe[baseNameFromParts].emoji || "&nbsp;"; // Use baseNameFromParts
+                        else if (itemName.endsWith(" Axe") && TOOL_DATA.axe[baseNameFromParts] && TOOL_DATA.axe[baseNameFromParts].emoji) { // Changed baseName to baseNameFromParts
+                            emoji = TOOL_DATA.axe[baseNameFromParts].emoji || "&nbsp;";
+                        } else if (itemName.endsWith(" Pickaxe") && TOOL_DATA.pickaxe[baseNameFromParts] && TOOL_DATA.pickaxe[baseNameFromParts].emoji) { // Changed baseName to baseNameFromParts
+                            emoji = TOOL_DATA.pickaxe[baseNameFromParts].emoji || "&nbsp;";
                         }
-                        // Specific check for simple tool material names like "bronze", "iron"
-                        // This is mainly a fallback for potentially old/malformed data.
-                        // Ideally, these standalone material names shouldn't be in inventory as stackable items.
-                        else if (TOOL_DATA.axe[itemName.toLowerCase()] || TOOL_DATA.pickaxe[itemName.toLowerCase()]) {
-                            const toolMaterialKey = itemName.toLowerCase();
-                            if (TOOL_DATA.axe[toolMaterialKey] && TOOL_DATA.axe[toolMaterialKey].emoji) {
-                                emoji = TOOL_DATA.axe[toolMaterialKey].emoji;
-                            } else if (TOOL_DATA.pickaxe[toolMaterialKey] && TOOL_DATA.pickaxe[toolMaterialKey].emoji) {
-                                emoji = TOOL_DATA.pickaxe[toolMaterialKey].emoji;
-                            } else {
-                                emoji = "⚙️"; // Generic gear/tool icon as a last resort for these
-                            }
-                        }
-                        // Ensure we don't try to color the tool emoji if it's already complex (like dragon tools)
-                        // The emoji from TOOL_DATA might already include spans for color.
-                        // If it's a simple emoji, the span wrapping in itemDiv.innerHTML will handle it.
-                        // Add other specific checks if needed, e.g., for ARMOR_DATA if you store full armor names in inventory
                         else if (itemName === "egg") emoji = "🥚";
                         else if (itemName === "goblin beads") emoji = "📿";
-                        // Fallback for items without a direct emoji or pattern match
+                        else if (itemName === "dragon gem") emoji = "<span class='fore-red'>💎</span>";
+                        else if (itemName === "demon heart") emoji = "<span class='fore-magenta'>❤️‍🔥</span>";
                         else {
-                            let itemColorClass = "fore-white"; // Default color
-                            // Use baseNameForEmoji here if baseName isn't defined in this scope yet for color
+                            let itemColorClass = "fore-white"; 
                             const baseNameForColor = itemName.toLowerCase().split(" ")[0];
                             if (ORE_DATA[baseNameForColor] && itemName.endsWith(" ore")) itemColorClass = ORE_DATA[baseNameForColor].color || itemColorClass;
                             else if (BAR_DATA[itemName]) itemColorClass = BAR_DATA[itemName].color || itemColorClass;
-                            // Add more conditions for other item types if they have a .color property
                             
-                            if (emoji === "&nbsp;") { // Only if no other emoji was found
-                                emoji = `<span class='${itemColorClass}'>●</span>`; // Using a solid circle '●'
+                            if (emoji === "&nbsp;") { 
+                                emoji = `<span class='${itemColorClass}'>●</span>`; 
                             }
-                        } // End of the large else block for emoji determination
+                        } 
                     }
-                    let itemColorClass = "fore-white"; // Default
-                    const baseName = itemName.toLowerCase().split(" ")[0]; // Define baseName for color logic here
+                    let itemColorClass = "fore-white"; 
+                    const baseName = itemName.toLowerCase().split(" ")[0]; 
                     if (BAR_DATA[itemName]) itemColorClass = BAR_DATA[itemName].color;
                     else if (itemName.endsWith(" ore") && ORE_DATA[baseName]) itemColorClass = ORE_DATA[baseName].color;
                     else if (itemName.endsWith(" logs") && TREE_DATA[baseName] && TREE_DATA[baseName].color) itemColorClass = TREE_DATA[baseName].color; 
-                    // For full tool names like "Bronze Axe" or just "Bronze" if it's a fallback
-                    else if ((itemName.endsWith(" Axe") || TOOL_DATA.axe[baseName]) && TOOL_DATA.axe[baseName] && TOOL_DATA.axe[baseName].color) itemColorClass = TOOL_DATA.axe[baseName].color;
-                    else if (itemName.endsWith(" Pickaxe") && TOOL_DATA.pickaxe[baseName]) itemColorClass = TOOL_DATA.pickaxe[baseName].color;
+                    else if ((itemName.endsWith(" Axe") || (TOOL_DATA.axe[baseName] && !itemName.endsWith(" Axe"))) && TOOL_DATA.axe[baseName] && TOOL_DATA.axe[baseName].color) itemColorClass = TOOL_DATA.axe[baseName].color; // Check if just material name for tool
+                    else if ((itemName.endsWith(" Pickaxe") || (TOOL_DATA.pickaxe[baseName] && !itemName.endsWith(" Pickaxe"))) && TOOL_DATA.pickaxe[baseName] && TOOL_DATA.pickaxe[baseName].color) itemColorClass = TOOL_DATA.pickaxe[baseName].color;
                     else if (SWORD_DATA[itemName]) itemColorClass = SWORD_DATA[itemName].color;
-                    else if (FOOD_DATA[itemName]) itemColorClass = FOOD_DATA[itemName].color || "fore-green"; // Cooked food often green, or specific color
-                    else if (COOKABLE_ITEMS[itemName.replace(/s$/, '')]) itemColorClass = COOKABLE_ITEMS[itemName.replace(/s$/, '')].color || "fore-white"; // Raw items
+                    else if (FOOD_DATA[itemName]) itemColorClass = FOOD_DATA[itemName].color || "fore-green"; 
+                    else if (COOKABLE_ITEMS[itemName.replace(/s$/, '')]) itemColorClass = COOKABLE_ITEMS[itemName.replace(/s$/, '')].color || "fore-white"; 
                     else if (itemName === "burnt meat") itemColorClass = "fore-dark-grey";
-                    // Add more specific item color lookups as needed
+                    
                     itemDiv.innerHTML = `<span class="inv-item-emoji">${emoji}</span><span class="item-name ${itemColorClass}">${titleCase(itemName)}:</span> <span class="item-quantity">${quantity.toLocaleString()}</span>`;
                     listDiv.appendChild(itemDiv);
                 }
@@ -1329,20 +1348,52 @@
             if (!hasItems) listDiv.innerHTML = "<p>Your inventory is empty.</p>";
         }
 
+
         function populateEquipmentDisplay() {
-            const weaponName = playerData.inventory.weapon === "none" ? "None" : titleCase(playerData.inventory.weapon);
-            const weaponData = SWORD_DATA[playerData.inventory.weapon];
+            const weaponKey = playerData.inventory.weapon;
+            const weaponName = weaponKey === "none" ? "None" : titleCase(weaponKey);
+            const weaponData = SWORD_DATA[weaponKey];
             const weaponColorClass = weaponData ? weaponData.color : 'fore-white';
             const weaponArt = weaponData ? (weaponData.emoji || "") : "";
             let weaponStatsDisplay = "";
-            if (weaponData && weaponData.lifesteal_chance && weaponData.lifesteal_amount) {
-                const lsChance = (weaponData.lifesteal_chance + (isPerkActive("vampiricEdge1") ? PERK_DATA.vampiricEdge1.value : 0)) * 100;
-                const lsAmount = Array.isArray(weaponData.lifesteal_amount) ? `${weaponData.lifesteal_amount[0]}-${weaponData.lifesteal_amount[1]}` : weaponData.lifesteal_amount;
-                weaponStatsDisplay = `(LS: ${lsChance.toFixed(0)}% for ${lsAmount} HP)`;
+
+            if (weaponData) {
+                let minDmg = weaponData.min_dmg;
+                let maxDmg = weaponData.max_dmg;
+
+                // Apply Weapon Master I perk if active
+                if (isPerkActive("weaponMaster1")) {
+                    minDmg = Math.floor(minDmg * (1 + PERK_DATA.weaponMaster1.value));
+                    maxDmg = Math.floor(maxDmg * (1 + PERK_DATA.weaponMaster1.value));
+                }
+                // Apply Stronghold global damage boost
+                if (playerData.built_structures.stronghold) {
+                    const strongholdDmgPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "global_damage_boost");
+                    if (strongholdDmgPerk) {
+                        minDmg = Math.floor(minDmg * (1 + strongholdDmgPerk.value));
+                        maxDmg = Math.floor(maxDmg * (1 + strongholdDmgPerk.value));
+                    }
+                }
+                weaponStatsDisplay += `(Dmg: ${minDmg}-${maxDmg}`;
+                if (isPerkActive("weaponMaster1") || playerData.built_structures.stronghold) {
+                     weaponStatsDisplay += "*"; // Indicate boosted damage
+                }
+                 weaponStatsDisplay += ")";
+
+
+                let effectiveLifestealChance = weaponData.lifesteal_chance || 0;
+                if (isPerkActive("vampiricEdge1")) {
+                    effectiveLifestealChance += PERK_DATA.vampiricEdge1.value;
+                }
+                if (effectiveLifestealChance > 0) {
+                    const lsAmount = Array.isArray(weaponData.lifesteal_amount) ? `${weaponData.lifesteal_amount[0]}-${weaponData.lifesteal_amount[1]}` : weaponData.lifesteal_amount;
+                    weaponStatsDisplay += ` (LS: ${(effectiveLifestealChance * 100).toFixed(0)}% for ${lsAmount} HP)`;
+                }
             }
+
             document.getElementById('eq-weapon-name').innerHTML = `<span class="${weaponColorClass}">${weaponName}</span>`;
-            document.getElementById('eq-weapon-stats').textContent = weaponStatsDisplay;
-            document.getElementById('eq-weapon-art').textContent = weaponArt;
+            document.getElementById('eq-weapon-stats').textContent = weaponStatsDisplay.trim();
+            document.getElementById('eq-weapon-art').innerHTML = weaponArt; // Use innerHTML for emojis with spans
 
             const axeKey = playerData.inventory.axe;
             const axeName = axeKey === "none" ? "None" : titleCase(axeKey);
@@ -1350,7 +1401,7 @@
             const axeColorClass = axeData ? axeData.color : 'fore-white';
             const axeArt = axeData ? (axeData.emoji || "") : "";
             document.getElementById('eq-axe-name').innerHTML = `<span class="${axeColorClass}">${axeName}</span>`;
-            document.getElementById('eq-axe-art').textContent = axeArt;
+            document.getElementById('eq-axe-art').innerHTML = axeArt;
 
             const pickaxeKey = playerData.inventory.pickaxe;
             const pickaxeName = pickaxeKey === "none" ? "None" : titleCase(pickaxeKey);
@@ -1358,12 +1409,19 @@
             const pickaxeColorClass = pickaxeData ? pickaxeData.color : 'fore-white';
             const pickaxeArt = pickaxeData ? (pickaxeData.emoji || "") : "";
             document.getElementById('eq-pickaxe-name').innerHTML = `<span class="${pickaxeColorClass}">${pickaxeName}</span>`;
-            document.getElementById('eq-pickaxe-art').textContent = pickaxeArt;
+            document.getElementById('eq-pickaxe-art').innerHTML = pickaxeArt;
 
-            const chestplateName = playerData.inventory.chestplate === "none" ? "None" : titleCase(playerData.inventory.chestplate);
-            const chestplateArt = playerData.inventory.chestplate === "none" ? "" : (ARMOR_DATA[playerData.inventory.chestplate]?.emoji || "");
-            document.getElementById('eq-chestplate-name').textContent = chestplateName;
-            document.getElementById('eq-chestplate-art').textContent = chestplateArt;
+            const chestplateKey = playerData.inventory.chestplate;
+            const chestplateName = chestplateKey === "none" ? "None" : titleCase(chestplateKey);
+            const armorData = ARMOR_DATA[chestplateKey];
+            const chestplateColorClass = armorData ? armorData.color : 'fore-white';
+            const chestplateArt = armorData ? (armorData.emoji || "") : "";
+            let defenseDisplay = "";
+            if (armorData && armorData.defense) {
+                defenseDisplay = ` (-${(armorData.defense * 100).toFixed(0)}% Mob Hit)`
+            }
+            document.getElementById('eq-chestplate-name').innerHTML = `<span class="${chestplateColorClass}">${chestplateName}</span> <span class="fore-cyan">${defenseDisplay}</span>`;
+            document.getElementById('eq-chestplate-art').innerHTML = chestplateArt;
         }
 
         function showEquipSelection(slot) {
@@ -1459,10 +1517,11 @@
                 itemDiv.className = 'shop-item item';
 
                 let actualPrice = item.price;
-                if (playerData.built_structures.castle) {
+                if (playerData.built_structures.castle && STRUCTURE_DATA.castle.perk_effect.type === "shop_price_modifier") { // Check perk type
                     actualPrice *= (1 + STRUCTURE_DATA.castle.perk_effect.buy_mod);
                     actualPrice = Math.max(1, Math.floor(actualPrice));
                 }
+
 
                 const displayName = (categoryKey === 'axe' || categoryKey === 'pickaxe') ? titleCase(itemName + " " + categoryKey) : titleCase(itemName);
                 const itemDisplayColorClass = item.color || 'fore-white'; // Get color from item data or default
@@ -1487,9 +1546,9 @@
             }
 
             let actualPrice = itemToBuy.price;
-            if (playerData.built_structures.castle) {
+            if (playerData.built_structures.castle && STRUCTURE_DATA.castle.perk_effect.type === "shop_price_modifier") { // Check perk type
                 actualPrice *= (1 + STRUCTURE_DATA.castle.perk_effect.buy_mod);
-                actualPrice = Math.max(1, Math.floor(actualPrice)); 
+                actualPrice = Math.max(1, Math.floor(actualPrice));
             }
 
             if (playerData.gold < actualPrice) {
@@ -1538,10 +1597,11 @@
                 const baseSellPrice = ITEM_SELL_PRICES[itemName];
 
                 let actualSellPrice = baseSellPrice;
-                if (playerData.built_structures.castle && actualSellPrice) {
+                if (playerData.built_structures.castle && actualSellPrice && STRUCTURE_DATA.castle.perk_effect.type === "shop_price_modifier") { // Check perk type
                     actualSellPrice *= (1 + STRUCTURE_DATA.castle.perk_effect.sell_mod);
                     actualSellPrice = Math.floor(actualSellPrice);
                 }
+
 
                 const isEquipped = (playerData.inventory.weapon === itemName || playerData.inventory.axe === itemName || playerData.inventory.pickaxe === itemName || playerData.inventory.chestplate === itemName);
 
@@ -1577,7 +1637,7 @@
             }
 
             let actualSellPricePerItem = pricePerItem;
-             if (playerData.built_structures.castle && actualSellPricePerItem) {
+            if (playerData.built_structures.castle && actualSellPricePerItem && STRUCTURE_DATA.castle.perk_effect.type === "shop_price_modifier") { // Check perk type
                 actualSellPricePerItem *= (1 + STRUCTURE_DATA.castle.perk_effect.sell_mod);
                 actualSellPricePerItem = Math.floor(actualSellPricePerItem);
             }
@@ -1604,19 +1664,37 @@
             currentWoodcuttingTarget = null; // Clear target when re-entering screen unless auto-action restarts
 
             const wcLvl = getLevelFromXp(playerData.woodcutting_xp);
+            const equippedAxeName = playerData.inventory.axe;
+            const equippedAxeData = TOOL_DATA.axe[equippedAxeName] || TOOL_DATA.axe.fists;
+            const equippedAxeTierIndex = AXE_TIER_ORDER.indexOf(equippedAxeData.tier);
+
             let available = false;
             for (const treeName in TREE_DATA) {
                 const tree = TREE_DATA[treeName];
                 if (wcLvl >= tree.level) {
                     available = true;
                     const treeDiv = document.createElement('div');
-                    treeDiv.className = 'skill-resource fore-green'; 
-                    treeDiv.innerHTML = `${tree.emoji} ${titleCase(treeName)} (Lvl: ${tree.level}, XP: ${tree.exp})`;
+                    treeDiv.className = 'skill-resource fore-green';
+                    
+                    let treeDisplayText = `${tree.emoji} ${titleCase(treeName)} (Lvl: ${tree.level}, XP per log: 30)`;
+                    let canChopThisTree = true;
+
+                    if (tree.required_axe_tier) {
+                        const requiredTierIndex = AXE_TIER_ORDER.indexOf(tree.required_axe_tier);
+                        if (equippedAxeTierIndex < requiredTierIndex) {
+                            treeDisplayText += ` <span class="fore-red">(Req: ${titleCase(tree.required_axe_tier)} Axe)</span>`;
+                            treeDiv.style.opacity = "0.6";
+                            treeDiv.style.cursor = "not-allowed";
+                            treeDiv.title = `Requires a ${titleCase(tree.required_axe_tier)} Axe or better.`;
+                            canChopThisTree = false;
+                        }
+                    }
+                    treeDiv.innerHTML = treeDisplayText;
                     treeDiv.id = `tree-list-item-${treeName.replace(/\s+/g, '-')}`;
                     if (isAutoWoodcutting && currentWoodcuttingTarget === treeName) {
                         treeDiv.classList.add('active-woodcutting-item');
                     }
-                    treeDiv.onclick = () => selectTreeForWoodcutting(treeName);
+                    if (canChopThisTree) treeDiv.onclick = () => selectTreeForWoodcutting(treeName);
                     treeListDiv.appendChild(treeDiv);
                 }
             }
@@ -1651,6 +1729,17 @@
                 logMessage(`Woodcutting Lvl (${currentWcLvl}) too low for ${titleCase(equippedAxeName)}. Req: ${axeProps.level_req}`, "fore-red");
                 currentWoodcuttingTarget = null; 
                 return false;
+            }
+
+            const treeData = TREE_DATA[treeName];
+            if (treeData.required_axe_tier) {
+                const equippedAxeTierIndex = AXE_TIER_ORDER.indexOf(axeProps.tier);
+                const requiredTierIndex = AXE_TIER_ORDER.indexOf(treeData.required_axe_tier);
+                if (equippedAxeTierIndex < requiredTierIndex) {
+                    logMessage(`Your ${titleCase(equippedAxeName)} is not strong enough for ${titleCase(treeName)}. Requires a ${titleCase(treeData.required_axe_tier)} Axe or better.`, "fore-red");
+                    currentWoodcuttingTarget = null;
+                    return false;
+                }
             }
 
             isAutoWoodcutting = true;
@@ -1690,35 +1779,52 @@
             const axeProps = TOOL_DATA.axe[equippedAxeName];
             if (!axeProps || !axeProps.yield_config) { logMessage("Error with axe data.", "fore-red"); stopAutoWoodcutting(); return; }
 
-            const treeData = TREE_DATA[currentWoodcuttingTarget];
+            const treeData = TREE_DATA[currentWoodcuttingTarget]; 
             const oldLevel = getLevelFromXp(playerData.woodcutting_xp);
             
-            let xpGained = treeData.exp;
-            if (playerData.built_structures.house) {
-                xpGained *= (1 + STRUCTURE_DATA.house.perk_effect.value);
-            }
-            playerData.woodcutting_xp += Math.floor(xpGained);
-            grantUniversalXP(treeData.exp); // grantUniversalXP also handles the House XP perk
-            
             let baseYieldBonus = 0;
-            if (playerData.built_structures.camp && Math.random() < STRUCTURE_DATA.camp.perk_effect.value) {
+            if (playerData.built_structures.camp && STRUCTURE_DATA.camp.perk_effect.type === "base_gather_yield_bonus" && Math.random() < STRUCTURE_DATA.camp.perk_effect.value) {
                 baseYieldBonus = 1; 
             }
+
             let logsGained = axeProps.yield_config.base + baseYieldBonus;
-            if (axeProps.yield_config.bonuses) {
-                axeProps.yield_config.bonuses.forEach(bonus => {
+            // Use tree-specific bonuses
+            const treeTypeKey = currentWoodcuttingTarget; // "normal", "oak", "willow"
+            const treeSpecificBonuses = axeProps.yield_config.bonuses_by_tree ? axeProps.yield_config.bonuses_by_tree[treeTypeKey] || [] : [];
+
+            if (treeSpecificBonuses.length > 0) {
+                treeSpecificBonuses.forEach(bonus => {
                     if (Math.random() < bonus.chance) logsGained += bonus.amount;
                 });
             }
-            if (logsGained < 0) logsGained = 0; 
+            if (logsGained < 0) logsGained = 0;
+
+            let xpPerLog = 30; 
+            let totalXpGainedThisAction = 0;
 
             if (logsGained > 0) {
                 playerData.inventory[treeData.log] = (playerData.inventory[treeData.log] || 0) + logsGained;
-                let logMsg = `+${Math.floor(xpGained)} WC XP. Got ${logsGained} ${titleCase(treeData.log)}.`;
+                totalXpGainedThisAction = logsGained * xpPerLog;
+
+                let logMsg = `Got ${logsGained} ${titleCase(treeData.log)}.`;
                 if (baseYieldBonus > 0) logMsg += " (Camp bonus!)";
-                logMessage(logMsg, "fore-green");
+                
+                let displayXpGained = totalXpGainedThisAction;
+                if (playerData.built_structures.house) {
+                    const houseXpPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "global_xp_boost");
+                    if (houseXpPerk) {
+                        displayXpGained *= (1 + houseXpPerk.value);
+                    }
+                }
+                displayXpGained = Math.floor(displayXpGained);
+
+                logMessage(`+${displayXpGained} WC XP. ${logMsg}`, "fore-green");
+                
+                playerData.woodcutting_xp += displayXpGained;
+                grantUniversalXP(totalXpGainedThisAction); 
+                
             } else {
-                 logMessage(`+${Math.floor(xpGained)} WC XP. Got no logs this time.`, "fore-yellow");
+                 logMessage(`Got no logs this time. (+0 WC XP)`, "fore-yellow");
             }
             
             playSound(skillRoundSound); 
@@ -1727,8 +1833,8 @@
             updateHud();
         }
 
+
         // --- Action: Mining (Modified for Camp Perk and new interaction) ---
-        // Similar structure to Woodcutting: showMining, selectOreForMining, startAutoMining, stopAutoMining, singleMineAction
         function showMining() {
             stopAllAutoActions();
             const oreListDiv = document.getElementById('available-ores');
@@ -1743,7 +1849,7 @@
                     available = true;
                     const oreDiv = document.createElement('div');
                     oreDiv.className = `skill-resource ${ore.color}`;
-                    oreDiv.innerHTML = `${ore.emoji} ${titleCase(oreName)} (Lvl: ${ore.level_req}, XP: ${ore.xp})`;
+                    oreDiv.innerHTML = `${ore.emoji} ${titleCase(oreName)} (Lvl: ${ore.level_req}, XP per ore: 30)`; // Updated XP display
                     oreDiv.id = `ore-list-item-${oreName.replace(/\s+/g, '-')}`;
                      if (isAutoMining && currentMiningTarget === oreName) {
                         oreDiv.classList.add('active-mining-item');
@@ -1824,17 +1930,11 @@
             const oreData = ORE_DATA[currentMiningTarget];
             const oldLevel = getLevelFromXp(playerData.mining_xp);
             
-            let xpGained = oreData.xp;
-            if (playerData.built_structures.house) {
-                xpGained *= (1 + STRUCTURE_DATA.house.perk_effect.value);
-            }
-            playerData.mining_xp += Math.floor(xpGained);
-            grantUniversalXP(oreData.xp);
-            
             let baseYieldBonus = 0;
-            if (playerData.built_structures.camp && Math.random() < STRUCTURE_DATA.camp.perk_effect.value) {
+            if (playerData.built_structures.camp && STRUCTURE_DATA.camp.perk_effect.type === "base_gather_yield_bonus" && Math.random() < STRUCTURE_DATA.camp.perk_effect.value) {
                 baseYieldBonus = 1;
             }
+
             let oreGained = pickaxeProps.yield_config.base + baseYieldBonus;
             if (pickaxeProps.yield_config.bonuses) {
                 pickaxeProps.yield_config.bonuses.forEach(bonus => {
@@ -1843,13 +1943,32 @@
             }
             if (oreGained < 0) oreGained = 0; 
 
+            let xpPerOre = 30; 
+            let totalXpGainedThisAction = 0;
+
             if (oreGained > 0) {
                 playerData.inventory[oreData.item_name] = (playerData.inventory[oreData.item_name] || 0) + oreGained;
-                let logMsg = `+${Math.floor(xpGained)} Mining XP. Got ${oreGained} ${titleCase(oreData.item_name)}.`;
-                if (baseYieldBonus > 0) logMsg += " (Camp bonus!)";
-                logMessage(logMsg, oreData.color);
+                totalXpGainedThisAction = oreGained * xpPerOre;
+
+                let logMsg = `Got ${oreGained} ${titleCase(oreData.item_name)}.`;
+                 if (baseYieldBonus > 0) logMsg += " (Camp bonus!)";
+                
+                let displayXpGained = totalXpGainedThisAction;
+                if (playerData.built_structures.house) {
+                     const houseXpPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "global_xp_boost");
+                    if (houseXpPerk) {
+                        displayXpGained *= (1 + houseXpPerk.value);
+                    }
+                }
+                displayXpGained = Math.floor(displayXpGained);
+                
+                logMessage(`+${displayXpGained} Mining XP. ${logMsg}`, oreData.color);
+
+                playerData.mining_xp += displayXpGained;
+                grantUniversalXP(totalXpGainedThisAction);
+
             } else {
-                 logMessage(`+${Math.floor(xpGained)} Mining XP. Got no ore this time.`, "fore-yellow");
+                 logMessage(`Got no ore this time. (+0 Mining XP)`, "fore-yellow");
             }
             
             playSound(skillRoundSound); 
@@ -1967,7 +2086,7 @@
             logMessage(`Auto-smelting ${titleCase(currentSmeltingTarget)}... (Up to ${maxSmeltableForCurrentTarget} times)`, "fore-cyan");
             
             let interval = BASE_CRAFT_INTERVAL;
-            if (playerData.built_structures.shed) {
+            if (playerData.built_structures.shed && STRUCTURE_DATA.shed.perk_effect.type === "crafting_speed_boost") { // Specific check for shed
                 interval *= (1 - STRUCTURE_DATA.shed.perk_effect.value);
             }
             if (playerData.built_structures.stronghold) {
@@ -2018,14 +2137,18 @@
             playerData.inventory[currentSmeltingTarget] = (playerData.inventory[currentSmeltingTarget] || 0) + barsMade;
             const oldLevel = getLevelFromXp(playerData.blacksmithing_xp);
             
-            let xpGained = barData.xp_gain;
+            let xpGainedRaw = barData.xp_gain; // Store raw XP before House perk
+            let xpGainedDisplay = xpGainedRaw; 
             if (playerData.built_structures.house) {
-                xpGained *= (1 + STRUCTURE_DATA.house.perk_effect.value);
+                const houseXpPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "global_xp_boost");
+                if(houseXpPerk) xpGainedDisplay *= (1 + houseXpPerk.value);
             }
-            playerData.blacksmithing_xp += Math.floor(xpGained);
-            grantUniversalXP(barData.xp_gain); 
+            xpGainedDisplay = Math.floor(xpGainedDisplay);
 
-            logMessage(`Smelted ${barsMade} ${titleCase(currentSmeltingTarget)}! (+${Math.floor(xpGained)} BS XP)`, barData.color);
+            playerData.blacksmithing_xp += xpGainedDisplay;
+            grantUniversalXP(xpGainedRaw); // Pass raw XP to universal XP function
+
+            logMessage(`Smelted ${barsMade} ${titleCase(currentSmeltingTarget)}! (+${xpGainedDisplay} BS XP)`, barData.color);
             
             playSound(skillRoundSound); 
             handleLevelUp("blacksmithing_xp", oldLevel);
@@ -2164,7 +2287,7 @@
             logMessage(`Auto-smithing ${titleCase(currentSmithingTarget)}...`, "fore-cyan");
 
             let interval = BASE_CRAFT_INTERVAL;
-            if (playerData.built_structures.shed) {
+            if (playerData.built_structures.shed && STRUCTURE_DATA.shed.perk_effect.type === "crafting_speed_boost") { // Specific check for shed
                 interval *= (1 - STRUCTURE_DATA.shed.perk_effect.value);
             }
             if (playerData.built_structures.stronghold) {
@@ -2215,15 +2338,18 @@
             playerData.inventory[currentSmithingTarget] = (playerData.inventory[currentSmithingTarget] || 0) + 1;
             
             let xpGainRaw = itemData.smith_level_req * 5; 
-            let xpGained = xpGainRaw;
+            let xpGainedDisplay = xpGainRaw; 
             if (playerData.built_structures.house) {
-                xpGained *= (1 + STRUCTURE_DATA.house.perk_effect.value);
+                const houseXpPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "global_xp_boost");
+                if(houseXpPerk) xpGainedDisplay *= (1 + houseXpPerk.value);
             }
+            xpGainedDisplay = Math.floor(xpGainedDisplay);
+
             const oldLevel = getLevelFromXp(playerData.blacksmithing_xp);
-            playerData.blacksmithing_xp += Math.floor(xpGained);
+            playerData.blacksmithing_xp += xpGainedDisplay;
             grantUniversalXP(xpGainRaw); 
 
-            logMessage(`Smithed 1 ${titleCase(currentSmithingTarget)}! (+${Math.floor(xpGained)} BS XP)`, itemData.color);
+            logMessage(`Smithed 1 ${titleCase(currentSmithingTarget)}! (+${xpGainedDisplay} BS XP)`, itemData.color);
             
             playSound(skillRoundSound); 
             handleLevelUp("blacksmithing_xp", oldLevel);
@@ -2447,9 +2573,8 @@
 
                 const oldAtkLvl = playerAtkLvl;
                 let xpGainedRaw = monster.attack_xp;
-                let xpGainedDisplay = xpGainedRaw; // For logging, before house perk is applied twice for display
+                let xpGainedDisplay = xpGainedRaw; 
 
-                // Apply House XP perk for individual skill XP
                 if (playerData.built_structures.house) {
                     const houseXpPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "global_xp_boost");
                     if (houseXpPerk) {
@@ -2457,19 +2582,17 @@
                     }
                 }
                 playerData.attack_xp += Math.floor(xpGainedDisplay);
-                grantUniversalXP(xpGainedRaw); // grantUniversalXP will handle its own House perk application for total_skill_xp
+                grantUniversalXP(xpGainedRaw); 
 
                 logMessage(`Gained ${Math.floor(xpGainedDisplay)} Attack XP!`, "fore-green");
                 
                 handleLevelUp("attack_xp", oldAtkLvl);
-                playerAtkLvl = getLevelFromXp(playerData.attack_xp); // Re-fetch playerAtkLvl in case of level up for drop calcs
+                playerAtkLvl = getLevelFromXp(playerData.attack_xp); 
 
                 // --- GOLD DROP LOGIC ---
-                // 1. Monster's Base Gold Drop
-                if (monster.gold_drop && monster.gold_drop[1] > 0) { // Check if monster can drop gold
+                if (monster.gold_drop && monster.gold_drop[1] > 0) { 
                     let goldDropped = Math.floor(Math.random() * (monster.gold_drop[1] - monster.gold_drop[0] + 1)) + monster.gold_drop[0];
                     
-                    // 2. Mansion Perk: Chance to Double the Base Gold Drop
                     if (playerData.built_structures.mansion) {
                         const mansionGoldPerk = STRUCTURE_DATA.mansion.perks.find(p => p.type === "monster_gold_drop_multiplier_chance");
                         if (mansionGoldPerk && Math.random() < mansionGoldPerk.value) {
@@ -2484,12 +2607,9 @@
                     }
                 }
 
-                // 3. House Perk: Separate chance for small *additional* bonus gold (non-chicken)
                 if (playerData.built_structures.house && currentMonsterTarget !== "chicken") {
                     const houseScaledGoldPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "scaled_bonus_mob_gold_drop_chance");
-                    // Ensure monster actually has a gold_drop defined before trying to scale off it
                     if (houseScaledGoldPerk && monster.gold_drop && monster.gold_drop[1] > 0 && Math.random() < houseScaledGoldPerk.value) {
-                        // Re-roll base for this bonus to be fair and independent of the main drop's roll
                         const baseGoldForScaling = Math.floor(Math.random() * (monster.gold_drop[1] - monster.gold_drop[0] + 1)) + monster.gold_drop[0];
                         const bonusScaledGold = Math.floor(baseGoldForScaling * houseScaledGoldPerk.bonus_gold_percentage_of_base);
                         if (bonusScaledGold > 0) {
@@ -2516,13 +2636,17 @@
                     }
                 });
 
-                // Stronghold: Heal on kill
                 if (playerData.built_structures.stronghold) {
                     const healPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "heal_on_kill_percent");
                     if (healPerk) {
                         const healAmount = Math.floor(playerMaxHp * healPerk.value);
-                        playerData.hp = Math.min(playerMaxHp, playerData.hp + healAmount);
-                        if (healAmount > 0) logMessage(`Stronghold's Blessing! Healed ${healAmount} HP.`, "fore-green");
+                        if(playerData.hp < playerMaxHp && healAmount > 0) { // Only heal if not full and healAmount > 0
+                            const oldPlayerHpForHeal = playerData.hp;
+                            playerData.hp = Math.min(playerMaxHp, playerData.hp + healAmount);
+                            if (playerData.hp > oldPlayerHpForHeal) { // Check if actual healing occurred
+                                logMessage(`Stronghold's Blessing! Healed ${playerData.hp - oldPlayerHpForHeal} HP.`, "fore-green");
+                            }
+                        }
                     }
                 }
 
@@ -2531,7 +2655,8 @@
 
                 if (!isAutoAttacking) { 
                     currentMonsterTarget = null; 
-                    const defeatedMonsterListItem = document.getElementById(`monster-list-item-${monsterName.replace(/\s+/g, '-').toLowerCase()}`);
+                    const monsterNameForID = monster.name ? monster.name : currentMonsterTarget; // Fallback if monster.name isn't defined for some reason
+                    const defeatedMonsterListItem = document.getElementById(`monster-list-item-${monsterNameForID.replace(/\s+/g, '-').toLowerCase()}`);
                     if (defeatedMonsterListItem) defeatedMonsterListItem.classList.remove('attacking-monster-list-item');
                     setTimeout(() => {
                         document.getElementById('combat-arena').classList.add('hidden'); 
@@ -2732,7 +2857,7 @@
             logMessage(`Auto-cooking ${titleCase(currentCookingTarget)}...`, "fore-cyan");
             
             let interval = BASE_CRAFT_INTERVAL;
-            if (playerData.built_structures.shed) {
+            if (playerData.built_structures.shed && STRUCTURE_DATA.shed.perk_effect.type === "crafting_speed_boost") {
                 interval *= (1 - STRUCTURE_DATA.shed.perk_effect.value);
             }
             if (playerData.built_structures.stronghold) {
@@ -2778,13 +2903,16 @@
                 playerData.inventory[cookDetails.cooked_item] = (playerData.inventory[cookDetails.cooked_item] || 0) + 1;
                 
                 let xpGainedRaw = cookDetails.xp_gain;
-                let xpGained = xpGainedRaw;
+                let xpGainedDisplay = xpGainedRaw; 
                 if (playerData.built_structures.house) {
-                    xpGained *= (1 + STRUCTURE_DATA.house.perk_effect.value);
+                    const houseXpPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "global_xp_boost");
+                    if(houseXpPerk) xpGainedDisplay *= (1 + houseXpPerk.value);
                 }
-                playerData.cooking_xp += Math.floor(xpGained); 
+                xpGainedDisplay = Math.floor(xpGainedDisplay);
+
+                playerData.cooking_xp += xpGainedDisplay; 
                 grantUniversalXP(xpGainedRaw);
-                logMessage(`Cooked 1 ${titleCase(cookDetails.cooked_item)}! (+${Math.floor(xpGained)} Cook XP)`, "fore-green");
+                logMessage(`Cooked 1 ${titleCase(cookDetails.cooked_item)}! (+${xpGainedDisplay} Cook XP)`, "fore-green");
                 if (currentCookLvlForThisItem >= cookDetails.difficulty_level + 15 && Math.random() < 0.10) {
                     playerData.inventory[cookDetails.cooked_item]++;
                     logMessage(`Bonus! Extra ${titleCase(cookDetails.cooked_item)}!`, "fore-yellow");
