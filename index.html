@@ -428,77 +428,77 @@
         }
 
         const TOOL_DATA = {
-            "axe": { // Nerfed damage, no lifesteal
-                "fists": {"emoji": "👊", "price":0,"level_req":1,"min_dmg":1,"max_dmg":1,"skill_type":"attack","color":"fore-white", "yield_config": { "base": 0, "bonuses": [] }},
-                "bronze": {"emoji": "🪓", "price":15,"level_req":1,"min_dmg":1,"max_dmg":2,"skill_type":"woodcutting","color":"fore-yellow", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.20, "amount": 1 }] } },
-                "iron": {"emoji": "🪓", "price":50,"level_req":15,"min_dmg":2,"max_dmg":3,"skill_type":"woodcutting","color":"fore-lightblack_ex", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.70, "amount": 1 }] } },
-                "steel": {"emoji": "🪓", "price":120,"level_req":30,"min_dmg":3,"max_dmg":5,"skill_type":"woodcutting","color":"fore-cyan", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.30, "amount": 1 }] } },
-                "mithril": {"emoji": "🪓", "price":300,"level_req":45,"min_dmg":5,"max_dmg":8,"skill_type":"woodcutting","color":"fore-blue", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.60, "amount": 1 }] } },
-                "adamant": {"emoji": "🪓", "price":750,"level_req":60,"min_dmg":8,"max_dmg":12,"skill_type":"woodcutting","color":"fore-green", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.40, "amount": 1 }] } },
-                "rune": {"emoji": "🪓", "price":2000,"level_req":75,"min_dmg":12,"max_dmg":18,"skill_type":"woodcutting","color":"fore-magenta", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.90, "amount": 1 }, { "chance": 0.70, "amount": 1 }] } },
-                "dragon": {"emoji": "🪓🔥", "price":10000,"level_req":90,"min_dmg":18,"max_dmg":25,"skill_type":"woodcutting","color":"fore-red", "yield_config": { "base": 3, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.50, "amount": 1 }] } }
+            "axe": {
+                "fists":   {"emoji": "👊",    "price":0,     "level_req":1,  "min_dmg":1,  "max_dmg":1,  "skill_type":"attack",      "color":"fore-white",         "yield_config": { "base": 0, "bonuses": [] }},
+                "bronze":  {"emoji": "🪓",    "price":15,    "level_req":1,  "min_dmg":1,  "max_dmg":2,  "skill_type":"woodcutting", "color":"fore-yellow",        "yield_config": { "base": 1, "bonuses": [{ "chance": 0.20, "amount": 1 }] } },
+                "iron":    {"emoji": "🪓",    "price":50,    "level_req":15, "min_dmg":2,  "max_dmg":3,  "skill_type":"woodcutting", "color":"fore-lightblack_ex", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.70, "amount": 1 }] } },
+                "steel":   {"emoji": "🪓",    "price":120,   "level_req":30, "min_dmg":3,  "max_dmg":5,  "skill_type":"woodcutting", "color":"fore-cyan",          "yield_config": { "base": 1, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.30, "amount": 1 }] } },
+                "mithril": {"emoji": "🪓",    "price":300,   "level_req":45, "min_dmg":5,  "max_dmg":8,  "skill_type":"woodcutting", "color":"fore-blue",          "yield_config": { "base": 2, "bonuses": [{ "chance": 0.60, "amount": 1 }] } },
+                "adamant": {"emoji": "🪓",    "price":750,   "level_req":60, "min_dmg":8,  "max_dmg":12, "skill_type":"woodcutting", "color":"fore-green",         "yield_config": { "base": 2, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.40, "amount": 1 }] } },
+                "rune":    {"emoji": "🪓",    "price":2000,  "level_req":75, "min_dmg":12, "max_dmg":18, "skill_type":"woodcutting", "color":"fore-magenta",       "yield_config": { "base": 2, "bonuses": [{ "chance": 0.90, "amount": 1 }, { "chance": 0.70, "amount": 1 }] } },
+                "dragon":  {"emoji": "🪓🔥",  "price":10000, "level_req":90, "min_dmg":18, "max_dmg":25, "skill_type":"woodcutting", "color":"fore-red",           "yield_config": { "base": 3, "bonuses": [{ "chance": 0.80, "amount": 1 }, { "chance": 0.50, "amount": 1 }] } }
             },
-            "pickaxe": { // Nerfed damage, no lifesteal
-                "bronze": {"emoji": "⛏️", "price":20,"level_req":1,"min_dmg":1,"max_dmg":2,"skill_type":"mining","color":"fore-yellow", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.15, "amount": 1 }] } },
-                "iron": {"emoji": "⛏️", "price":60,"level_req":15,"min_dmg":2,"max_dmg":3,"skill_type":"mining","color":"fore-lightblack_ex", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.60, "amount": 1 }] } },
-                "steel": {"emoji": "⛏️", "price":140,"level_req":30,"min_dmg":3,"max_dmg":5,"skill_type":"mining","color":"fore-cyan", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.25, "amount": 1 }] } },
-                "mithril": {"emoji": "⛏️", "price":350,"level_req":45,"min_dmg":5,"max_dmg":8,"skill_type":"mining","color":"fore-blue", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.50, "amount": 1 }] } },
-                "adamant": {"emoji": "⛏️", "price":850,"level_req":60,"min_dmg":8,"max_dmg":12,"skill_type":"mining","color":"fore-green", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.70, "amount": 1 }, { "chance": 0.35, "amount": 1 }] } },
-                "rune": {"emoji": "⛏️", "price":2300,"level_req":75,"min_dmg":12,"max_dmg":18,"skill_type":"mining","color":"fore-magenta", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.85, "amount": 1 }, { "chance": 0.65, "amount": 1 }] } },
-                "dragon": {"emoji": "⛏️🔥", "price":11500,"level_req":90,"min_dmg":18,"max_dmg":25,"skill_type":"mining","color":"fore-red", "yield_config": { "base": 3, "bonuses": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.45, "amount": 1 }] } }
+            "pickaxe": {
+                "bronze":  {"emoji": "⛏️",    "price":10,    "level_req":1,  "min_dmg":1,  "max_dmg":2,  "skill_type":"mining",      "color":"fore-yellow",        "yield_config": { "base": 1, "bonuses": [{ "chance": 0.15, "amount": 1 }] } },
+                "iron":    {"emoji": "⛏️",    "price":40,    "level_req":15, "min_dmg":2,  "max_dmg":3,  "skill_type":"mining",      "color":"fore-lightblack_ex", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.60, "amount": 1 }] } },
+                "steel":   {"emoji": "⛏️",    "price":100,   "level_req":30, "min_dmg":3,  "max_dmg":5,  "skill_type":"mining",      "color":"fore-cyan",          "yield_config": { "base": 1, "bonuses": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.25, "amount": 1 }] } },
+                "mithril": {"emoji": "⛏️",    "price":280,   "level_req":45, "min_dmg":5,  "max_dmg":8,  "skill_type":"mining",      "color":"fore-blue",          "yield_config": { "base": 2, "bonuses": [{ "chance": 0.50, "amount": 1 }] } },
+                "adamant": {"emoji": "⛏️",    "price":700,   "level_req":60, "min_dmg":8,  "max_dmg":12, "skill_type":"mining",      "color":"fore-green",         "yield_config": { "base": 2, "bonuses": [{ "chance": 0.70, "amount": 1 }, { "chance": 0.35, "amount": 1 }] } },
+                "rune":    {"emoji": "⛏️",    "price":1900,  "level_req":75, "min_dmg":12, "max_dmg":18, "skill_type":"mining",      "color":"fore-magenta",       "yield_config": { "base": 2, "bonuses": [{ "chance": 0.85, "amount": 1 }, { "chance": 0.65, "amount": 1 }] } },
+                "dragon":  {"emoji": "⛏️🔥",  "price":9500,  "level_req":90, "min_dmg":18, "max_dmg":25, "skill_type":"mining",      "color":"fore-red",           "yield_config": { "base": 3, "bonuses": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.45, "amount": 1 }] } }
             }
         };
         
-        const SWORD_DATA = { // New 2H Swords with lifesteal
-            "bronze 2h sword": {"emoji": "🗡️", "smith_level_req":1, "wield_level_req":1, "min_dmg":5,"max_dmg":8,"skill_type":"attack","color":"fore-yellow", "lifesteal_chance": 0.02, "lifesteal_amount": 1, "recipe": {"bronze bar": 5}},
-            "iron 2h sword": {"emoji": "🗡️", "smith_level_req":15, "wield_level_req":15, "min_dmg":10,"max_dmg":16,"skill_type":"attack","color":"fore-lightblack_ex", "lifesteal_chance": 0.03, "lifesteal_amount": [1,2], "recipe": {"iron bar": 5}},
-            "steel 2h sword": {"emoji": "🗡️", "smith_level_req":30, "wield_level_req":30, "min_dmg":18,"max_dmg":28,"skill_type":"attack","color":"fore-cyan", "lifesteal_chance": 0.04, "lifesteal_amount": [2,3], "recipe": {"steel bar": 5}},
-            "mithril 2h sword": {"emoji": "🗡️", "smith_level_req":45, "wield_level_req":45, "min_dmg":30,"max_dmg":45,"skill_type":"attack","color":"fore-blue", "lifesteal_chance": 0.05, "lifesteal_amount": [2,4], "recipe": {"mithril bar": 5}},
-            "adamant 2h sword": {"emoji": "🗡️", "smith_level_req":60, "wield_level_req":60, "min_dmg":48,"max_dmg":70,"skill_type":"attack","color":"fore-green", "lifesteal_chance": 0.06, "lifesteal_amount": [3,5], "recipe": {"adamantite bar": 5}},
-            "rune 2h sword": {"emoji": "🗡️", "smith_level_req":75, "wield_level_req":75, "min_dmg":72,"max_dmg":100,"skill_type":"attack","color":"fore-magenta", "lifesteal_chance": 0.07, "lifesteal_amount": [4,6], "recipe": {"runite bar": 5}},
-            "dragon 2h sword": {"emoji": "🗡️🔥", "smith_level_req":90, "wield_level_req":90, "min_dmg":100,"max_dmg":140,"skill_type":"attack","color":"fore-red", "lifesteal_chance": 0.08, "lifesteal_amount": [5,8], "recipe": {"dragon bar": 5}}
+        const SWORD_DATA = {
+            "bronze 2h sword":   {"emoji": "🗡️",   "smith_level_req":1,  "wield_level_req":1,  "min_dmg":5,   "max_dmg":8,   "skill_type":"attack", "color":"fore-yellow",        "lifesteal_chance": 0.02, "lifesteal_amount": 1,     "recipe": {"bronze bar": 5}},
+            "iron 2h sword":     {"emoji": "🗡️",   "smith_level_req":15, "wield_level_req":15, "min_dmg":10,  "max_dmg":16,  "skill_type":"attack", "color":"fore-lightblack_ex", "lifesteal_chance": 0.03, "lifesteal_amount": [1,2], "recipe": {"iron bar": 5}},
+            "steel 2h sword":    {"emoji": "🗡️",   "smith_level_req":30, "wield_level_req":30, "min_dmg":18,  "max_dmg":28,  "skill_type":"attack", "color":"fore-cyan",          "lifesteal_chance": 0.04, "lifesteal_amount": [2,3], "recipe": {"steel bar": 5}},
+            "mithril 2h sword":  {"emoji": "🗡️",   "smith_level_req":45, "wield_level_req":45, "min_dmg":30,  "max_dmg":45,  "skill_type":"attack", "color":"fore-blue",          "lifesteal_chance": 0.05, "lifesteal_amount": [2,4], "recipe": {"mithril bar": 5}},
+            "adamant 2h sword":  {"emoji": "🗡️",   "smith_level_req":60, "wield_level_req":60, "min_dmg":48,  "max_dmg":70,  "skill_type":"attack", "color":"fore-green",         "lifesteal_chance": 0.06, "lifesteal_amount": [3,5], "recipe": {"adamantite bar": 5}},
+            "rune 2h sword":     {"emoji": "🗡️",   "smith_level_req":75, "wield_level_req":75, "min_dmg":72,  "max_dmg":100, "skill_type":"attack", "color":"fore-magenta",       "lifesteal_chance": 0.07, "lifesteal_amount": [4,6], "recipe": {"runite bar": 5}},
+            "dragon 2h sword":   {"emoji": "🗡️🔥", "smith_level_req":90, "wield_level_req":90, "min_dmg":100, "max_dmg":140, "skill_type":"attack", "color":"fore-red",           "lifesteal_chance": 0.08, "lifesteal_amount": [5,8], "recipe": {"dragon bar": 5}}
         };
 
 
         const FOOD_DATA = {
-            "cooked meat": {"heal_amount": 5, "sell_price": 2, "emoji": "🍖"}, 
-            "bread": {"heal_amount": 3, "sell_price": 1, "emoji": "🍞"},
+            "cooked meat":       {"heal_amount": 5,  "sell_price": 2, "emoji": "🍖"}, 
+            "bread":             {"heal_amount": 3,  "sell_price": 1, "emoji": "🍞"},
             "health potion (s)": {"heal_amount": 15, "sell_price": 10, "emoji": "🧪"}
         };
 
         const COOKABLE_ITEMS = {
-            "raw meat": {"cooked_item":"cooked meat","burnt_item":"burnt meat","xp_gain":10,"level_req":1,"difficulty_level":1, "emoji": "🥩"},
+            "raw meat": {"cooked_item":"cooked meat", "burnt_item":"burnt meat", "xp_gain":10, "level_req":1, "difficulty_level":1, "emoji": "🥩"},
         };
         
         const ARMOR_DATA = {
-            "bronze chestplate": {"defense":0.03,"price":40,"level_req":5,"color":"fore-yellow", "emoji":"🛡️"},
-            "iron chestplate":   {"defense":0.06,"price":100,"level_req":15,"color":"fore-lightblack_ex", "emoji":"🛡️"},
-            "steel chestplate":  {"defense":0.09,"price":250,"level_req":30,"color":"fore-cyan", "emoji":"🛡️"},
-            "mithril chestplate":{"defense":0.12,"price":600,"level_req":45,"color":"fore-blue", "emoji":"🛡️"},
-            "adamant chestplate":{"defense":0.15,"price":1500,"level_req":60,"color":"fore-green", "emoji":"🛡️"},
-            "rune chestplate":   {"defense":0.18,"price":5000,"level_req":75,"color":"fore-magenta", "emoji":"🛡️"},
-            "dragon chestplate": {"defense":0.22,"price":20000,"level_req":90,"color":"fore-red", "emoji":"🛡️🔥"}
+            "bronze chestplate":  {"defense":0.03, "price":40,    "level_req":5,  "color":"fore-yellow",        "emoji":"🛡️"},
+            "iron chestplate":    {"defense":0.06, "price":100,   "level_req":15, "color":"fore-lightblack_ex", "emoji":"🛡️"},
+            "steel chestplate":   {"defense":0.09, "price":250,   "level_req":30, "color":"fore-cyan",          "emoji":"🛡️"},
+            "mithril chestplate": {"defense":0.12, "price":600,   "level_req":45, "color":"fore-blue",          "emoji":"🛡️"},
+            "adamant chestplate": {"defense":0.15, "price":1500,  "level_req":60, "color":"fore-green",         "emoji":"🛡️"},
+            "rune chestplate":    {"defense":0.18, "price":5000,  "level_req":75, "color":"fore-magenta",       "emoji":"🛡️"},
+            "dragon chestplate":  {"defense":0.22, "price":20000, "level_req":90, "color":"fore-red",           "emoji":"🛡️🔥"}
         };
         
-        const BAR_DATA = { // For Blacksmithing - Smelting
-            "bronze bar": {"emoji": "🧱", "level_req": 1, "xp_gain": 10, "color": "fore-yellow", "recipe": {"copper ore": 1, "tin ore": 1}},
-            "iron bar": {"emoji": "🧱", "level_req": 15, "xp_gain": 20, "color": "fore-lightblack_ex", "recipe": {"iron ore": 1}},
-            "steel bar": {"emoji": "🧱", "level_req": 30, "xp_gain": 30, "color": "fore-cyan", "recipe": {"iron ore": 1, "coal": 2}}, 
-            "mithril bar": {"emoji": "🧱", "level_req": 45, "xp_gain": 50, "color": "fore-blue", "recipe": {"mithril ore": 1, "coal": 4}},
-            "adamantite bar": {"emoji": "🧱", "level_req": 60, "xp_gain": 70, "color": "fore-green", "recipe": {"adamantite ore": 1, "coal": 6}},
-            "runite bar": {"emoji": "🧱", "level_req": 75, "xp_gain": 100, "color": "fore-magenta", "recipe": {"runite ore": 1, "coal": 8}},
-            "dragon bar": {"emoji": "🧱🔥", "level_req": 90, "xp_gain": 150, "color": "fore-red", "recipe": {"special dragon ore": 1, "coal": 10}}
+        const BAR_DATA = {
+            "bronze bar":     {"emoji": "🧱",   "level_req": 1,  "xp_gain": 10,  "color": "fore-yellow",        "recipe": {"copper ore": 1, "tin ore": 1}},
+            "iron bar":       {"emoji": "🧱",   "level_req": 15, "xp_gain": 20,  "color": "fore-lightblack_ex", "recipe": {"iron ore": 1}},
+            "steel bar":      {"emoji": "🧱",   "level_req": 30, "xp_gain": 30,  "color": "fore-cyan",          "recipe": {"iron ore": 1, "coal": 2}}, 
+            "mithril bar":    {"emoji": "🧱",   "level_req": 45, "xp_gain": 50,  "color": "fore-blue",          "recipe": {"mithril ore": 1, "coal": 4}},
+            "adamantite bar": {"emoji": "🧱",   "level_req": 60, "xp_gain": 70,  "color": "fore-green",         "recipe": {"adamantite ore": 1, "coal": 6}},
+            "runite bar":     {"emoji": "🧱",   "level_req": 75, "xp_gain": 100, "color": "fore-magenta",       "recipe": {"runite ore": 1, "coal": 8}},
+            "dragon bar":     {"emoji": "🧱🔥", "level_req": 90, "xp_gain": 150, "color": "fore-red",           "recipe": {"special dragon ore": 1, "coal": 10}}
         };
 
         const ORE_DATA = { 
-            "copper": {"level_req": 1, "xp": 15, "item_name": "copper ore", "color": "fore-yellow", "emoji": "⛏️<span class='fore-yellow'>🪨</span>"},
-            "tin": {"level_req": 1, "xp": 15, "item_name": "tin ore", "color": "fore-lightblack_ex", "emoji": "⛏️<span class='fore-lightblack_ex'>🪨</span>"},
-            "iron": {"level_req": 15, "xp": 35, "item_name": "iron ore", "color": "fore-white", "emoji": "⛏️<span class='fore-white'>🪨</span>"},
-            "coal": {"level_req": 20, "xp": 40, "item_name": "coal", "color": "fore-lightblack_ex", "emoji": "⛏️<span class='fore-lightblack_ex'>⚫</span>"},
-            "mithril": {"level_req": 45, "xp": 80, "item_name": "mithril ore", "color": "fore-blue", "emoji": "⛏️<span class='fore-blue'>💎</span>"},
-            "adamantite": {"level_req": 60, "xp": 120, "item_name": "adamantite ore", "color": "fore-green", "emoji": "⛏️<span class='fore-green'>💎</span>"},
-            "runite": {"level_req": 75, "xp": 200, "item_name": "runite ore", "color": "fore-magenta", "emoji": "⛏️<span class='fore-magenta'>💎</span>"},
-            "special dragon ore": {"level_req": 90, "xp": 300, "item_name": "special dragon ore", "color": "fore-red", "emoji": "⛏️<span class='fore-red'>🔥💎</span>"}
+            "copper":             {"level_req": 1,  "xp": 15,  "item_name": "copper ore",         "color": "fore-yellow",        "emoji": "⛏️<span class='fore-yellow'>🪨</span>"},
+            "tin":                {"level_req": 1,  "xp": 15,  "item_name": "tin ore",            "color": "fore-lightblack_ex", "emoji": "⛏️<span class='fore-lightblack_ex'>🪨</span>"},
+            "iron":               {"level_req": 15, "xp": 35,  "item_name": "iron ore",           "color": "fore-white",         "emoji": "⛏️<span class='fore-white'>🪨</span>"},
+            "coal":               {"level_req": 20, "xp": 40,  "item_name": "coal",               "color": "fore-lightblack_ex", "emoji": "⛏️<span class='fore-lightblack_ex'>⚫</span>"},
+            "mithril":            {"level_req": 45, "xp": 80,  "item_name": "mithril ore",        "color": "fore-blue",          "emoji": "⛏️<span class='fore-blue'>💎</span>"},
+            "adamantite":         {"level_req": 60, "xp": 120, "item_name": "adamantite ore",     "color": "fore-green",         "emoji": "⛏️<span class='fore-green'>💎</span>"},
+            "runite":             {"level_req": 75, "xp": 200, "item_name": "runite ore",         "color": "fore-magenta",       "emoji": "⛏️<span class='fore-magenta'>💎</span>"},
+            "special dragon ore": {"level_req": 90, "xp": 300, "item_name": "special dragon ore", "color": "fore-red",           "emoji": "⛏️<span class='fore-red'>🔥💎</span>"}
         };
 
         const DEFAULT_PLAYER = {
@@ -541,23 +541,23 @@
         }
         
         const MONSTER_DATA = { 
-            "chicken": {"level_req":1,"hp":5,"attack_xp":5,"color":"fore-white","emoji":"🐔","drops":[{"item_name":"egg","base_chance":0.9,"quantity":[1,2],"always_drop_one":true},{"item_name":"raw meat","base_chance":0.7,"quantity":[1,1]}]},
-            "goblin": {"level_req":5,"hp":20,"attack_xp":15,"color":"fore-green","emoji":"👺","drops":[{"item_name":"goblin beads","base_chance":0.5,"quantity":[1,1]},{"item_name":"bread","base_chance":0.2,"quantity":[1,1]}, {"item_name":"bronze chestplate", "base_chance":0.02, "quantity":[1,1]}]},
-            "wolf": {"level_req":10,"hp":35,"attack_xp":25,"color":"fore-lightblack_ex","emoji":"🐺","drops":[{"item_name":"raw meat","base_chance":0.8,"quantity":[1,2]},{"item_name":"wolf fang","base_chance":0.3,"quantity":[1,1]}]},
-            "bear": {"level_req":20,"hp":70,"attack_xp":50,"color":"fore-yellow","emoji":"🐻","drops":[{"item_name":"raw meat","base_chance":0.9,"quantity":[2,3]},{"item_name":"bear claw","base_chance":0.25,"quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.1,"quantity":[1,1]}, {"item_name":"iron chestplate", "base_chance":0.025, "quantity":[1,1]}]},
-            "ogre": {"level_req":30,"hp":120,"attack_xp":90,"color":"fore-green","emoji":"👹","drops":[{"item_name":"ogre club fragment","base_chance":0.4,"quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.3,"quantity":[1,2]}, {"item_name":"steel chestplate", "base_chance":0.03, "quantity":[1,1]}]},
-            "troll": {"level_req":40,"hp":200,"attack_xp":150,"color":"fore-cyan","emoji":"🧌","drops":[{"item_name":"troll hide","base_chance":0.35,"quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.15,"quantity":[1,1]}, {"item_name":"mithril chestplate", "base_chance":0.02, "quantity":[1,1]}]},
-            "giant": {"level_req":55,"hp":350,"attack_xp":280,"color":"fore-blue","emoji":"🗿","drops":[{"item_name":"giant's toe","base_chance":0.2,"quantity":[1,1]},{"item_name":"cooked meat","base_chance":0.5,"quantity":[2,4]}, {"item_name":"adamant chestplate", "base_chance":0.025, "quantity":[1,1]}]},
-            "demon": {"level_req":70,"hp":500,"attack_xp":500,"color":"fore-magenta","emoji":"😈","drops":[{"item_name":"demon heart","base_chance":0.04,"quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.3,"quantity":[1,2]}, {"item_name":"rune chestplate", "base_chance":0.015, "quantity":[1,1]}]},
-            "dark_dragon": {"level_req":85,"hp":1200,"attack_xp":2500,"color":"fore-red","emoji":"🐉","drops":[{"item_name":"dragon gem","base_chance":0.02,"quantity":[1,1]},{"item_name":"health potion (s)","base_chance":0.5,"quantity":[2,3]}, {"item_name":"dragon chestplate", "base_chance":0.01, "quantity":[1,1]}, {"item_name":"special dragon ore", "base_chance":0.1, "quantity":[1,2]}]}
+            "chicken":     {"level_req":1,  "hp":5,    "attack_xp":5,    "color":"fore-white",         "emoji":"🐔", "drops":[{"item_name":"egg",                "base_chance":0.9, "quantity":[1,2], "always_drop_one":true},{"item_name":"raw meat",           "base_chance":0.7, "quantity":[1,1]}]},
+            "goblin":      {"level_req":5,  "hp":20,   "attack_xp":15,   "color":"fore-green",         "emoji":"👺", "drops":[{"item_name":"goblin beads",       "base_chance":0.5, "quantity":[1,1]},{"item_name":"bread",              "base_chance":0.2, "quantity":[1,1]}, {"item_name":"bronze chestplate",  "base_chance":0.02, "quantity":[1,1]}]},
+            "wolf":        {"level_req":10, "hp":35,   "attack_xp":25,   "color":"fore-lightblack_ex", "emoji":"🐺", "drops":[{"item_name":"raw meat",           "base_chance":0.8, "quantity":[1,2]},{"item_name":"wolf fang",          "base_chance":0.3, "quantity":[1,1]}]},
+            "bear":        {"level_req":20, "hp":70,   "attack_xp":50,   "color":"fore-yellow",        "emoji":"🐻", "drops":[{"item_name":"raw meat",           "base_chance":0.9, "quantity":[2,3]},{"item_name":"bear claw",          "base_chance":0.25, "quantity":[1,1]},{"item_name":"cooked meat",        "base_chance":0.1, "quantity":[1,1]}, {"item_name":"iron chestplate",    "base_chance":0.025, "quantity":[1,1]}]},
+            "ogre":        {"level_req":30, "hp":120,  "attack_xp":90,   "color":"fore-green",         "emoji":"👹", "drops":[{"item_name":"ogre club fragment", "base_chance":0.4, "quantity":[1,1]},{"item_name":"cooked meat",        "base_chance":0.3, "quantity":[1,2]}, {"item_name":"steel chestplate",   "base_chance":0.03, "quantity":[1,1]}]},
+            "troll":       {"level_req":40, "hp":200,  "attack_xp":150,  "color":"fore-cyan",          "emoji":"🧌", "drops":[{"item_name":"troll hide",         "base_chance":0.35, "quantity":[1,1]},{"item_name":"health potion (s)",  "base_chance":0.15, "quantity":[1,1]}, {"item_name":"mithril chestplate", "base_chance":0.02, "quantity":[1,1]}]},
+            "giant":       {"level_req":55, "hp":350,  "attack_xp":280,  "color":"fore-blue",          "emoji":"🗿", "drops":[{"item_name":"giant's toe",        "base_chance":0.2, "quantity":[1,1]},{"item_name":"cooked meat",        "base_chance":0.5, "quantity":[2,4]}, {"item_name":"adamant chestplate", "base_chance":0.025, "quantity":[1,1]}]},
+            "demon":       {"level_req":70, "hp":500,  "attack_xp":500,  "color":"fore-magenta",       "emoji":"😈", "drops":[{"item_name":"demon heart",        "base_chance":0.04, "quantity":[1,1]},{"item_name":"health potion (s)",  "base_chance":0.3, "quantity":[1,2]}, {"item_name":"rune chestplate",    "base_chance":0.015, "quantity":[1,1]}]},
+            "dark_dragon": {"level_req":85, "hp":1200, "attack_xp":2500, "color":"fore-red",           "emoji":"🐉", "drops":[{"item_name":"dragon gem",         "base_chance":0.02, "quantity":[1,1]},{"item_name":"health potion (s)",  "base_chance":0.5, "quantity":[2,3]}, {"item_name":"dragon chestplate",  "base_chance":0.01, "quantity":[1,1]}, {"item_name":"special dragon ore", "base_chance":0.1, "quantity":[1,2]}]}
         };
         const ALL_MONSTER_NAMES = Object.keys(MONSTER_DATA);
         const ALL_ORE_NAMES = Object.keys(ORE_DATA);
 
         const TREE_DATA = { 
-            "normal": {"exp":25,"log":"normal logs","level":1, "emoji": "🌲"},
-            "oak": {"exp":60,"log":"oak logs","level":15, "emoji": "🌳"},
-            "willow": {"exp":90,"log":"willow logs","level":30, "emoji": "🌿"}
+            "normal": {"exp":25, "log":"normal logs", "level":1,  "emoji": "🌲"},
+            "oak":    {"exp":60, "log":"oak logs",    "level":15, "emoji": "🌳"},
+            "willow": {"exp":90, "log":"willow logs", "level":30, "emoji": "🌿"}
         };
         
         const MAX_PERK_POINTS = 25;
@@ -618,7 +618,6 @@
         let autoAttackInterval = null;
         let currentMonsterTarget = null;
         let currentMonsterHP = 0;
-        let currentSessionKillCount = 0; // Added for kill tracking
         
         let isAutoWoodcutting = false;
         let autoWoodcuttingInterval = null;
@@ -635,7 +634,7 @@
         let isAutoSmelting = false;
         let autoSmeltingInterval = null;
         let currentSmeltingTarget = null; 
-        let maxSmeltableForCurrentTarget = 0; // For auto-smelting tracking
+        let maxSmeltableForCurrentTarget = 0;
 
 
         let isAutoSmithing = false;
@@ -945,7 +944,7 @@
             showSection('actions-menu-section'); 
         }
         
-        function showShopMenu() { // MODIFIED - Button text already changed in HTML
+        function showShopMenu() { 
             document.getElementById('shop-gold-display').textContent = `Your Gold: ${playerData.gold}`;
             showSection('shop-menu-section');
         }
@@ -978,7 +977,7 @@
             }
         }
 
-        function populateEquipmentDisplay() { // MODIFIED - Lifesteal Display
+        function populateEquipmentDisplay() { 
             const eqSlots = {
                 weapon: { data: SWORD_DATA, artEl: 'eq-weapon-art', nameEl: 'eq-weapon-name' }, 
                 axe: { data: TOOL_DATA.axe, artEl: 'eq-axe-art', nameEl: 'eq-axe-name' },
@@ -1020,7 +1019,7 @@
                              details += ` <span class="fore-green">(LS: ${(effectiveLifestealChance * 100).toFixed(1)}%)</span>`;
                         }
                     }
-                    itemNameEl.innerHTML = `${titleCase(itemName)} ${details}`; // Update with all details
+                    itemNameEl.innerHTML = `${titleCase(itemName)} ${details}`;
 
                 } else {
                     itemNameEl.textContent = "None";
@@ -1152,7 +1151,7 @@
         }
 
         // --- Shop Logic ---
-        function showBuyMenu() { // Armor category button is removed in HTML
+        function showBuyMenu() { 
             document.getElementById('shop-items-list').innerHTML = ''; 
             showSection('buy-menu-section');
         }
@@ -1161,7 +1160,7 @@
             const listDiv = document.getElementById('shop-items-list');
             listDiv.innerHTML = `<div class="section-title">${categoryName} for Sale</div>`;
             
-            const sourceData = TOOL_DATA[categoryKey]; // Only tools are bought now
+            const sourceData = TOOL_DATA[categoryKey]; 
             if (!sourceData) {
                 listDiv.innerHTML += "<p>No items in this category.</p>";
                 return;
@@ -1191,8 +1190,8 @@
             }
         }
         
-        function buyItem(categoryKey, itemName) { // Logic for chestplate buying is now unused from shop
-            const sourceData = TOOL_DATA[categoryKey]; // Simplified as only tools are bought
+        function buyItem(categoryKey, itemName) { 
+            const sourceData = TOOL_DATA[categoryKey]; 
             const itemToBuy = sourceData[itemName];
 
             const skillType = itemToBuy.skill_type;
@@ -1210,7 +1209,7 @@
 
             playerData.gold -= itemToBuy.price;
             
-            const oldItemName = playerData.inventory[categoryKey]; // categoryKey will be 'axe' or 'pickaxe'
+            const oldItemName = playerData.inventory[categoryKey]; 
             if (oldItemName && oldItemName !== "none" && sourceData[oldItemName]) {
                 const oldItemData = sourceData[oldItemName];
                 const sellBackPrice = Math.floor(oldItemData.price * 0.4);
@@ -1516,28 +1515,26 @@
             for (const ore in bar.recipe) {
                 const oreOnHand = playerData.inventory[ore] || 0;
                 const oreNeededPerSet = bar.recipe[ore];
-                if (oreNeededPerSet === 0) continue; // Avoid division by zero if recipe is malformed
+                if (oreNeededPerSet === 0) continue;
                 maxSets = Math.min(maxSets, Math.floor(oreOnHand / oreNeededPerSet));
             }
             return maxSets === Infinity ? 0 : maxSets;
         }
 
-
-        // Smelting // MODIFIED - showSmeltingMenu, selectBarForSmelting, startAutoSmelting, singleSmeltAction
         function showSmeltingMenu() {
-            stopAllAutoActions(); // Stop any ongoing auto actions, including smelting itself if menu is re-entered
+            if (!isAutoSmelting) { // Only fully stop and clear if not actively auto-smelting
+                stopAllAutoActions();
+                currentSmeltingTarget = null;
+            }
             const listDiv = document.getElementById('available-bars-to-smelt');
             listDiv.innerHTML = '<div class="section-title">Available Bars to Smelt</div>';
-            document.getElementById('smelting-controls').classList.add('hidden');
-            // currentSmeltingTarget should persist if auto-smelting was active and we are just refreshing the view
-            // However, for simplicity, we'll clear it if not auto-smelting. If auto-smelting, it will be set by selectBar.
-            if (!isAutoSmelting) {
-                 currentSmeltingTarget = null;
+             if (!isAutoSmelting) { // Hide controls if not auto-smelting
+                document.getElementById('smelting-controls').classList.add('hidden');
             }
 
 
             const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
-            let canSmeltAnythingAtAll = false; // Checks if any recipe is potentially available
+            let canSmeltAnythingAtAll = false; 
 
             for (const barName in BAR_DATA) {
                 const bar = BAR_DATA[barName];
@@ -1553,7 +1550,7 @@
                 const levelReqColor = bsLvl >= bar.level_req ? 'fore-green' : 'fore-red';
                 const itemDiv = document.createElement('div');
                 itemDiv.className = `smeltable-item-list item ${bar.color}`;
-                itemDiv.id = `smeltable-item-div-${barName.replace(/\s+/g, '-')}`; // Unique ID for updates
+                itemDiv.id = `smeltable-item-div-${barName.replace(/\s+/g, '-')}`; 
                 
                 itemDiv.innerHTML = `
                     ${bar.emoji} ${titleCase(barName)} (XP: ${bar.xp_gain})
@@ -1575,25 +1572,35 @@
             if (!canSmeltAnythingAtAll && Object.keys(BAR_DATA).length > 0) listDiv.innerHTML += "<p>No bars you can currently smelt (check level & materials).</p>";
             else if (Object.keys(BAR_DATA).length === 0) listDiv.innerHTML += "<p>No bar recipes known.</p>";
             
-            // If returning to menu while auto-smelting, re-select the current target to show controls
             if (isAutoSmelting && currentSmeltingTarget) {
-                selectBarForSmelting(currentSmeltingTarget, true); // Pass a flag to skip logging
+                 const btn = document.getElementById('auto-smelt-btn');
+                 btn.textContent = `Stop Auto-Smelting ${titleCase(currentSmeltingTarget)}`;
+                 btn.classList.add('red');
+                 document.getElementById('smelting-controls').classList.remove('hidden');
+            } else if (currentSmeltingTarget) { // If a target is selected but not auto-smelting
+                const btn = document.getElementById('auto-smelt-btn');
+                btn.textContent = `Auto-Smelt ${titleCase(currentSmeltingTarget)}`;
+                btn.classList.remove('red');
+                document.getElementById('smelting-controls').classList.remove('hidden');
             }
+
 
             showSection('smelting-section');
         }
 
-        function selectBarForSmelting(barName, isReselect = false) {
+        function selectBarForSmelting(barName) {
+            if (isAutoSmelting && currentSmeltingTarget !== barName) {
+                logMessage("Stop current auto-smelting before selecting a new bar.", "fore-yellow");
+                return;
+            }
             currentSmeltingTarget = barName;
             maxSmeltableForCurrentTarget = calculateMaxCraftableForBar(barName);
 
-            if (!isReselect) { // Only log if it's a new manual selection
-                 logMessage(`Selected ${titleCase(barName)} for smelting. Max craftable: ${maxSmeltableForCurrentTarget}`, "fore-cyan");
-            }
-
+            logMessage(`Selected ${titleCase(barName)} for smelting. Max craftable: ${maxSmeltableForCurrentTarget}`, "fore-cyan");
+            
             const btn = document.getElementById('auto-smelt-btn');
-            btn.textContent = isAutoSmelting ? `Stop Auto-Smelting ${titleCase(barName)}` : `Auto-Smelt ${titleCase(barName)}`;
-            btn.classList.toggle('red', isAutoSmelting);
+            btn.textContent = `Auto-Smelt ${titleCase(barName)}`;
+            btn.classList.remove('red'); // Ensure red is removed if was previously stopping
             document.getElementById('smelting-controls').classList.remove('hidden');
         }
 
@@ -1628,6 +1635,8 @@
             btn.textContent = `Stop Auto-Smelting ${titleCase(currentSmeltingTarget)}`;
             btn.classList.add('red');
             logMessage(`Auto-smelting ${titleCase(currentSmeltingTarget)}... (Up to ${maxSmeltableForCurrentTarget} times)`, "fore-cyan");
+            
+            if (autoSmeltingInterval) clearInterval(autoSmeltingInterval); // Clear previous interval just in case
             autoSmeltingInterval = setInterval(singleSmeltAction, BASE_CRAFT_INTERVAL);
         }
 
@@ -1637,11 +1646,10 @@
                 clearInterval(autoSmeltingInterval);
                 autoSmeltingInterval = null;
                 const btn = document.getElementById('auto-smelt-btn');
-                // Ensure button text reflects non-auto state only if a target is still selected
                 if (currentSmeltingTarget) {
                     btn.textContent = `Auto-Smelt ${titleCase(currentSmeltingTarget)}`;
                     btn.classList.remove('red');
-                } else { // If no target (e.g. ran out completely and it was cleared)
+                } else { 
                     btn.textContent = 'Start Auto-Smelting';
                     btn.classList.remove('red');
                     document.getElementById('smelting-controls').classList.add('hidden');
@@ -1657,16 +1665,15 @@
             }
 
             const barData = BAR_DATA[currentSmeltingTarget];
-            maxSmeltableForCurrentTarget = calculateMaxCraftableForBar(currentSmeltingTarget); // Recalculate before each craft
+            maxSmeltableForCurrentTarget = calculateMaxCraftableForBar(currentSmeltingTarget); 
 
             if (maxSmeltableForCurrentTarget <= 0) {
                 logMessage(`Ran out of materials for ${titleCase(currentSmeltingTarget)}. Stopping.`, "fore-red");
                 stopAutoSmelting();
-                showSmeltingMenu(); // Refresh the menu to show 0 craftable
+                showSmeltingMenu(); 
                 return;
             }
 
-            // Consume materials
             for(const ore in barData.recipe) {
                 playerData.inventory[ore] -= barData.recipe[ore];
             }
@@ -1688,37 +1695,40 @@
             savePlayerData();
             updateHud();
             
-            // Update the specific item's display in the smelting menu
-            const itemDivId = `smeltable-item-div-${currentSmeltingTarget.replace(/\s+/g, '-')}`;
-            const itemDiv = document.getElementById(itemDivId);
-            if (itemDiv) {
-                 let recipeString = "";
-                for(const ore in barData.recipe) {
-                    recipeString += `${barData.recipe[ore]} ${titleCase(ore)} (${playerData.inventory[ore] || 0}), `;
+            // Update the specific item's display in the smelting menu (only max craftable and ore counts in recipe string)
+            const itemDivToUpdate = document.getElementById(`smeltable-item-div-${currentSmeltingTarget.replace(/\s+/g, '-')}`);
+            if (itemDivToUpdate) {
+                let newRecipeString = "";
+                 for(const ore in barData.recipe) {
+                    newRecipeString += `${barData.recipe[ore]} ${titleCase(ore)} (${playerData.inventory[ore] || 0}), `;
                 }
-                recipeString = recipeString.slice(0, -2);
-                const newMaxCraftable = calculateMaxCraftableForBar(currentSmeltingTarget);
+                newRecipeString = newRecipeString.slice(0, -2);
+                const newMaxCraftableDisplay = calculateMaxCraftableForBar(currentSmeltingTarget);
                 const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
                 const levelReqColor = bsLvl >= barData.level_req ? 'fore-green' : 'fore-red';
 
-                itemDiv.innerHTML = `
+                itemDivToUpdate.innerHTML = `
                     ${barData.emoji} ${titleCase(currentSmeltingTarget)} (XP: ${barData.xp_gain})
-                    <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${barData.level_req} BS</span></small>
-                    <br><small>Max craftable: <span id="max-craftable-${currentSmeltingTarget.replace(/\s+/g, '-')}">${newMaxCraftable}</span></small>
+                    <br><small>Requires: ${newRecipeString} - <span class="${levelReqColor}">Lvl: ${barData.level_req} BS</span></small>
+                    <br><small>Max craftable: <span id="max-craftable-${currentSmeltingTarget.replace(/\s+/g, '-')}">${newMaxCraftableDisplay}</span></small>
                 `;
-                if (newMaxCraftable === 0 || bsLvl < barData.level_req) { // Disable if cannot make more
-                    itemDiv.style.cursor = 'not-allowed';
-                    itemDiv.title = bsLvl < barData.level_req ? 'BS level too low' : 'Not enough materials';
-                    itemDiv.style.opacity = "0.6";
-                    itemDiv.onclick = null; // Remove click listener
+                 if (newMaxCraftableDisplay === 0 || bsLvl < barData.level_req) {
+                    itemDivToUpdate.style.cursor = 'not-allowed';
+                    itemDivToUpdate.title = bsLvl < barData.level_req ? 'BS level too low' : 'Not enough materials';
+                    itemDivToUpdate.style.opacity = "0.6";
+                    itemDivToUpdate.onclick = null; 
+                } else { // Ensure it's clickable if it becomes craftable again (e.g. level up)
+                    itemDivToUpdate.style.cursor = 'pointer';
+                    itemDivToUpdate.title = '';
+                    itemDivToUpdate.style.opacity = "1";
+                    itemDivToUpdate.onclick = () => selectBarForSmelting(currentSmeltingTarget);
                 }
             }
 
-
-            if (calculateMaxCraftableForBar(currentSmeltingTarget) <= 0) { // Check again after crafting
-                 logMessage(`No more materials to smelt ${titleCase(currentSmeltingTarget)}. Auto-smelting will stop.`, "fore-yellow");
+            if (calculateMaxCraftableForBar(currentSmeltingTarget) <= 0) { 
+                 logMessage(`No more materials to smelt ${titleCase(currentSmeltingTarget)}. Auto-smelting stopped.`, "fore-yellow");
                  stopAutoSmelting();
-                 showSmeltingMenu(); // Refresh to reflect the final state
+                 // showSmeltingMenu(); // Optionally refresh the whole menu
             }
         }
 
@@ -1772,6 +1782,10 @@
         }
         
         function selectItemForSmithing(itemName) {
+             if (isAutoSmithing && currentSmithingTarget !== itemName) {
+                logMessage("Stop current auto-smithing before selecting a new item.", "fore-yellow");
+                return;
+            }
             currentSmithingTarget = itemName; 
             logMessage(`Selected ${titleCase(itemName)} for smithing.`, "fore-cyan");
             const btn = document.getElementById('auto-smith-btn');
@@ -1810,6 +1824,7 @@
             btn.textContent = `Stop Auto-Smithing ${titleCase(currentSmithingTarget)}`;
             btn.classList.add('red');
             logMessage(`Auto-smithing ${titleCase(currentSmithingTarget)}...`, "fore-cyan");
+            if(autoSmithingInterval) clearInterval(autoSmithingInterval);
             autoSmithingInterval = setInterval(singleSmithAction, BASE_CRAFT_INTERVAL);
         }
 
@@ -1819,8 +1834,14 @@
                 clearInterval(autoSmithingInterval);
                 autoSmithingInterval = null;
                 const btn = document.getElementById('auto-smith-btn');
-                btn.textContent = currentSmithingTarget ? `Auto-Smith ${titleCase(currentSmithingTarget)}` : `Start Auto-Smithing`;
-                btn.classList.remove('red');
+                if(currentSmithingTarget) {
+                    btn.textContent = `Auto-Smith ${titleCase(currentSmithingTarget)}`;
+                    btn.classList.remove('red');
+                } else {
+                    btn.textContent = 'Start Auto-Smithing';
+                    btn.classList.remove('red');
+                    document.getElementById('smithing-controls').classList.add('hidden');
+                }
                 logMessage("Auto-smithing stopped.", "fore-yellow");
             }
         }
@@ -1859,11 +1880,11 @@
             handleLevelUp("blacksmithing_xp", oldLevel);
             savePlayerData();
             updateHud();
-            showSmithingMenu(); // Refresh the list to update material counts
+            showSmithingMenu(); 
         }
 
 
-        // --- Action: Combat --- // MODIFIED - singleCombatRound
+        // --- Action: Combat --- 
         function showCombat() {
             stopAllAutoActions();
             const monsterListDiv = document.getElementById('available-monsters');
@@ -1912,11 +1933,11 @@
             if (playerData.hp <= 0) { logMessage("You are too weak to fight.", "fore-red"); return; }
             isAutoAttacking = true;
             document.getElementById('auto-attack-btn').textContent = `Stop Auto-Attacking ${titleCase(monsterName)}`;
-            currentSessionKillCount = 0; // Reset kill count for new session
             document.getElementById('auto-attack-btn').classList.add('red');
             logMessage(`Auto-attacking ${titleCase(monsterName)}...`, "fore-red");
             
             prepareCombatArena(monsterName); 
+            if(autoAttackInterval) clearInterval(autoAttackInterval);
             autoAttackInterval = setInterval(singleCombatRound, BASE_COMBAT_INTERVAL); 
         }
 
@@ -1935,22 +1956,21 @@
         function prepareCombatArena(monsterName, isRespawn = false, originalColorIfRespawn = null) {
             const monster = MONSTER_DATA[monsterName];
             currentMonsterHP = monster.hp;
-            const killCountDisplay = currentSessionKillCount > 0 ? ` <span class="fore-yellow">x${currentSessionKillCount}</span>` : '';
             const monsterDisplayEl = document.getElementById('monster-display-combat');
             const monsterHpDisplayEl = document.getElementById('monster-hp-combat');
 
             if (isRespawn) {
-                monsterDisplayEl.innerHTML = `<span class="emoji">✨</span>${killCountDisplay} Spawning ${titleCase(monsterName)}...`;
-                monsterDisplayEl.className = `monster-display ${originalColorIfRespawn || monster.color} fore-yellow`; // Use original color, add yellow
-                monsterHpDisplayEl.textContent = `---/${monster.hp}`; // Indicate loading
+                monsterDisplayEl.innerHTML = `<span class="emoji">✨</span> Spawning ${titleCase(monsterName)}...`;
+                monsterDisplayEl.className = `monster-display ${originalColorIfRespawn || monster.color} fore-yellow`; 
+                monsterHpDisplayEl.textContent = `---/${monster.hp}`; 
 
                 setTimeout(() => {
-                    monsterDisplayEl.innerHTML = `<span class="emoji">${monster.emoji}</span>${killCountDisplay} ${titleCase(monsterName)}`;
-                    monsterDisplayEl.className = `monster-display ${monster.color}`; // Restore normal class
+                    monsterDisplayEl.innerHTML = `<span class="emoji">${monster.emoji}</span> ${titleCase(monsterName)}`;
+                    monsterDisplayEl.className = `monster-display ${monster.color}`; 
                     monsterHpDisplayEl.textContent = `${currentMonsterHP}/${monster.hp}`;
-                }, 750); // 0.75s delay for spawning message
+                }, 750); 
             } else {
-                monsterDisplayEl.innerHTML = `<span class="emoji">${monster.emoji}</span>${killCountDisplay} ${titleCase(monsterName)}`;
+                monsterDisplayEl.innerHTML = `<span class="emoji">${monster.emoji}</span> ${titleCase(monsterName)}`;
                 monsterDisplayEl.className = `monster-display ${monster.color}`;
                 monsterHpDisplayEl.textContent = `${currentMonsterHP}/${monster.hp}`;
             }
@@ -2046,25 +2066,23 @@
 
             if (currentMonsterHP <= 0) {
                 logMessage(`${titleCase(currentMonsterTarget)} defeated!`, monster.color);
-                playSound(monsterKillSound); 
-                currentSessionKillCount++; // Increment kill count for this session
+                playSound(monsterKillSound);
+
+                const monsterDisplayEl = document.getElementById('monster-display-combat');
+                const originalMonsterNameColor = monster.color; 
+                monsterDisplayEl.innerHTML = `<span class="emoji">💀</span> ${titleCase(currentMonsterTarget)} Defeated!`;
+                monsterDisplayEl.className = `monster-display fore-lightred_ex`; 
+                document.getElementById('monster-hp-combat').textContent = `0/${monster.hp}`;
+
                 const oldAtkLvl = playerAtkLvl;
                 playerData.attack_xp += monster.attack_xp;
                 grantUniversalXP(monster.attack_xp);
                 logMessage(`Gained ${monster.attack_xp} Attack XP!`, "fore-green");
                 
-                // REMOVED HP on kill
-                // const hpOnKill = 3; 
-                // const oldHpKillHeal = playerData.hp;
-                // playerData.hp = Math.min(playerMaxHp, playerData.hp + hpOnKill);
-                // if (playerData.hp > oldHpKillHeal) {
-                //      logMessage(`Recovered ${playerData.hp - oldHpKillHeal} HP from kill!`, "fore-cyan");
-                // }
-
                 handleLevelUp("attack_xp", oldAtkLvl);
 
                 monster.drops.forEach(drop => {
-                    const isRare = drop.item_name.includes("gem") || drop.item_name.includes("heart") || ARMOR_DATA[drop.item_name]; // Sword check removed
+                    const isRare = drop.item_name.includes("gem") || drop.item_name.includes("heart") || ARMOR_DATA[drop.item_name];
                     const bonus = (playerAtkLvl * (isRare ? 0.001 : 0.005));
                     const capBonus = isRare ? 0.05 : 0.20;
                     const effBonus = Math.min(bonus, capBonus);
@@ -2086,12 +2104,18 @@
 
                 savePlayerData();
                 updateHud();
+
                 if (!isAutoAttacking) { 
                     currentMonsterTarget = null; 
-                    document.getElementById('combat-controls').classList.add('hidden');
-                    showCombat(); 
+                    setTimeout(() => {
+                        document.getElementById('combat-controls').classList.add('hidden');
+                        document.getElementById('combat-arena').classList.add('hidden'); 
+                        showCombat(); 
+                    }, 1200); 
                 } else {
-                     prepareCombatArena(currentMonsterTarget, true, monster.color); // Respawn with updated kill count
+                    setTimeout(() => {
+                         prepareCombatArena(currentMonsterTarget, true, originalMonsterNameColor); 
+                    }, 1200); 
                 }
                 return; 
             }
@@ -2223,6 +2247,10 @@
         }
         
         function selectRawItemForCooking(rawItemName) {
+             if (isAutoCooking && currentCookingTarget !== rawItemName) {
+                logMessage("Stop current auto-cooking before selecting a new item.", "fore-yellow");
+                return;
+            }
             currentCookingTarget = rawItemName;
             logMessage(`Selected ${titleCase(rawItemName)}. Click 'Auto-Cook' to begin.`, "fore-cyan");
             const btn = document.getElementById('auto-cook-btn');
@@ -2256,6 +2284,7 @@
             btn.textContent = `Stop Auto-Cooking ${titleCase(currentCookingTarget)}`;
             btn.classList.add('red');
             logMessage(`Auto-cooking ${titleCase(currentCookingTarget)}...`, "fore-cyan");
+            if(autoCookingInterval) clearInterval(autoCookingInterval);
             autoCookingInterval = setInterval(singleCookAction, BASE_CRAFT_INTERVAL);
         }
 
@@ -2265,8 +2294,14 @@
                 clearInterval(autoCookingInterval);
                 autoCookingInterval = null;
                 const btn = document.getElementById('auto-cook-btn');
-                btn.textContent = currentCookingTarget ? `Auto-Cook ${titleCase(currentCookingTarget)}` : `Start Auto-Cooking`;
-                btn.classList.remove('red');
+                if (currentCookingTarget) {
+                    btn.textContent = `Auto-Cook ${titleCase(currentCookingTarget)}`;
+                     btn.classList.remove('red');
+                } else {
+                    btn.textContent = `Start Auto-Cooking`;
+                    btn.classList.remove('red');
+                    document.getElementById('cooking-controls').classList.add('hidden');
+                }
                 logMessage("Auto-cooking stopped.", "fore-yellow");
             }
         }
@@ -2320,10 +2355,18 @@
                             itemDiv.onclick = null; 
                             itemDiv.style.cursor = 'not-allowed';
                             itemDiv.style.opacity = "0.6";
+                         } else { // Re-enable if conditions met
+                            itemDiv.onclick = () => selectRawItemForCooking(currentCookingTarget);
+                            itemDiv.style.cursor = 'pointer';
+                            itemDiv.style.opacity = "1";
                          }
                          break;
                      }
                  }
+            }
+             if (playerData.inventory[currentCookingTarget] <= 0) {
+                logMessage(`Ran out of ${titleCase(currentCookingTarget)} to cook. Auto-cooking stopped.`, "fore-yellow");
+                stopAutoCooking();
             }
         }
 
@@ -2392,7 +2435,7 @@
             savePlayerData();
             updateHud();
             showPerkTreeMenu(); 
-            populateEquipmentDisplay(); // Re-populate equipment if perks affect weapon stats
+            populateEquipmentDisplay(); 
         }
 
 
@@ -2447,7 +2490,7 @@
 
             } else if (cheatCode === "perkmeup") {
                 playerData.perk_points_earned += 5;
-                 logMessage("+5 Perk Points! Total XP may not reflect this.", "fore-magenta"); // Clarify total XP not directly boosted
+                 logMessage("+5 Perk Points! Total XP may not reflect this.", "fore-magenta"); 
             }
             else {
                 logMessage("Invalid cheat code.", "fore-red");
