@@ -334,15 +334,53 @@
         #blacksmithing-menu-section .btn-smith-weapons { background-color: #8d6e63; border-color: #7b5f55; }
         #blacksmithing-menu-section .btn-smith-weapons:hover { background-color: #a18278; }
 
-        #available-structures-list .item {
-            border-left: 5px solid #569cd6;
+        /* New Styles for Build Structures Section */
+        .structure-item-card {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #3b475c; /* Slightly darker, more distinct border */
+            border-left: 5px solid #63b3ed; /* Accent color */
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #2a313f; /* Darker card background */
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        #available-structures-list .item h3 {
+        .structure-item-card h3 { /* Name and Emoji */
             margin-top: 0;
-            color: #569cd6;
+            margin-bottom: 10px;
+            color: #90cdf4; /* Lighter blue for title */
+            display: flex;
+            align-items: center;
+            font-size: 1.2em;
         }
-        #available-structures-list .item p em {
-            color: #6a9955; 
+        .structure-item-card h3 .emoji {
+            font-size: 1.6em; /* Larger emoji */
+            margin-right: 12px;
+        }
+        .structure-item-card .built-status {
+            font-size: 0.85em;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+        .structure-item-card .description { /* Perk description */
+            font-style: italic;
+            color: #b0c4de; /* Lighter grey/blue for description */
+            margin-bottom: 12px;
+            font-size: 0.95em;
+        }
+        .structure-item-card .requirements-block { /* Cost and Prerequisite */
+            background-color: #212733; /* Even darker for requirements block */
+            padding: 12px;
+            border-radius: 3px;
+            margin-bottom: 12px;
+            font-size: 0.9em;
+        }
+        .structure-item-card .requirements-block h4 { margin-top: 0; margin-bottom: 8px; color: #a0aec0; }
+        .structure-item-card .requirements-block p { margin: 4px 0; color: #e2e8f0; }
+        .structure-item-card .requirements-block .cost-item-name { color: #cbd5e0; }
+        .structure-item-card .actions { /* Button or Locked Text */
+            margin-top: 10px;
         }
         .glow-green-temp {
             background-color: #0e9c18 !important; /* Strong green */
@@ -3172,51 +3210,63 @@
             let allBuilt = true; 
             for (const structureId in STRUCTURE_DATA) {
                 const structure = STRUCTURE_DATA[structureId];
-                const div = document.createElement('div');
-                div.className = 'item'; 
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'structure-item-card'; 
 
-                let costString = "Cost: ";
                 let resourcesMet = true;
+                let costHtml = "<h4>Cost:</h4>";
                 for (const resourceName in structure.cost) {
                     const needed = structure.cost[resourceName];
                     const possessed = playerData.inventory[resourceName] || 0;
-                    costString += `${needed} ${titleCase(resourceName)} (${possessed.toLocaleString()}), `;
+                    const color = possessed >= needed ? 'fore-green' : 'fore-red';
+                    costHtml += `<p><span class="cost-item-name">${titleCase(resourceName)}:</span> ${needed.toLocaleString()} (<span class="${color}">${possessed.toLocaleString()}</span>)</p>`;
                     if (possessed < needed) {
                         resourcesMet = false;
                     }
                 }
-                costString = costString.slice(0, -2); 
 
                 const requirementsMet = !structure.requires_structure || playerData.built_structures[structure.requires_structure];
                 const isAlreadyBuilt = playerData.built_structures[structureId];
 
                 if (!isAlreadyBuilt) allBuilt = false;
 
-                div.innerHTML = `
-                    <h3>${structure.emoji} ${structure.name} ${isAlreadyBuilt ? "<span class='fore-green'>(Built)</span>" : ""}</h3>
-                    <p><em>${structure.perk_desc}</em></p>
-                    <p>${costString}</p>
-                    ${structure.requires_structure ? `<p>Requires: ${STRUCTURE_DATA[structure.requires_structure].name} Built</p>` : ""}
-                `;
+                let prerequisiteHtml = "";
+                if (structure.requires_structure) {
+                    const reqStruct = STRUCTURE_DATA[structure.requires_structure];
+                    const reqStatusText = playerData.built_structures[structure.requires_structure] ? "<span class='fore-green'>(Built)</span>" : "<span class='fore-red'>(Not Built)</span>";
+                    prerequisiteHtml = `<h4>Prerequisite:</h4><p>${reqStruct.name} ${reqStatusText}</p>`;
+                }
 
+                let actionsHtml = "";
                 if (!isAlreadyBuilt && requirementsMet) {
                     const buildButton = document.createElement('button');
                     buildButton.textContent = `Build ${structure.name}`;
                     if (resourcesMet) {
                         buildButton.onclick = () => buildStructure(structureId);
+                        actionsHtml = buildButton.outerHTML;
                     } else {
                         buildButton.disabled = true;
                         buildButton.title = "Not enough resources.";
+                        actionsHtml = buildButton.outerHTML;
                     }
-                    div.appendChild(buildButton);
                     canBuildSomething = true;
                 } else if (!isAlreadyBuilt && !requirementsMet) {
-                    const lockedText = document.createElement('p');
-                    lockedText.className = 'fore-red';
-                    lockedText.textContent = `Locked. Build ${STRUCTURE_DATA[structure.requires_structure].name} first.`;
-                    div.appendChild(lockedText);
+                    actionsHtml = `<p class="fore-red">Locked. Build ${STRUCTURE_DATA[structure.requires_structure].name} first.</p>`;
                 }
-                listDiv.appendChild(div);
+
+                cardDiv.innerHTML = `
+                    <h3>
+                        <span class="emoji">${structure.emoji}</span>
+                        ${structure.name}
+                        ${isAlreadyBuilt ? "<span class='built-status fore-green'>(Built)</span>" : ""}
+                    </h3>
+                    <p class="description">${structure.perk_desc}</p>
+                    <div class="requirements-block">
+                        ${costHtml}
+                        ${prerequisiteHtml}
+                    </div>
+                    <div class="actions">${actionsHtml}</div>`;
+                listDiv.appendChild(cardDiv);
             }
             if (!canBuildSomething && !allBuilt) {
                 listDiv.innerHTML += "<p>No new structures available to build at this time (check resources and requirements).</p>";
