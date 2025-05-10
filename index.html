@@ -221,7 +221,7 @@
         .shop-item:hover, .inv-item-equip:hover, .cookable-item-list:hover, .food-item-list:hover, .smeltable-item-list:hover, .smithable-item-list:hover {
             background-color: #3a3d41;
         }
-        .shop-item .price { float: right; color: #dcdcaa; }
+        .shop-item .price { color: #dcdcaa; margin-left: auto; /* Pushes price to the right in flex */ }
         .shop-item .req { font-size: 0.9em; color: #888; }
 
         .hud-item {
@@ -389,6 +389,63 @@
             color: white !important;
             transition: background-color 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
         }
+        /* New Styles for Perk Tree Section */
+        .perk-item-card {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #4a3b5c; /* Perk-themed border */
+            border-left: 5px solid #c586c0; /* Perk accent color (magenta) */
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #2d2a3f; /* Darker purple/magenta card background */
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .perk-item-card .perk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .perk-item-card .perk-name {
+            color: #d993d3; /* Lighter magenta for title */
+            font-size: 1.15em;
+            font-weight: bold;
+        }
+        .perk-item-card .perk-cost-display {
+            background-color: #1c1a25;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            color: #e2e8f0;
+        }
+        .perk-item-card .perk-description {
+            color: #b0c4de;
+            margin-top: 2px;
+            margin-bottom: 2px; /* Further reduced spacing below description */
+            font-size: 0.95em;
+        }
+        .perk-item-card .perk-status-action { margin-top: 2px; } /* Further reduced spacing above action/button */
+        .perk-item-card .perk-status-action { margin-bottom: 2px; }
+        .perk-item-card .fore-green { margin: 2px;}
+        .perk-item-card .perk-status-action .status-tet { font-style: italic; font-size: 0.9em; }
+        .perk-item-card.activated-perk-card { border-left-color: #6a9955; background-color: #2a3f2e; } /* Greenish for activated */
+        .perk-item-card.activated-perk-card .perk-name { color: #8cc877; }
+        /* Style for the activate button within perk cards */
+        .perk-item-card .perk-status-action button {
+            background-color: #c586c0; /* Match .btn-perks base color */
+            border: 1px solid #b373ac;   /* Match .btn-perks base border color */
+            padding: 4px 5px; /* Further reduced padding to make button more compact */
+            font-size: 0.9em;  /* Make font smaller */
+            font-weight: bold; /* Ensure font weight is consistent */
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; /* Smooth transition */
+        }
+        .perk-item-card .perk-status-action button:hover {
+            background-color: #d993d3; /* Match .btn-perks hover color */
+            border-color: #d993d3;   /* Lighter border on hover */
+            transform: scale(1.03); /* Slight zoom effect on hover */
+        }
+        .perk-item-card.disabled-perk-card { opacity: 0.7; }
 
     </style>
 </head>
@@ -1614,8 +1671,12 @@
 
                 const displayName = (categoryKey === 'axe' || categoryKey === 'pickaxe') ? titleCase(itemName + " " + categoryKey) : titleCase(itemName);
                 const itemDisplayColorClass = item.color || 'fore-white'; // Get color from item data or default
-                itemDiv.innerHTML = `${item.emoji || ''} <span class="${itemDisplayColorClass}">${displayName}</span> <span class="price">${actualPrice}g</span>
-                                     <br><small class="req">Req Lvl: ${item.level_req} ${titleCase(item.skill_type || categoryKey)}</small>`;
+                itemDiv.innerHTML = `
+                    <div class="shop-item-details">
+                        ${item.emoji || ''} <span class="${itemDisplayColorClass}">${displayName}</span>
+                        <br><small class="req">Req Lvl: ${item.level_req} ${titleCase(item.skill_type || categoryKey)}</small>
+                    </div>
+                    <span class="price">${actualPrice}g</span>`;
                 itemDiv.onclick = () => buyItem(categoryKey, itemName);
                 listDiv.appendChild(itemDiv);
             }
@@ -1664,6 +1725,17 @@
             
             logMessage(`Bought and equipped ${titleCase(itemName)} for ${actualPrice}g!`, "fore-green");
             savePlayerData();
+
+            // Visual feedback for successful purchase
+            if (categoryKey === 'axe' || categoryKey === 'pickaxe') {
+                const boughtButtonId = `shop-item-buy-${categoryKey}-${itemName.replace(/\s+/g, '-')}`;
+                const boughtButton = document.getElementById(boughtButtonId);
+                if (boughtButton) {
+                    boughtButton.classList.add('glow-green-temp');
+                    setTimeout(() => boughtButton.classList.remove('glow-green-temp'), 500); // Glow for 0.5 seconds
+                }
+            }
+
             updateHud();
             populateEquipmentDisplay(); 
             populateInventoryDisplay();
@@ -1775,7 +1847,11 @@
                 itemDiv.className = 'shop-item item'; // Using shop-item for consistency
 
                 // Mimic inventory display structure for consistency
-                itemDiv.innerHTML = `<span class="inv-item-emoji">${emoji}</span><span class="item-name ${itemColorClass}">${displayFullName}:</span> <span class="item-quantity">${quantity.toLocaleString()}</span> <span class="price">${actualSellPrice}g each</span>`;
+                itemDiv.innerHTML = `
+                    <div class="shop-item-details">
+                        <span class="inv-item-emoji">${emoji}</span><span class="item-name ${itemColorClass}">${displayFullName}:</span> <span class="item-quantity">${quantity.toLocaleString()}</span>
+                    </div>
+                    <span class="price">${actualSellPrice}g each</span>`;
                 itemDiv.onclick = () => sellItem(inventoryKey, quantity, baseSellPrice); // Pass original inventoryKey and baseSellPrice
                 listDiv.appendChild(itemDiv);
             }
@@ -3405,41 +3481,52 @@
             perkListDiv.innerHTML = "";
             const availablePoints = (playerData.perk_points_earned || 0) - (playerData.perk_points_spent || 0);
             document.getElementById('available-perk-points').textContent = availablePoints;
-
+        
             for (const perkId in PERK_DATA) {
                 const perk = PERK_DATA[perkId];
-                const perkDiv = document.createElement('div');
-                perkDiv.className = 'perk-entry';
-                
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'perk-item-card';
+        
                 const isUnlocked = playerData.active_perks[perkId];
                 const canAfford = availablePoints >= perk.cost;
                 const reqsMet = perk.requires.every(reqId => playerData.active_perks[reqId]);
-
-                let statusText = "";
+        
+                let statusActionHtml = "";
+        
                 if (isUnlocked) {
-                    perkDiv.classList.add('activated-perk');
-                    statusText = " (Activated)";
+                    cardDiv.classList.add('activated-perk-card');
+                    statusActionHtml = `<p class="status-text fore-green">Activated</p>`;
                 } else if (!reqsMet) {
-                    perkDiv.classList.add('disabled-perk');
-                    statusText = " (Locked - Requires: " + perk.requires.map(r => PERK_DATA[r] ? PERK_DATA[r].name : r).join(', ') + ")";
+                    cardDiv.classList.add('disabled-perk-card');
+                    const reqNames = perk.requires.map(r => PERK_DATA[r] ? PERK_DATA[r].name : r).join(', ');
+                    statusActionHtml = `<p class="status-text fore-red">Locked. Requires: ${reqNames}</p>`;
                 } else if (!canAfford) {
-                    perkDiv.classList.add('disabled-perk');
-                    statusText = " (Locked - Not enough points)";
+                    cardDiv.classList.add('disabled-perk-card');
+                    statusActionHtml = `<p class="status-text fore-yellow">Locked. Not enough Perk Points.</p>`;
                 } else {
-                    perkDiv.onclick = () => activatePerk(perkId);
+                    const activateButton = document.createElement('button');
+                    activateButton.textContent = `Activate (${perk.cost} PP)`;
+                    activateButton.onclick = () => activatePerk(perkId);
+                    statusActionHtml = activateButton.outerHTML;
                 }
-
-                perkDiv.innerHTML = `
-                    <span class="perk-name">${perk.name}</span>
-                    <span class="perk-cost">Cost: ${perk.cost} PP</span>
-                    <div class="perk-desc">${perk.description}${statusText}</div>
+        
+                cardDiv.innerHTML = `
+                    <div class="perk-header">
+                        <span class="perk-name">${perk.name}</span>
+                        <span class="perk-cost-display">Cost: ${perk.cost} PP</span>
+                    </div>
+                    <p class="perk-description">${perk.description}</p>
+                    <div class="perk-status-action">
+                        ${statusActionHtml}
+                    </div>
                 `;
-                perkListDiv.appendChild(perkDiv);
+                perkListDiv.appendChild(cardDiv);
             }
             showSection('perk-tree-section');
         }
 
         function activatePerk(perkId) {
+            stopAllAutoActions(); // Good practice to stop actions if a perk might affect them
             const perk = PERK_DATA[perkId];
             const availablePoints = (playerData.perk_points_earned || 0) - (playerData.perk_points_spent || 0);
 
