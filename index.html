@@ -224,9 +224,6 @@
             <button onclick="showShopMenu()">🛒Shop</button>
             <button onclick="showPerkTreeMenu()">🌟 Perks</button>
             <button class="red" onclick="quitGame()">🚪Quit (Save & Close)</button>
-            <hr>
-            <button class="red" style="margin-top: 10px;" onclick="confirmResetGame()">Reset All Progress</button>
-            <hr>
             <div><input type="text" id="cheat-input" placeholder="Cheat code"><button onclick="applyCheat()">Apply</button></div>
         </div>
 
@@ -381,6 +378,10 @@
 
 
         <div class="log-area" id="log-area">Welcome to the Adventure!</div>
+
+        <div style="text-align: center; padding-top: 20px; border-top: 1px solid #444; margin-top:20px;">
+            <button class="red" onclick="confirmResetGame()">Reset All Progress</button>
+        </div>
     </div>
 
     <script>
