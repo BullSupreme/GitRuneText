@@ -1,3 +1,4 @@
+Direct	Hex Entity	Description	Category Suggestion
 🌲	&#x1F332;	Evergreen Tree	Woodcutting, Nature
 🌳	&#x1F333;	Deciduous Tree	Woodcutting, Nature
 🌿	&#x1F33F;	Herb / Willow-like	Woodcutting, Nature
@@ -17,35 +18,33 @@
 🍞	&#x1F35E;	Bread	Food, Items
 🥚	&#x1F95A;	Egg	Food, Items
 🧪	&#x1F9EA;	Test Tube / Potion	Items, Crafting
-🛠️	&#x1F6E0;	 Hammer and Wrench	Blacksmithing, Crafting
+🛠️	&#x1F6E0;	Hammer and Wrench	Blacksmithing, Crafting
 ⚔️	&#x2694;	Crossed Swords	Combat, Attack
-🗡️	&#x1F5E1;	 Dagger / Sword	Weapon
-🛡️	&#x1F6E1;	 Shield	Armor, Defense
+🗡️	&#x1F5E1;	Dagger / Sword	Weapon
+🛡️	&#x1F6E1;	Shield	Armor, Defense
 📜	&#x1F4DC;	Scroll	Info, Quests
 🎒	&#x1F392;	Backpack	Inventory
 🛒	&#x1F6D2;	Shopping Cart	Shop
-🌟  &#x1F31F;	Glowing Star	Perks, Special
-✨  &#x2728;	  Sparkles	Perks, Magic, Special
-▶️  &#x25B6;	Play Button	Actions
-💰  &#x1F4B0;	Money Bag / Gold	Currency
-❤️  &#x2764;	Red Heart	Health
-💀  &#x1F480;	Skull	Death, Defeat
-❓  &#x2753;	 Question Mark	Help, Info
-❗  &#x2757;	 Exclamation Mark	Alert
-✔️  &#x2714;	 Check Mark	Success, Done
-❌  &#x274C;    Cross Mark	Failure, Cancel
+🌟	&#x1F31F;	Glowing Star	Perks, Special
+✨	&#x2728;	Sparkles	Perks, Magic, Special
+▶️	&#x25B6;	Play Button	Actions
+💰	&#x1F4B0;	Money Bag / Gold	Currency
+❤️	&#x2764;	Red Heart	Health
+💀	&#x1F480;	Skull	Death, Defeat
+❓	&#x2753;	Question Mark	Help, Info
+❗	&#x2757;	Exclamation Mark	Alert
+✔️	&#x2714;	Check Mark	Success, Done
+❌	&#x274C;	Cross Mark	Failure, Cancel
 ⬅️	&#x2B05;	Left Arrow	Back, Navigation
 ➡️	&#x27A1;	Right Arrow	Next, Navigation
-⬆️	
-
-&#x2B06;	Up Arrow	Navigation, Increase
+⬆️	&#x2B06;	Up Arrow	Navigation, Increase
 ⬇️	&#x2B07;	Down Arrow	Navigation, Decrease
 🔄	&#x1F504;	Refresh / Repeat	Auto-actions
-➕  &#x2795;	   Plus Sign	Add, Increase
-➖  &#x2796;	   Minus Sign	Remove, Decrease
+➕	&#x2795;	Plus Sign	Add, Increase
+➖	&#x2796;	Minus Sign	Remove, Decrease
 ⚙️	&#x2699;	Gear	Settings, Crafting
 🧭	&#x1F9ED;	Compass	Exploration
-🗺️	 &#x1F5FA;   World Map	Map, Travel
+🗺️	&#x1F5FA;	World Map	Map, Travel
 🌍	&#x1F30D;	Globe (Europe-Africa)	World, Global
 🏠	&#x1F3E0;	House	Building
 🏡	&#x1F3E1;	House with Garden / Cabin	Building
@@ -53,11 +52,11 @@
 🏭	&#x1F3ED;	Factory	Building (industrial)
 🏰	&#x1F3F0;	Castle	Building (epic)
 🏯	&#x1F3EF;	Japanese Castle / Mansion	Building (epic)
-🏛️	 &#x1F3DB;	 Classical Building / Stately	Building (grand)
-🏟️	 &#x1F3DF;	 Stadium	Building (large public)
+🏛️	&#x1F3DB;	Classical Building / Stately	Building (grand)
+🏟️	&#x1F3DF;	Stadium	Building (large public)
 🛖	&#x1F6D6;	Hut / Shed	Building (basic)
-⛺  &#x26FA;	   Tent / Camp	Building (basic)
-🏗️	 &#x1F3D7;	 Building Construction	Action, UI
+⛺	&#x26FA;	Tent / Camp	Building (basic)
+🏗️	&#x1F3D7;	Building Construction	Action, UI
 🐔	&#x1F414;	Chicken	Monster
 👺	&#x1F47A;	Goblin	Monster
 🐺	&#x1F43A;	Wolf Face	Monster
@@ -68,17 +67,17 @@
 😈	&#x1F608;	Smiling Face with Horns / Demon	Monster
 🐉	&#x1F409;	Dragon	Monster (epic)
 👑	&#x1F451;	Crown	Item, Status
-🟫	&#x1F7EB;	Brown Square (for generic wood)	Item color
+🟫	&#x1F7EB;	Brown Square (generic wood)	Item color
 🟧	&#x1F7E7;	Orange Square (bronze)	Item color
-⬜  &#x2B1C;	   White Large Square (iron)	Item color
+⬜	&#x2B1C;	White Large Square (iron)	Item color
 🔳	&#x1F532;	Black Square Button (steel)	Item color
 🟦	&#x1F7E6;	Blue Square (mithril)	Item color
 🟩	&#x1F7E9;	Green Square (adamant)	Item color
 🟪	&#x1F7EA;	Purple Square (rune)	Item color
 🟥	&#x1F7E5;	Red Square (dragon)	Item color
 🟠	&#x1F7E0;	Orange Circle (copper)	Item color
-⚫  &#x26AB;	   Medium Black Circle (coal)	Item color
-⚪  &#x26AA;	   Medium White Circle (tin/iron alt)	Item color
+⚫	&#x26AB;	Medium Black Circle (coal)	Item color
+⚪	&#x26AA;	Medium White Circle (tin/iron)	Item color
 
 ==============================================================
 
