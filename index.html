@@ -63,11 +63,38 @@
         .hud-column { display: flex; flex-direction: column; gap: 3px; }
         .section {
             border: 1px solid #444;
-            padding: 10px;
+            padding: 15px; /* Increased padding slightly to accommodate header */
             margin-bottom: 15px;
         }
 
-        .section-title { font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #555; padding-bottom: 5px; }
+        /* Old .section-title styles are now part of .section-title-header and .section-title-text */
+        .section-title-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px; /* Space below header */
+            border-bottom: 1px solid #555;
+            padding-bottom: 8px;
+        }
+
+        .btn-back-header {
+            background-color: transparent;
+            border: none;
+            color: #d4d4d4; /* Default text color */
+            font-size: 1.6em; /* Make arrow larger */
+            padding: 0 12px 0 0; /* Right padding, no left/top/bottom */
+            margin: 0; /* Remove default button margins */
+            cursor: pointer;
+            font-weight: normal; /* Override general button bold */
+            line-height: 1; /* Ensure it aligns well vertically */
+            transition: color 0.2s ease, transform 0.2s ease, text-shadow 0.2s ease; /* Add transition */
+        }
+        .btn-back-header:hover {
+            background-color: transparent; /* Keep background transparent */
+            color: #fff; /* Make arrow brighter white */
+            transform: scale(1.2); /* Make it grow slightly */
+            text-shadow: 0 0 8px #fff; /* Add a white glow */
+        }
+        .section-title-text { font-weight: bold; flex-grow: 1; font-size: 1.1em; }
 
         button {
             background-color: #0e639c;
@@ -492,17 +519,23 @@
         </div>
 
         <div id="character-info-section" class="section hidden">
-            <div class="section-title fore-cyan">Character Information</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showMainMenu()" title="Back to Main Menu">⬅️</button>
+                <div class="section-title-text fore-cyan">Character Information</div>
+            </div>
             <div id="char-info-details"></div>
             <p>Total XP Gained (All Skills): <span id="total-xp-all-skills" class="fore-magenta">0</span></p>
             <button onclick="showMainMenu()"><span class="button-icon">⬅️</span> Back</button>
         </div>
         
         <div id="inventory-section" class="section hidden">
-            <div class="section-title fore-magenta">Inventory</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showMainMenu()" title="Back to Main Menu">⬅️</button>
+                <div class="section-title-text fore-magenta">Inventory</div>
+            </div>
             <div id="inventory-list"></div>
             <hr>
-            <div class="section-title fore-cyan">Equipped Gear</div>
+            <div class="section-title-text fore-cyan" style="margin-top:15px; padding-bottom: 5px; border-bottom: 1px solid #555; margin-bottom:10px;">Equipped Gear</div>
             <div id="equipment-display">
                 <div class="slot"><span class="slot-name">Weapon:</span><span class="item-name" id="eq-weapon-name">None</span><span class="item-art" id="eq-weapon-art"></span> <span id="eq-weapon-stats" style="font-size:0.9em; color:#aaa;"></span></div>
                 <div class="slot"><span class="slot-name">Axe:</span><span class="item-name" id="eq-axe-name">None</span><span class="item-art" id="eq-axe-art"></span></div>
@@ -520,7 +553,9 @@
                 </div>
             </div>
             <div id="item-selection-for-equip" class="hidden">
-                <div class="section-title" id="equip-item-type-title">Equip Item</div>
+                <div class="section-title-header" style="border-bottom:none; margin-bottom:5px;"> <!-- Less margin for this sub-title -->
+                    <div class="section-title-text" id="equip-item-type-title">Equip Item</div>
+                </div>
                 <div id="equip-item-list"></div>
                 <button onclick="hideEquipSelection()">Cancel</button>
             </div>
@@ -528,7 +563,10 @@
         </div>
 
         <div id="actions-menu-section" class="section hidden">
-            <div class="section-title">Actions Menu</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showMainMenu()" title="Back to Main Menu">⬅️</button>
+                <div class="section-title-text">Actions Menu</div>
+            </div>
             <div class="submenu-buttons-container"> 
                 <button class="btn-woodcutting" onclick="showWoodcutting()"><span class="button-icon">🌲</span>Woodcutting</button>
                 <button class="btn-mining" onclick="showMining()"><span class="button-icon">⛏️</span> Mining</button>
@@ -546,7 +584,10 @@
         </div>
 
         <div id="shop-menu-section" class="section hidden">
-            <div class="section-title fore-green">Store</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showMainMenu()" title="Back to Main Menu">⬅️</button>
+                <div class="section-title-text fore-green">Store</div>
+            </div>
             <div id="shop-gold-display" class="fore-yellow"></div>
             <div class="submenu-buttons-container">
                 <button class="btn-buy-tools" onclick="showBuyMenu()">1. Buy Tools</button>
@@ -556,7 +597,10 @@
         </div>
         
         <div id="buy-menu-section" class="section hidden">
-            <div class="section-title fore-green">Buy Items</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showShopMenu()" title="Back to Shop Menu">⬅️</button>
+                <div class="section-title-text fore-green">Buy Items</div>
+            </div>
             <div id="buy-category-selection" class="submenu-buttons-container">
                  <button onclick="populateShopItems('axe', 'Axes')">Axes</button>
                  <button onclick="populateShopItems('pickaxe', 'Pickaxes')">Pickaxes</button>
@@ -566,25 +610,37 @@
         </div>
 
         <div id="sell-menu-section" class="section hidden">
-            <div class="section-title fore-green">Sell Items</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showShopMenu()" title="Back to Shop Menu">⬅️</button>
+                <div class="section-title-text fore-green">Sell Items</div>
+            </div>
             <div id="sellable-items-list"></div>
-            <button onclick="showShopMenu()">Back to Shop</button>
+            <button onclick="showShopMenu()"><span class="button-icon">⬅️</span> Back to Shop</button>
         </div>
 
         <div id="woodcutting-section" class="section hidden">
-            <div class="section-title fore-green">Woodcutting</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showActionsMenu()" title="Back to Actions Menu">⬅️</button>
+                <div class="section-title-text fore-green">Woodcutting</div>
+            </div>
             <div id="available-trees"></div>
             <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
         
         <div id="mining-section" class="section hidden">
-            <div class="section-title fore-lightblack_ex">Mining</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showActionsMenu()" title="Back to Actions Menu">⬅️</button>
+                <div class="section-title-text fore-lightblack_ex">Mining</div>
+            </div>
             <div id="available-ores"></div>
             <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
         
         <div id="blacksmithing-menu-section" class="section hidden">
-            <div class="section-title fore-orange">Blacksmithing</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showActionsMenu()" title="Back to Actions Menu">⬅️</button>
+                <div class="section-title-text fore-orange">Blacksmithing</div>
+            </div>
             <div class="submenu-buttons-container">
                 <button class="btn-smelt-bars" onclick="showSmeltingMenu()">1. Smelt Bars</button>
                 <button class="btn-smith-weapons" onclick="showSmithingMenu()">2. Smith Weapons</button>
@@ -593,25 +649,37 @@
         </div>
 
         <div id="smelting-section" class="section hidden">
-            <div class="section-title fore-orange">Smelt Bars</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showBlacksmithingMenu()" title="Back to Blacksmithing Menu">⬅️</button>
+                <div class="section-title-text fore-orange">Smelt Bars</div>
+            </div>
             <div id="available-bars-to-smelt"></div>
             <button onclick="showBlacksmithingMenu()"><span class="button-icon">⬅️</span> Back to Blacksmithing</button>
         </div>
 
         <div id="smithing-section" class="section hidden">
-            <div class="section-title fore-orange">Smith Items</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showBlacksmithingMenu()" title="Back to Blacksmithing Menu">⬅️</button>
+                <div class="section-title-text fore-orange">Smith Items</div>
+            </div>
             <div id="available-items-to-smith"></div>
             <button onclick="showBlacksmithingMenu()"><span class="button-icon">⬅️</span> Back to Blacksmithing</button>
         </div>
 
         <div id="build-structures-section" class="section hidden">
-            <div class="section-title fore-blue">Build Structures</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showActionsMenu()" title="Back to Actions Menu">⬅️</button>
+                <div class="section-title-text fore-blue">Build Structures</div>
+            </div>
             <div id="available-structures-list"></div>
             <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
 
         <div id="combat-section" class="section hidden">
-            <div class="section-title fore-red">Combat</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="stopCombatAndReturn()" title="Back to Actions Menu">⬅️</button>
+                <div class="section-title-text fore-red">Combat</div>
+            </div>
             <div id="available-monsters"></div>
             <div id="combat-arena" class="hidden">
                 <div id="monster-display-combat" class="monster-display"></div>
@@ -622,19 +690,28 @@
         </div>
         
         <div id="eat-food-section" class="section hidden">
-             <div class="section-title fore-green">Eat Food</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showActionsMenu()" title="Back to Actions Menu">⬅️</button>
+                <div class="section-title-text fore-green">Eat Food</div>
+            </div>
              <div id="available-food-list"></div>
              <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
 
         <div id="cook-food-section" class="section hidden">
-            <div class="section-title fore-yellow">Cook Food</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showActionsMenu()" title="Back to Actions Menu">⬅️</button>
+                <div class="section-title-text fore-yellow">Cook Food</div>
+            </div>
             <div id="cookable-items-list"></div>
             <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
 
         <div id="perk-tree-section" class="section hidden">
-            <div class="section-title fore-magenta">Perk Tree</div>
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showMainMenu()" title="Back to Main Menu">⬅️</button>
+                <div class="section-title-text fore-magenta">Perk Tree</div>
+            </div>
             <p>Available Perk Points: <span id="available-perk-points" class="fore-magenta">0</span></p>
             <div id="perk-list"></div>
             <button onclick="showMainMenu()"><span class="button-icon">⬅️</span> Back to Main Menu</button>
