@@ -382,6 +382,10 @@
         .structure-item-card .actions { /* Button or Locked Text */
             margin-top: 10px;
         }
+        /* Style for built structure cards */
+        .built-structure-card { border-left-color: #6a9955 !important; background-color: #2a3f2e !important; }
+        .built-structure-card h3 { color: #8cc877 !important; } /* Make title green too */
+
         .glow-green-temp {
             background-color: #0e9c18 !important; /* Strong green */
             border-color: #33ff33 !important;
@@ -3288,49 +3292,39 @@
             for (const structureId in STRUCTURE_DATA) {
                 const structure = STRUCTURE_DATA[structureId];
                 const cardDiv = document.createElement('div');
-                cardDiv.className = 'structure-item-card'; 
-
-                let resourcesMet = true;
-                let costHtml = "<h4>Cost:</h4>";
-                for (const resourceName in structure.cost) {
-                    const needed = structure.cost[resourceName];
-                    const possessed = playerData.inventory[resourceName] || 0;
-                    const color = possessed >= needed ? 'fore-green' : 'fore-red';
-                    costHtml += `<p><span class="cost-item-name">${titleCase(resourceName)}:</span> ${needed.toLocaleString()} (<span class="${color}">${possessed.toLocaleString()}</span>)</p>`;
-                    if (possessed < needed) {
-                        resourcesMet = false;
-                    }
+                cardDiv.className = 'structure-item-card';
+                if (playerData.built_structures[structureId]) {
+                    cardDiv.classList.add('built-structure-card');
                 }
 
                 const requirementsMet = !structure.requires_structure || playerData.built_structures[structure.requires_structure];
                 const isAlreadyBuilt = playerData.built_structures[structureId];
-
                 if (!isAlreadyBuilt) allBuilt = false;
 
-                let prerequisiteHtml = "";
-                if (structure.requires_structure) {
-                    const reqStruct = STRUCTURE_DATA[structure.requires_structure];
-                    const reqStatusText = playerData.built_structures[structure.requires_structure] ? "<span class='fore-green'>(Built)</span>" : "<span class='fore-red'>(Not Built)</span>";
-                    prerequisiteHtml = `<h4>Prerequisite:</h4><p>${reqStruct.name} ${reqStatusText}</p>`;
-                }
+                let resourcesMet = true; // Still needed for button logic if not built
+                let costDisplayHtml = "";
+                let prerequisiteDisplayHtml = "";
 
-                let actionsHtml = "";
-                if (!isAlreadyBuilt && requirementsMet) {
-                    const buildButton = document.createElement('button');
-                    buildButton.textContent = `Build ${structure.name}`;
-                    if (resourcesMet) {
-                        buildButton.onclick = () => buildStructure(structureId);
-                        actionsHtml = buildButton.outerHTML;
-                    } else {
-                        buildButton.disabled = true;
-                        buildButton.title = "Not enough resources.";
-                        actionsHtml = buildButton.outerHTML;
+                if (!isAlreadyBuilt) {
+                    costDisplayHtml = "<h4>Cost:</h4>";
+                    for (const resourceName in structure.cost) {
+                        const needed = structure.cost[resourceName];
+                        const possessed = playerData.inventory[resourceName] || 0;
+                        const color = possessed >= needed ? 'fore-green' : 'fore-red';
+                        costDisplayHtml += `<p><span class="cost-item-name">${titleCase(resourceName)}:</span> ${needed.toLocaleString()} (<span class="${color}">${possessed.toLocaleString()}</span>)</p>`;
+                        if (possessed < needed) {
+                            resourcesMet = false;
+                        }
                     }
-                    canBuildSomething = true;
-                } else if (!isAlreadyBuilt && !requirementsMet) {
-                    actionsHtml = `<p class="fore-red">Locked. Build ${STRUCTURE_DATA[structure.requires_structure].name} first.</p>`;
+
+                    if (structure.requires_structure) {
+                        const reqStruct = STRUCTURE_DATA[structure.requires_structure];
+                        const reqStatusText = playerData.built_structures[structure.requires_structure] ? "<span class='fore-green'>(Built)</span>" : "<span class='fore-red'>(Not Built)</span>";
+                        prerequisiteDisplayHtml = `<h4>Prerequisite:</h4><p>${reqStruct.name} ${reqStatusText}</p>`;
+                    }
                 }
 
+                // Set up the main card structure first, without the actions part
                 cardDiv.innerHTML = `
                     <h3>
                         <span class="emoji">${structure.emoji}</span>
@@ -3338,11 +3332,36 @@
                         ${isAlreadyBuilt ? "<span class='built-status fore-green'>(Built)</span>" : ""}
                     </h3>
                     <p class="description">${structure.perk_desc}</p>
+                    ${(!isAlreadyBuilt && (costDisplayHtml || prerequisiteDisplayHtml)) ? `
                     <div class="requirements-block">
-                        ${costHtml}
-                        ${prerequisiteHtml}
-                    </div>
-                    <div class="actions">${actionsHtml}</div>`;
+                        ${costDisplayHtml}
+                        ${prerequisiteDisplayHtml}
+                    </div>` : ''}
+                `;
+
+                // Create a separate container for actions and append elements to it
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'actions';
+
+                if (!isAlreadyBuilt && requirementsMet) {
+                    const buildButton = document.createElement('button');
+                    buildButton.textContent = `Build ${structure.name}`;
+                    if (resourcesMet) {
+                        buildButton.onclick = () => buildStructure(structureId);
+                    } else {
+                        buildButton.disabled = true;
+                        buildButton.title = "Not enough resources.";
+                    }
+                    actionsDiv.appendChild(buildButton); // Append the button element
+                    canBuildSomething = true;
+                } else if (!isAlreadyBuilt && !requirementsMet) {
+                    const lockedText = document.createElement('p');
+                    lockedText.className = 'fore-red';
+                    lockedText.textContent = `Locked. Build ${STRUCTURE_DATA[structure.requires_structure].name} first.`;
+                    actionsDiv.appendChild(lockedText); // Append the paragraph element
+                }
+
+                cardDiv.appendChild(actionsDiv); // Append the actionsDiv to the card
                 listDiv.appendChild(cardDiv);
             }
             if (!canBuildSomething && !allBuilt) {
