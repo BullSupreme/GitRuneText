@@ -614,6 +614,11 @@
                 id: "masterSmith", name: "Master Smith",
                 description: "Smithing 2H swords requires 1 less bar (minimum 1 bar).",
                 cost: 3, tier: 3, type: "smithing_bar_reduction", value: 1, requires: ["vampiricEdge1", "advancedSmelting"]
+            },
+            "combatSustenance": {
+                id: "combatSustenance", name: "Combat Sustenance",
+                description: "Automatically consumes the best available food when HP drops to 20% or below during combat.",
+                cost: 5, tier: 3, type: "auto_eat_combat", value: 0.20, requires: ["vampiricEdge1"]
             }
         };
 
@@ -2171,6 +2176,31 @@
             updateHud();
         }
         
+        function attemptAutoEat() {
+            const playerMaxHp = getMaxHp(getLevelFromXp(playerData.attack_xp));
+            if (playerData.hp >= playerMaxHp) return false; // Already full
+
+            let bestFood = null;
+            let bestHealAmount = 0;
+
+            for (const itemName in playerData.inventory) {
+                if (FOOD_DATA[itemName] && playerData.inventory[itemName] > 0) {
+                    if (FOOD_DATA[itemName].heal_amount > bestHealAmount) {
+                        bestHealAmount = FOOD_DATA[itemName].heal_amount;
+                        bestFood = itemName;
+                    }
+                }
+            }
+
+            if (bestFood) {
+                logMessage(`HP critical! Auto-eating ${titleCase(bestFood)}...`, "fore-magenta");
+                eatFoodItem(bestFood); // This function handles logging, saving, HUD update
+                return true;
+            }
+            logMessage("HP critical, but no food to auto-eat!", "fore-red");
+            return false;
+        }
+
         // --- Action: Eat Food ---
         function showEatFood() {
             const foodListDiv = document.getElementById('available-food-list');
