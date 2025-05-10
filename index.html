@@ -2055,10 +2055,11 @@
                 const requiredTierIndex = PICKAXE_TIER_ORDER.indexOf(oreData.required_pickaxe_tier);
                 if (equippedPickaxeTierIndex < requiredTierIndex) {
                     logMessage(`Your ${titleCase(equippedPickaxeName)} is not strong enough for ${titleCase(currentMiningTarget)}. Requires a ${titleCase(oreData.required_pickaxe_tier)} Pickaxe or better.`, "fore-red");
-                    currentMiningTarget = null;
                     // Also remove active class if it was somehow set
-                    const oreListItem = document.getElementById(`ore-list-item-${currentMiningTarget.replace(/\s+/g, '-')}`);
+                    const oreListElementId = `ore-list-item-${currentMiningTarget.replace(/\s+/g, '-')}`; // Use currentMiningTarget before nulling
+                    const oreListItem = document.getElementById(oreListElementId);
                     if (oreListItem) oreListItem.classList.remove('active-mining-item');
+                    currentMiningTarget = null; // Null it after using it
                     return false;
                 }
             }
