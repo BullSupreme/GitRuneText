@@ -234,7 +234,7 @@
             <div class="section-title fore-cyan">Character Information</div>
             <div id="char-info-details"></div>
             <p>Total XP Gained (All Skills): <span id="total-xp-all-skills" class="fore-magenta">0</span></p>
-            <button onclick="showMainMenu()">Back</button>
+            <button onclick="showMainMenu()">⬅️ Back</button>
         </div>
         
         <div id="inventory-section" class="section hidden">
@@ -259,19 +259,19 @@
                 <div id="equip-item-list"></div>
                 <button onclick="hideEquipSelection()">Cancel</button>
             </div>
-            <button onclick="showMainMenu()">Back to Main Menu</button>
+            <button onclick="showMainMenu()">⬅️ Back to Main Menu</button>
         </div>
 
 
         <div id="actions-menu-section" class="section hidden">
             <div class="section-title">Actions Menu</div>
-            <button onclick="showWoodcutting()">1. Woodcutting</button>
-            <button onclick="showMining()">2. Mining</button>
-            <button class="fore-orange" onclick="showBlacksmithingMenu()">3. Blacksmithing</button>
-            <button onclick="showCombat()">4. Attack Monsters</button>
-            <button class="green" onclick="showEatFood()">5. Eat Food</button>
-            <button class="yellow" onclick="showCookFood()">6. Cook Food</button>
-            <button onclick="showMainMenu()">Back to Main Menu</button>
+            <button onclick="showWoodcutting()">🌲Woodcutting</button>
+            <button onclick="showMining()">⛏️ Mining</button>
+            <button class="fore-orange" onclick="showBlacksmithingMenu()">🛠️ Blacksmithing</button>
+            <button onclick="showCombat()">⚔️ Attack Monsters</button>
+            <button class="green" onclick="showEatFood()">🍖 Eat Food</button>
+            <button class="yellow" onclick="showCookFood()">🍳 Cook Food</button>
+            <button onclick="showMainMenu()">⬅️ Back to Main Menu</button>
         </div>
 
         <div id="shop-menu-section" class="section hidden">
@@ -279,7 +279,7 @@
             <div id="shop-gold-display" class="fore-yellow"></div>
             <button onclick="showBuyMenu()">1. Buy Tools</button> <!-- MODIFIED TEXT -->
             <button onclick="showSellMenu()">2. Sell Items</button>
-            <button onclick="showMainMenu()">Back to Main Menu</button>
+            <button onclick="showMainMenu()">⬅️ Back to Main Menu</button>
         </div>
         
         <div id="buy-menu-section" class="section hidden">
@@ -290,7 +290,7 @@
                  <!-- Armor button removed -->
             </div>
             <div id="shop-items-list"></div>
-            <button onclick="showShopMenu()">Back to Shop</button>
+            <button onclick="showShopMenu()">⬅️ Back to Shop</button>
         </div>
 
         <div id="sell-menu-section" class="section hidden">
@@ -305,7 +305,7 @@
             <div id="woodcutting-controls" class="hidden">
                 <button id="auto-chop-btn" onclick="toggleAutoWoodcutting()">Start Auto-Chopping</button>
             </div>
-            <button onclick="showActionsMenu()">Back to Actions</button>
+            <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
         </div>
         
         <div id="mining-section" class="section hidden">
@@ -314,14 +314,14 @@
             <div id="mining-controls" class="hidden">
                 <button id="auto-mine-btn" onclick="toggleAutoMining()">Start Auto-Mining</button>
             </div>
-            <button onclick="showActionsMenu()">Back to Actions</button>
+            <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
         </div>
         
         <div id="blacksmithing-menu-section" class="section hidden">
             <div class="section-title fore-orange">Blacksmithing</div>
             <button onclick="showSmeltingMenu()">1. Smelt Bars</button>
             <button onclick="showSmithingMenu()">2. Smith Weapons</button> <!-- Clarified to Weapons -->
-            <button onclick="showActionsMenu()">Back to Actions</button>
+            <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
         </div>
 
         <div id="smelting-section" class="section hidden">
@@ -330,7 +330,7 @@
             <div id="smelting-controls" class="hidden">
                 <button id="auto-smelt-btn" onclick="toggleAutoSmelting()">Start Auto-Smelting</button>
             </div>
-            <button onclick="showBlacksmithingMenu()">Back to Blacksmithing</button>
+            <button onclick="showBlacksmithingMenu()">⬅️ Back to Blacksmithing</button>
         </div>
 
         <div id="smithing-section" class="section hidden">
@@ -339,7 +339,7 @@
             <div id="smithing-controls" class="hidden">
                 <button id="auto-smith-btn" onclick="toggleAutoSmithing()">Start Auto-Smithing</button>
             </div>
-            <button onclick="showBlacksmithingMenu()">Back to Blacksmithing</button>
+            <button onclick="showBlacksmithingMenu()">⬅️ Back to Blacksmithing</button>
         </div>
 
 
@@ -354,13 +354,13 @@
                 <div>Player HP: <span id="player-hp-combat" class="fore-green"></span></div>
                 <div>Monster HP: <span id="monster-hp-combat" class="fore-red"></span></div>
             </div>
-            <button onclick="stopCombatAndReturn()">Back to Actions</button>
+            <button onclick="stopCombatAndReturn()">⬅️ Back to Actions</button>
         </div>
         
         <div id="eat-food-section" class="section hidden">
              <div class="section-title fore-green">Eat Food</div>
              <div id="available-food-list"></div>
-             <button onclick="showActionsMenu()">Back to Actions</button>
+             <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
         </div>
 
         <div id="cook-food-section" class="section hidden">
@@ -369,14 +369,14 @@
             <div id="cooking-controls" class="hidden">
                  <button id="auto-cook-btn" onclick="toggleAutoCooking()">Start Auto-Cooking</button>
             </div>
-            <button onclick="showActionsMenu()">Back to Actions</button>
+            <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
         </div>
 
         <div id="perk-tree-section" class="section hidden">
             <div class="section-title fore-magenta">Perk Tree</div>
             <p>Available Perk Points: <span id="available-perk-points" class="fore-magenta">0</span></p>
             <div id="perk-list"></div>
-            <button onclick="showMainMenu()">Back to Main Menu</button>
+            <button onclick="showMainMenu()">⬅️ Back to Main Menu</button>
         </div>
 
 
@@ -505,10 +505,10 @@
             "name":"PlayerOne","woodcutting_xp":0,"attack_xp":0,"mining_xp":0,"cooking_xp":0, "blacksmithing_xp":0,
             "hp":10,"gold":10, "total_skill_xp": 0, "perk_points_earned": 0, "perk_points_spent": 0, "active_perks": {},
             "inventory": {
-                "weapon":"none", "axe":"none","pickaxe":"none","chestplate":"none", 
+                "weapon":"none","axe":"none","pickaxe":"none","chestplate":"none", 
                 "normal logs":0,"oak logs":0,"willow logs":0,
                 "copper ore":0,"tin ore":0,"iron ore":0,"coal":0,"mithril ore":0,"adamantite ore":0,"runite ore":0,"special dragon ore":0,
-                "bronze bar":0, "iron bar":0, "steel bar":0, "mithril bar":0, "adamantite bar":0, "runite bar":0, "dragon bar":0,
+                "bronze bar":0,"iron bar":0, "steel bar":0, "mithril bar":0, "adamantite bar":0, "runite bar":0, "dragon bar":0,
                 "egg":0,"goblin beads":0,"dragon gem":0,
                 "raw meat":0,"cooked meat":0,"bread":0,"burnt meat":0,"health potion (s)":0,
                 "wolf fang":0,"bear claw":0,"ogre club fragment":0,"troll hide":0,"giant's toe":0,"demon heart":0,
