@@ -36,6 +36,7 @@
         }
         .top-controls button {
             padding: 5px 10px;
+            padding: 7px 12px; /* Made a little bigger */
             font-size: 0.9em;
         }
          .top-right-controls {
@@ -45,7 +46,7 @@
             z-index: 1000;
         }
         #mute-toggle-btn {
-            padding: 5px 10px;
+            padding: 7px 12px; /* Made a little bigger */
             font-size: 0.9em;
         }
 
@@ -71,13 +72,16 @@
 
         button {
             background-color: #0e639c;
-            color: white;
+            color: #222; /* Dark font for all buttons */
             border: 1px solid #1c7abb;
-            padding: 8px 15px;
+            padding: 10px 18px; /* Made a little bigger */
             margin: 5px;
             cursor: pointer;
             font-family: inherit;
             border-radius: 3px;
+            font-size: 1.05em; /* Made a little bigger */
+            font-weight: bold; /* Make button text bold */
+            /* text-shadow removed for no outline */
         }
         button:hover { background-color: #1177bb; }
         button:disabled {
@@ -89,8 +93,14 @@
         button.red:hover { background-color: #bb1111; }
         button.green { background-color: #0e9c18; }
         button.green:hover { background-color: #11bb1a; }
-        button.yellow { background-color: #b4a61a; color: #222;}
-        button.yellow:hover { background-color: #d4c62a; }
+        button.yellow {
+            background-color: #b4a61a;
+            /* color: #222; Inherits from general button */
+            /* text-shadow: none; Inherits from general button (no shadow) */
+        }
+        button.yellow:hover {
+            background-color: #d4c62a;
+        }
 
 
         .log-area {
@@ -146,6 +156,18 @@
             background-color: #665200 !important;
             border: 2px solid #ffcc00 !important;
             box-shadow: 0 0 8px #ffcc00;
+        }
+
+        /* For button icon hover effect */
+        .button-icon {
+            display: inline-block; /* Important for transform */
+            transition: transform 0.2s ease-out, filter 0.2s ease-out;
+            margin-right: 4px; /* Space between icon and text */
+        }
+
+        button:hover .button-icon {
+            transform: scale(1.3);
+            filter: drop-shadow(0 0 5px #fff);
         }
 
         /* Color classes */
@@ -250,12 +272,15 @@
         .main-menu-buttons-container button {
             flex: 1; 
             margin: 0; 
-            padding: 8px 10px; 
+            padding: 10px 12px; /* Made a little bigger */
             text-align: center; 
         }
         #main-menu-section .btn-actions { background-color: #0e9c18; border-color: #0c8314; }
         #main-menu-section .btn-actions:hover { background-color: #11bb1a; }
-        #main-menu-section .btn-shop { background-color: #b4a61a; color: #222; border-color: #a09417; }
+        #main-menu-section .btn-shop {
+            background-color: #b4a61a;
+            border-color: #a09417;
+        }
         #main-menu-section .btn-shop:hover { background-color: #d4c62a; }
         #main-menu-section .btn-perks { background-color: #c586c0; border-color: #b373ac; }
         #main-menu-section .btn-perks:hover { background-color: #d993d3; }
@@ -268,7 +293,7 @@
         .submenu-buttons-container button {
             flex: 1; 
             margin: 0; 
-            padding: 8px 10px; 
+            padding: 10px 12px; /* Made a little bigger */
             text-align: center; 
         }
 
@@ -282,14 +307,26 @@
         #actions-menu-section .btn-combat:hover { background-color: #e04440; }
         #actions-menu-section .btn-eat { background-color: #4cae4c; border-color: #459c45; }
         #actions-menu-section .btn-eat:hover { background-color: #5cb85c; }
-        #actions-menu-section .btn-cook { background-color: #eea236; border-color: #d58d20; color: #222; }
+        #actions-menu-section .btn-cook {
+            background-color: #eea236;
+            border-color: #d58d20;
+            /* color: #222; Inherits */
+        }
         #actions-menu-section .btn-cook:hover { background-color: #f0ad4e; }
         #actions-menu-section .btn-build-structures { background-color: #795548; border-color: #6a4a3e; }
         #actions-menu-section .btn-build-structures:hover { background-color: #8d6e63; }
 
-        #shop-menu-section .btn-buy-tools { background-color: #d4af37; color: #3e300b; border-color: #c09d31; }
+        #shop-menu-section .btn-buy-tools {
+            background-color: #d4af37;
+            color: #3e300b; /* Dark text */
+            border-color: #c09d31;
+        }
         #shop-menu-section .btn-buy-tools:hover { background-color: #e6c350; }
-        #shop-menu-section .btn-sell-items { background-color: #a7b0b9; color: #2a2d30; border-color: #979fa6; }
+        #shop-menu-section .btn-sell-items {
+            background-color: #a7b0b9;
+            color: #2a2d30; /* Dark text - specific dark shade */
+            border-color: #979fa6;
+        }
         #shop-menu-section .btn-sell-items:hover { background-color: #c1c8cf; }
 
         #blacksmithing-menu-section .btn-smelt-bars { background-color: #e07a5f; border-color: #ca6b50; }
@@ -340,11 +377,11 @@
         <div id="main-menu-section" class="section">
             <div class="section-title">Main Menu</div>
             <div class="main-menu-buttons-container">
-                <button class="btn-char-info" onclick="showCharacterInfo()">📜Character Info</button>
-                <button class="btn-inventory" onclick="showInventory()">🎒Inventory & Equipment</button>
-                <button class="btn-actions" onclick="showActionsMenu()">▶️Actions</button>
-                <button class="btn-shop" onclick="showShopMenu()">🛒Shop</button>
-                <button class="btn-perks" onclick="showPerkTreeMenu()">🌟 Perks</button>
+                <button class="btn-char-info" onclick="showCharacterInfo()"><span class="button-icon">📜</span>Character Info</button>
+                <button class="btn-inventory" onclick="showInventory()"><span class="button-icon">🎒</span>Inventory & Equipment</button>
+                <button class="btn-actions" onclick="showActionsMenu()"><span class="button-icon">▶️</span>Actions</button>
+                <button class="btn-shop" onclick="showShopMenu()"><span class="button-icon">🛒</span>Shop</button>
+                <button class="btn-perks" onclick="showPerkTreeMenu()"><span class="button-icon">🌟</span>Perks</button>
             </div>
             <div><input type="text" id="cheat-input" placeholder="Cheat code"><button onclick="applyCheat()">Apply</button></div>
         </div>
@@ -353,7 +390,7 @@
             <div class="section-title fore-cyan">Character Information</div>
             <div id="char-info-details"></div>
             <p>Total XP Gained (All Skills): <span id="total-xp-all-skills" class="fore-magenta">0</span></p>
-            <button onclick="showMainMenu()">⬅️ Back</button>
+            <button onclick="showMainMenu()"><span class="button-icon">⬅️</span> Back</button>
         </div>
         
         <div id="inventory-section" class="section hidden">
@@ -382,25 +419,25 @@
                 <div id="equip-item-list"></div>
                 <button onclick="hideEquipSelection()">Cancel</button>
             </div>
-            <button onclick="showMainMenu()">⬅️ Back to Main Menu</button>
+            <button onclick="showMainMenu()"><span class="button-icon">⬅️</span> Back to Main Menu</button>
         </div>
 
         <div id="actions-menu-section" class="section hidden">
             <div class="section-title">Actions Menu</div>
             <div class="submenu-buttons-container"> 
-                <button class="btn-woodcutting" onclick="showWoodcutting()">🌲Woodcutting</button>
-                <button class="btn-mining" onclick="showMining()">⛏️ Mining</button>
+                <button class="btn-woodcutting" onclick="showWoodcutting()"><span class="button-icon">🌲</span>Woodcutting</button>
+                <button class="btn-mining" onclick="showMining()"><span class="button-icon">⛏️</span> Mining</button>
             </div>
             <div class="submenu-buttons-container"> 
-                <button class="btn-blacksmithing" onclick="showBlacksmithingMenu()">🛠️ Blacksmithing</button>
-                <button class="btn-combat" onclick="showCombat()">⚔️ Attack Monsters</button>
+                <button class="btn-blacksmithing" onclick="showBlacksmithingMenu()"><span class="button-icon">🛠️</span> Blacksmithing</button>
+                <button class="btn-combat" onclick="showCombat()"><span class="button-icon">⚔️</span> Attack Monsters</button>
             </div>
             <div class="submenu-buttons-container"> 
-                <button class="btn-eat" onclick="showEatFood()">🍖 Eat Food</button>
-                <button class="btn-cook" onclick="showCookFood()">🍳 Cook Food</button>
-                <button class="btn-build-structures" onclick="showBuildStructuresMenu()">🏗️ Build Structures</button>
+                <button class="btn-eat" onclick="showEatFood()"><span class="button-icon">🍖</span> Eat Food</button>
+                <button class="btn-cook" onclick="showCookFood()"><span class="button-icon">🍳</span> Cook Food</button>
+                <button class="btn-build-structures" onclick="showBuildStructuresMenu()"><span class="button-icon">🏗️</span> Build Structures</button>
             </div>
-            <button onclick="showMainMenu()">⬅️ Back to Main Menu</button>
+            <button onclick="showMainMenu()"><span class="button-icon">⬅️</span> Back to Main Menu</button>
         </div>
 
         <div id="shop-menu-section" class="section hidden">
@@ -410,7 +447,7 @@
                 <button class="btn-buy-tools" onclick="showBuyMenu()">1. Buy Tools</button>
                 <button class="btn-sell-items" onclick="showSellMenu()">2. Sell Items</button>
             </div>
-            <button onclick="showMainMenu()">⬅️ Back to Main Menu</button>
+            <button onclick="showMainMenu()"><span class="button-icon">⬅️</span> Back to Main Menu</button>
         </div>
         
         <div id="buy-menu-section" class="section hidden">
@@ -420,7 +457,7 @@
                  <button onclick="populateShopItems('pickaxe', 'Pickaxes')">Pickaxes</button>
             </div>
             <div id="shop-items-list"></div>
-            <button onclick="showShopMenu()">⬅️ Back to Shop</button>
+            <button onclick="showShopMenu()"><span class="button-icon">⬅️</span> Back to Shop</button>
         </div>
 
         <div id="sell-menu-section" class="section hidden">
@@ -432,13 +469,13 @@
         <div id="woodcutting-section" class="section hidden">
             <div class="section-title fore-green">Woodcutting</div>
             <div id="available-trees"></div>
-            <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
+            <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
         
         <div id="mining-section" class="section hidden">
             <div class="section-title fore-lightblack_ex">Mining</div>
             <div id="available-ores"></div>
-            <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
+            <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
         
         <div id="blacksmithing-menu-section" class="section hidden">
@@ -447,25 +484,25 @@
                 <button class="btn-smelt-bars" onclick="showSmeltingMenu()">1. Smelt Bars</button>
                 <button class="btn-smith-weapons" onclick="showSmithingMenu()">2. Smith Weapons</button>
             </div>
-            <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
+            <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
 
         <div id="smelting-section" class="section hidden">
             <div class="section-title fore-orange">Smelt Bars</div>
             <div id="available-bars-to-smelt"></div>
-            <button onclick="showBlacksmithingMenu()">⬅️ Back to Blacksmithing</button>
+            <button onclick="showBlacksmithingMenu()"><span class="button-icon">⬅️</span> Back to Blacksmithing</button>
         </div>
 
         <div id="smithing-section" class="section hidden">
             <div class="section-title fore-orange">Smith Items</div>
             <div id="available-items-to-smith"></div>
-            <button onclick="showBlacksmithingMenu()">⬅️ Back to Blacksmithing</button>
+            <button onclick="showBlacksmithingMenu()"><span class="button-icon">⬅️</span> Back to Blacksmithing</button>
         </div>
 
         <div id="build-structures-section" class="section hidden">
             <div class="section-title fore-blue">Build Structures</div>
             <div id="available-structures-list"></div>
-            <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
+            <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
 
         <div id="combat-section" class="section hidden">
@@ -476,26 +513,26 @@
                 <div>Player HP: <span id="player-hp-combat" class="fore-green"></span></div>
                 <div>Monster HP: <span id="monster-hp-combat" class="fore-red"></span></div>
             </div>
-            <button onclick="stopCombatAndReturn()">⬅️ Back to Actions</button>
+            <button onclick="stopCombatAndReturn()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
         
         <div id="eat-food-section" class="section hidden">
              <div class="section-title fore-green">Eat Food</div>
              <div id="available-food-list"></div>
-             <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
+             <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
 
         <div id="cook-food-section" class="section hidden">
             <div class="section-title fore-yellow">Cook Food</div>
             <div id="cookable-items-list"></div>
-            <button onclick="showActionsMenu()">⬅️ Back to Actions</button>
+            <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span> Back to Actions</button>
         </div>
 
         <div id="perk-tree-section" class="section hidden">
             <div class="section-title fore-magenta">Perk Tree</div>
             <p>Available Perk Points: <span id="available-perk-points" class="fore-magenta">0</span></p>
             <div id="perk-list"></div>
-            <button onclick="showMainMenu()">⬅️ Back to Main Menu</button>
+            <button onclick="showMainMenu()"><span class="button-icon">⬅️</span> Back to Main Menu</button>
         </div>
 
         <div class="log-area" id="log-area">Welcome to the Adventure!</div>
@@ -680,7 +717,7 @@
                 rent_value: 100 
             },
             "stronghold": {
-                name: "The Stronghold", emoji: "🧱🏰",
+                name: "The Stronghold", emoji: "🧱🏰🛡️",
                 cost: {
                     "willow logs": 25000, 
                     "oak logs": 10000,
