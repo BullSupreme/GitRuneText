@@ -649,13 +649,13 @@
                 }
             },
             "pickaxe": {
-                "bronze":  {"emoji": "⛏️",    "price":10,    "level_req":1,  "min_dmg":1,  "max_dmg":2,  "skill_type":"mining",      "color":"fore-yellow",        "yield_config": { "base": 1, "bonuses": [{ "chance": 0.15, "amount": 1 }] } },
-                "iron":    {"emoji": "⛏️",    "price":40,    "level_req":15, "min_dmg":2,  "max_dmg":3,  "skill_type":"mining",      "color":"fore-lightblack_ex", "yield_config": { "base": 1, "bonuses": [{ "chance": 0.60, "amount": 1 }] } },
-                "steel":   {"emoji": "⛏️",    "price":100,   "level_req":30, "min_dmg":3,  "max_dmg":5,  "skill_type":"mining",      "color":"fore-cyan",          "yield_config": { "base": 1, "bonuses": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.25, "amount": 1 }] } },
-                "mithril": {"emoji": "⛏️",    "price":280,   "level_req":45, "min_dmg":5,  "max_dmg":8,  "skill_type":"mining",      "color":"fore-blue",          "yield_config": { "base": 2, "bonuses": [{ "chance": 0.50, "amount": 1 }] } },
-                "adamant": {"emoji": "⛏️",    "price":700,   "level_req":60, "min_dmg":8,  "max_dmg":12, "skill_type":"mining",      "color":"fore-green",         "yield_config": { "base": 2, "bonuses": [{ "chance": 0.70, "amount": 1 }, { "chance": 0.35, "amount": 1 }] } },
-                "rune":    {"emoji": "⛏️",    "price":1900,  "level_req":75, "min_dmg":12, "max_dmg":18, "skill_type":"mining",      "color":"fore-magenta",       "yield_config": { "base": 2, "bonuses": [{ "chance": 0.85, "amount": 1 }, { "chance": 0.65, "amount": 1 }] } },
-                "dragon":  {"emoji": "⛏️🔥",  "price":9500,  "level_req":90, "min_dmg":18, "max_dmg":25, "skill_type":"mining",      "color":"fore-red",           "yield_config": { "base": 3, "bonuses": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.45, "amount": 1 }] } }
+                "bronze":  {"emoji": "⛏️",    "price":10,    "level_req":1,  "min_dmg":1,  "max_dmg":2,  "skill_type":"mining", "color":"fore-yellow",        "tier": "bronze",  "yield_config": { "base": 1, "bonuses": [{ "chance": 0.15, "amount": 1 }] } },
+                "iron":    {"emoji": "⛏️",    "price":40,    "level_req":15, "min_dmg":2,  "max_dmg":3,  "skill_type":"mining", "color":"fore-lightblack_ex", "tier": "iron",    "yield_config": { "base": 1, "bonuses": [{ "chance": 0.60, "amount": 1 }] } },
+                "steel":   {"emoji": "⛏️",    "price":100,   "level_req":30, "min_dmg":3,  "max_dmg":5,  "skill_type":"mining", "color":"fore-cyan",          "tier": "steel",   "yield_config": { "base": 1, "bonuses": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.25, "amount": 1 }] } },
+                "mithril": {"emoji": "⛏️",    "price":280,   "level_req":45, "min_dmg":5,  "max_dmg":8,  "skill_type":"mining", "color":"fore-blue",          "tier": "mithril", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.50, "amount": 1 }] } },
+                "adamant": {"emoji": "⛏️",    "price":700,   "level_req":60, "min_dmg":8,  "max_dmg":12, "skill_type":"mining", "color":"fore-green",         "tier": "adamant", "yield_config": { "base": 2, "bonuses": [{ "chance": 0.70, "amount": 1 }, { "chance": 0.35, "amount": 1 }] } },
+                "rune":    {"emoji": "⛏️",    "price":1900,  "level_req":75, "min_dmg":12, "max_dmg":18, "skill_type":"mining", "color":"fore-magenta",       "tier": "rune",    "yield_config": { "base": 2, "bonuses": [{ "chance": 0.85, "amount": 1 }, { "chance": 0.65, "amount": 1 }] } },
+                "dragon":  {"emoji": "⛏️🔥",  "price":9500,  "level_req":90, "min_dmg":18, "max_dmg":25, "skill_type":"mining", "color":"fore-red",           "tier": "dragon",  "yield_config": { "base": 3, "bonuses": [{ "chance": 0.75, "amount": 1 }, { "chance": 0.45, "amount": 1 }] } }
             }
         };
         
@@ -704,11 +704,11 @@
             "copper":    {"level_req": 1,  "xp": 15,  "item_name": "copper ore",     "color": "fore-orange", "emoji": "<span class='fore-orange'>🟠</span>"},
             "tin":       {"level_req": 1,  "xp": 15,  "item_name": "tin ore",        "color": "fore-lightblack_ex", "emoji": "<span class='fore-lightblack_ex'>🪨</span>"},
             "iron":      {"level_req": 15, "xp": 35,  "item_name": "iron ore",       "color": "fore-white",  "emoji": "<span class='fore-white'>⚪</span>"},
-            "coal":      {"level_req": 20, "xp": 40,  "item_name": "coal",           "color": "fore-lightblack_ex", "emoji": "<span class='fore-lightblack_ex'>⚫</span>"},
-            "mithril":   {"level_req": 45, "xp": 80,  "item_name": "mithril ore",    "color": "fore-blue",   "emoji": "<span class='fore-blue'>🔵</span>"},
-            "adamantite":{"level_req": 60, "xp": 120, "item_name": "adamantite ore", "color": "fore-green",  "emoji": "<span class='fore-green'>🟢</span>"},
-            "runite":    {"level_req": 75, "xp": 200, "item_name": "runite ore",     "color": "fore-magenta","emoji": "<span class='fore-magenta'>🟣</span>"},
-            "special dragon ore": {"level_req": 90, "xp":300,"item_name":"special dragon ore","color":"fore-red","emoji":"<span class='fore-red'>🔴</span>🔥"}
+            "coal":      {"level_req": 30, "xp": 40,  "item_name": "coal",           "color": "fore-lightblack_ex", "emoji": "<span class='fore-lightblack_ex'>⚫</span>", "required_pickaxe_tier": "steel"},
+            "mithril":   {"level_req": 45, "xp": 80,  "item_name": "mithril ore",    "color": "fore-blue",   "emoji": "<span class='fore-blue'>🔵</span>", "required_pickaxe_tier": "steel"},
+            "adamantite":{"level_req": 60, "xp": 120, "item_name": "adamantite ore", "color": "fore-green",  "emoji": "<span class='fore-green'>🟢</span>", "required_pickaxe_tier": "steel"},
+            "runite":    {"level_req": 75, "xp": 200, "item_name": "runite ore",     "color": "fore-magenta","emoji": "<span class='fore-magenta'>🟣</span>", "required_pickaxe_tier": "steel"},
+            "special dragon ore": {"level_req": 90, "xp":300,"item_name":"special dragon ore","color":"fore-red","emoji":"<span class='fore-red'>🔴</span>🔥", "required_pickaxe_tier": "steel"}
         };
         
         const STRUCTURE_DATA = {
@@ -738,7 +738,7 @@
             },
             "house": {
                 name: "House", emoji: "🏠",
-                cost: { "willow logs": 2500, "iron bar": 100, "tin bar": 50 },
+                cost: { "willow logs": 2500, "iron bar": 300, "bronze bar": 100 },
                 perk_desc: "Increases all Skill XP gain by +2%. Also grants a 5% chance for non-chicken monsters to drop bonus gold equal to 10% of their base gold drop (stacks with Mansion).",
                 perks: [ 
                     { type: "global_xp_boost", value: 0.02 },
@@ -851,6 +851,7 @@
         const ALL_MONSTER_NAMES = Object.keys(MONSTER_DATA);
         const ALL_ORE_NAMES = Object.keys(ORE_DATA);
 
+        const PICKAXE_TIER_ORDER = ["bronze", "iron", "steel", "mithril", "adamant", "rune", "dragon"];
         const AXE_TIER_ORDER = ["fists", "bronze", "iron", "steel", "mithril", "adamant", "rune", "dragon"];
         const TREE_DATA = { 
             "normal": {"exp":10, "log":"normal logs", "level":1,  "emoji": "🌲"},
@@ -1969,23 +1970,49 @@
             oreListDiv.innerHTML = '<div class="section-title">Available Ores</div>';
             currentMiningTarget = null;
 
+            const equippedPickaxeName = playerData.inventory.pickaxe;
+            const equippedPickaxeData = TOOL_DATA.pickaxe[equippedPickaxeName] || null; // No "fists" for pickaxe
+            const equippedPickaxeTierIndex = equippedPickaxeData ? PICKAXE_TIER_ORDER.indexOf(equippedPickaxeData.tier) : -1;
+
             const mnLvl = getLevelFromXp(playerData.mining_xp);
             let available = false;
             for (const oreName in ORE_DATA) {
                 const ore = ORE_DATA[oreName];
                 if (mnLvl >= ore.level_req) {
                     available = true;
+                    let canMineThisOre = true;
+                    let oreDisplayText = `${ore.emoji} ${titleCase(oreName)} (Lvl: ${ore.level_req}, XP per ore: ${ore.xp})`;
+
+                    if (ore.required_pickaxe_tier) {
+                        if (!equippedPickaxeData) { // No pickaxe equipped
+                            oreDisplayText += ` <span class="fore-red">(Req: ${titleCase(ore.required_pickaxe_tier)} Pickaxe)</span>`;
+                            canMineThisOre = false;
+                        } else {
+                            const requiredTierIndex = PICKAXE_TIER_ORDER.indexOf(ore.required_pickaxe_tier);
+                            if (equippedPickaxeTierIndex < requiredTierIndex) {
+                                oreDisplayText += ` <span class="fore-red">(Req: ${titleCase(ore.required_pickaxe_tier)} Pickaxe)</span>`;
+                                canMineThisOre = false;
+                            }
+                        }
+                    }
+
                     const oreDiv = document.createElement('div');
                     oreDiv.className = `skill-resource ${ore.color}`;
                     oreDiv.innerHTML = `
-                        <span class="resource-main-text">${ore.emoji} ${titleCase(oreName)} (Lvl: ${ore.level_req}, XP per ore: ${ore.xp})</span>
+                        <span class="resource-main-text">${oreDisplayText}</span>
                         <span class="resource-inventory-count" id="inv-count-mn-${oreName.replace(/\s+/g, '-')}">${playerData.inventory[ore.item_name] || 0}</span>
                     `;
                     oreDiv.id = `ore-list-item-${oreName.replace(/\s+/g, '-')}`;
                      if (isAutoMining && currentMiningTarget === oreName) {
                         oreDiv.classList.add('active-mining-item');
                     }
-                    oreDiv.onclick = () => selectOreForMining(oreName);
+                    if (canMineThisOre) {
+                        oreDiv.onclick = () => selectOreForMining(oreName);
+                    } else {
+                        oreDiv.style.opacity = "0.6";
+                        oreDiv.style.cursor = "not-allowed";
+                        oreDiv.title = `Requires a ${titleCase(ore.required_pickaxe_tier || 'better')} Pickaxe.`;
+                    }
                     oreListDiv.appendChild(oreDiv);
                 }
             }
@@ -2019,6 +2046,29 @@
             if (currentMnLvl < pickaxeProps.level_req) {
                 logMessage(`Mining Lvl (${currentMnLvl}) too low for ${titleCase(equippedPickaxeName)}. Req: ${pickaxeProps.level_req}`, "fore-red");
                 currentMiningTarget = null;
+                return false;
+            }
+
+            const oreData = ORE_DATA[currentMiningTarget];
+            if (oreData.required_pickaxe_tier) {
+                const equippedPickaxeTierIndex = PICKAXE_TIER_ORDER.indexOf(pickaxeProps.tier);
+                const requiredTierIndex = PICKAXE_TIER_ORDER.indexOf(oreData.required_pickaxe_tier);
+                if (equippedPickaxeTierIndex < requiredTierIndex) {
+                    logMessage(`Your ${titleCase(equippedPickaxeName)} is not strong enough for ${titleCase(currentMiningTarget)}. Requires a ${titleCase(oreData.required_pickaxe_tier)} Pickaxe or better.`, "fore-red");
+                    currentMiningTarget = null;
+                    // Also remove active class if it was somehow set
+                    const oreListItem = document.getElementById(`ore-list-item-${currentMiningTarget.replace(/\s+/g, '-')}`);
+                    if (oreListItem) oreListItem.classList.remove('active-mining-item');
+                    return false;
+                }
+            }
+
+            isAutoMining = true;
+            const oreListItem = document.getElementById(`ore-list-item-${currentMiningTarget.replace(/\s+/g, '-')}`);
+            if (oreListItem) oreListItem.classList.add('active-mining-item');
+            logMessage(`Auto-mining ${titleCase(currentMiningTarget)}...`, "fore-cyan");
+            
+            let interval = BASE_GATHER_INTERVAL;
                 return false;
             }
 
