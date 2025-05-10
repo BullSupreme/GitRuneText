@@ -56,7 +56,11 @@
             padding: 10px;
             margin-bottom: 15px;
             margin-top: 50px; /* Make space for top controls */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
+        .hud-column { display: flex; flex-direction: column; gap: 3px; }
         .section {
             border: 1px solid #444;
             padding: 10px;
@@ -155,7 +159,7 @@
         .hud-item {
             display: flex;
             align-items: center;
-            margin-bottom: 3px;
+            /* margin-bottom: 3px; */ /* Replaced by gap in .hud-column */
         }
         .hud-icon {
             font-size: 1.2em;
@@ -206,14 +210,18 @@
         </div>
 
         <div class="hud" id="hud">
-            <div id="hud-wc" class="hud-item"><span class="hud-icon" title="Woodcutting Skill">🌲<span class="tooltip-text">Woodcutting</span></span>Woodcutting: 1 (XP: 0/0)</div>
-            <div id="hud-mn" class="hud-item"><span class="hud-icon" title="Mining Skill">⛏️<span class="tooltip-text">Mining</span></span>Mining: 1 (XP: 0/0)</div>
-            <div id="hud-ck" class="hud-item"><span class="hud-icon" title="Cooking Skill">🍳<span class="tooltip-text">Cooking</span></span>Cooking: 1 (XP: 0/0)</div>
-            <div id="hud-bs" class="hud-item"><span class="hud-icon" title="Blacksmithing Skill">🛠️<span class="tooltip-text">Blacksmithing</span></span>Blacksmithing: 1 (XP: 0/0)</div>
-            <div id="hud-atk" class="hud-item"><span class="hud-icon" title="Attack Skill">⚔️<span class="tooltip-text">Attack</span></span>Attack: 1 (XP: 0/0)</div>
-            <div id="hud-hp" class="hud-item fore-lightred_ex"><span class="hud-icon" title="Health Points">❤️<span class="tooltip-text">Health</span></span>HP: 10/10</div>
-            <div id="hud-gold" class="hud-item fore-yellow"><span class="hud-icon" title="Your Gold">💰<span class="tooltip-text">Gold</span></span>Gold: 10</div>
-            <div id="hud-perk-points" class="hud-item fore-magenta"><span class="hud-icon" title="Perk Points">✨<span class="tooltip-text">Perk Points</span></span>Perk Points: 0</div>
+            <div class="hud-column" id="hud-left-skills">
+                <div id="hud-wc" class="hud-item"><span class="hud-icon" title="Woodcutting Skill">🌲<span class="tooltip-text">Woodcutting</span></span>Woodcutting: 1 (XP: 0/0)</div>
+                <div id="hud-mn" class="hud-item"><span class="hud-icon" title="Mining Skill">⛏️<span class="tooltip-text">Mining</span></span>Mining: 1 (XP: 0/0)</div>
+                <div id="hud-ck" class="hud-item"><span class="hud-icon" title="Cooking Skill">🍳<span class="tooltip-text">Cooking</span></span>Cooking: 1 (XP: 0/0)</div>
+                <div id="hud-bs" class="hud-item"><span class="hud-icon" title="Blacksmithing Skill">🛠️<span class="tooltip-text">Blacksmithing</span></span>Blacksmithing: 1 (XP: 0/0)</div>
+            </div>
+            <div class="hud-column" id="hud-right-stats">
+                <div id="hud-atk" class="hud-item"><span class="hud-icon" title="Attack Skill">⚔️<span class="tooltip-text">Attack</span></span>Attack: 1 (XP: 0/0)</div>
+                <div id="hud-hp" class="hud-item fore-lightred_ex"><span class="hud-icon" title="Health Points">❤️<span class="tooltip-text">Health</span></span>HP: 10/10</div>
+                <div id="hud-gold" class="hud-item fore-yellow"><span class="hud-icon" title="Your Gold">💰<span class="tooltip-text">Gold</span></span>Gold: 10</div>
+                <div id="hud-perk-points" class="hud-item fore-magenta"><span class="hud-icon" title="Perk Points">✨<span class="tooltip-text">Perk Points</span></span>Perk Points: 0</div>
+            </div>
         </div>
 
         <div id="main-menu-section" class="section">
