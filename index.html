@@ -652,16 +652,22 @@
             "house": {
                 name: "House", emoji: "🏠",
                 cost: { "willow logs": 2500, "iron bar": 100, "tin bar": 50 },
-                perk_desc: "Increases all Skill XP gain by +2%.",
-                perk_effect: { type: "global_xp_boost", value: 0.02 },
+                // Combined description for UI clarity
+                perk_desc: "Increases all Skill XP gain by +2%. Also grants a 5% chance for non-chicken monsters to drop bonus gold equal to 10% of their base gold drop.",
+                perks: [ // Array of perk objects
+                    { type: "global_xp_boost", value: 0.02 },
+                    { type: "scaled_bonus_mob_gold_drop_chance", value: 0.05, bonus_gold_percentage_of_base: 0.10 } // 5% chance of +10% base gold
+                ],
                 requires_structure: "cabin",
                 rent_value: 15 
             },
             "mansion": {
                 name: "Mansion", emoji: "🏯",
                 cost: { "willow logs": 5000, "steel bar": 200, "coal": 100 },
-                perk_desc: "5% chance for monster kills to drop double their normal gold amount.",
-                perk_effect: { type: "monster_gold_drop_multiplier_chance", value: 0.05, multiplier: 2 },
+                perk_desc: "Grants a 10% chance for monster kills to drop double their normal gold amount.",
+                perks: [ // Array for Mansion perks
+                    { type: "monster_gold_drop_multiplier_chance", value: 0.10, multiplier: 2 } // 10% chance
+                ],
                 requires_structure: "house",
                 rent_value: 40 
             },
@@ -672,6 +678,32 @@
                 perk_effect: { type: "shop_price_modifier", buy_mod: -0.05, sell_mod: 0.05 },
                 requires_structure: "mansion",
                 rent_value: 100 
+            },
+            "stronghold": {
+                name: "The Stronghold", emoji: "🧱🏰",
+                cost: {
+                    "willow logs": 25000, 
+                    "oak logs": 10000,
+                    "normal logs": 5000,
+                    "bronze bar": 500,
+                    "iron bar": 400,
+                    "steel bar": 300,
+                    "mithril bar": 250,
+                    "adamantite bar": 200,
+                    "runite bar": 150,
+                    "dragon bar": 100,
+                    "dragon gem": 5, 
+                    "demon heart": 10 
+                },
+                perk_desc: "A bastion of ultimate power. Grants +10% to all damage dealt, +25 Max HP, heals 5% of Max HP on monster kill, and all skill actions are 5% faster.",
+                perks: [
+                    { type: "global_damage_boost", value: 0.10 },
+                    { type: "max_hp_bonus_flat", value: 25 }, 
+                    { type: "heal_on_kill_percent", value: 0.05 },
+                    { type: "global_skill_speed_boost", value: 0.05 }
+                ],
+                requires_structure: "castle", 
+                rent_value: 250 
             }
         };
         const RENT_COLLECTION_INTERVAL = 5 * 60 * 1000; // 5 minutes
@@ -689,7 +721,7 @@
                 "wolf fang":0,"bear claw":0,"ogre club fragment":0,"troll hide":0,"giant's toe":0,"demon heart":0,
             },
             "built_structures": {
-                "camp": false, "shed": false, "cabin": false, "house": false, "mansion": false, "castle": false
+                "camp": false, "shed": false, "cabin": false, "house": false, "mansion": false, "castle": false, "stronghold": false
             },
             "last_rent_collection_time": 0,
         };
@@ -854,6 +886,13 @@
             if (playerData && playerData.built_structures && playerData.built_structures.cabin) {
                 baseMaxHp += STRUCTURE_DATA.cabin.perk_effect.value;
             }
+            if (playerData && playerData.built_structures && playerData.built_structures.stronghold) {
+                const strongholdHpPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "max_hp_bonus_flat");
+                if (strongholdHpPerk) {
+                    baseMaxHp += strongholdHpPerk.value;
+                }
+            }
+
             return baseMaxHp;
         }
 
@@ -881,7 +920,11 @@
         function grantUniversalXP(amount) {
             let actualAmount = amount;
             if (playerData && playerData.built_structures && playerData.built_structures.house) {
-                actualAmount *= (1 + STRUCTURE_DATA.house.perk_effect.value);
+                STRUCTURE_DATA.house.perks.forEach(perk => {
+                    if (perk.type === "global_xp_boost") {
+                        actualAmount *= (1 + perk.value);
+                    }
+                });
             }
             playerData.total_skill_xp = (playerData.total_skill_xp || 0) + Math.floor(actualAmount);
             updatePerkPoints();
@@ -947,7 +990,7 @@
                 data.built_structures = JSON.parse(JSON.stringify(DEFAULT_PLAYER.built_structures));
                 dataChanged = true;
             } else { 
-                for (const structKey in DEFAULT_PLAYER.built_structures) {
+                for (const structKey in DEFAULT_PLAYER.built_structures) { // Ensure all default structure keys exist
                     if (!(structKey in data.built_structures)) {
                         data.built_structures[structKey] = DEFAULT_PLAYER.built_structures[structKey];
                         dataChanged = true;
@@ -1581,6 +1624,10 @@
 
             let interval = BASE_GATHER_INTERVAL;
             if(isPerkActive("efficientGatherer1")) interval *= (1 - PERK_DATA.efficientGatherer1.value);
+            if (playerData.built_structures.stronghold) {
+                const speedPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "global_skill_speed_boost");
+                if (speedPerk) interval *= (1 - speedPerk.value);
+            }
             autoWoodcuttingInterval = setInterval(singleChopAction, interval);
             return true;
         }
@@ -1708,6 +1755,10 @@
             
             let interval = BASE_GATHER_INTERVAL;
             if(isPerkActive("efficientGatherer1")) interval *= (1 - PERK_DATA.efficientGatherer1.value);
+            if (playerData.built_structures.stronghold) {
+                const speedPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "global_skill_speed_boost");
+                if (speedPerk) interval *= (1 - speedPerk.value);
+            }
             autoMiningInterval = setInterval(singleMineAction, interval);
             return true;
         }
@@ -1881,6 +1932,10 @@
             let interval = BASE_CRAFT_INTERVAL;
             if (playerData.built_structures.shed) {
                 interval *= (1 - STRUCTURE_DATA.shed.perk_effect.value);
+            }
+            if (playerData.built_structures.stronghold) {
+                const speedPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "global_skill_speed_boost");
+                if (speedPerk) interval *= (1 - speedPerk.value);
             }
             if (autoSmeltingInterval) clearInterval(autoSmeltingInterval);
             autoSmeltingInterval = setInterval(singleSmeltAction, interval);
@@ -2075,6 +2130,10 @@
             if (playerData.built_structures.shed) {
                 interval *= (1 - STRUCTURE_DATA.shed.perk_effect.value);
             }
+            if (playerData.built_structures.stronghold) {
+                const speedPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "global_skill_speed_boost");
+                if (speedPerk) interval *= (1 - speedPerk.value);
+            }
             if(autoSmithingInterval) clearInterval(autoSmithingInterval);
             autoSmithingInterval = setInterval(singleSmithAction, interval);
             return true;
@@ -2261,7 +2320,7 @@
             }
 
             const monster = MONSTER_DATA[currentMonsterTarget];
-            const playerAtkLvl = getLevelFromXp(playerData.attack_xp);
+            let playerAtkLvl = getLevelFromXp(playerData.attack_xp); // Use let for oldAtkLvl later
             const playerMaxHp = getMaxHp(playerAtkLvl);
 
             let weaponName = "fists";
@@ -2289,6 +2348,11 @@
                 if(isPerkActive("weaponMaster1")) {
                     finalPlayerDmg *= (1 + PERK_DATA.weaponMaster1.value);
                 }
+            }
+            // Apply Stronghold global damage boost
+            if (playerData.built_structures.stronghold) {
+                const damagePerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "global_damage_boost");
+                if (damagePerk) finalPlayerDmg *= (1 + damagePerk.value);
             }
 
             let critMultiplier = 1.0;
@@ -2346,26 +2410,55 @@
 
                 const oldAtkLvl = playerAtkLvl;
                 let xpGainedRaw = monster.attack_xp;
-                let xpGained = xpGainedRaw;
+                let xpGainedDisplay = xpGainedRaw; // For logging, before house perk is applied twice for display
+
+                // Apply House XP perk for individual skill XP
                 if (playerData.built_structures.house) {
-                    xpGained *= (1 + STRUCTURE_DATA.house.perk_effect.value);
+                    const houseXpPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "global_xp_boost");
+                    if (houseXpPerk) {
+                        xpGainedDisplay *= (1 + houseXpPerk.value);
+                    }
                 }
-                playerData.attack_xp += Math.floor(xpGained);
-                grantUniversalXP(xpGainedRaw);
-                logMessage(`Gained ${Math.floor(xpGained)} Attack XP!`, "fore-green");
+                playerData.attack_xp += Math.floor(xpGainedDisplay);
+                grantUniversalXP(xpGainedRaw); // grantUniversalXP will handle its own House perk application for total_skill_xp
+
+                logMessage(`Gained ${Math.floor(xpGainedDisplay)} Attack XP!`, "fore-green");
                 
                 handleLevelUp("attack_xp", oldAtkLvl);
+                playerAtkLvl = getLevelFromXp(playerData.attack_xp); // Re-fetch playerAtkLvl in case of level up for drop calcs
 
-                // Monster Gold Drop
-                if (monster.gold_drop) {
+                // --- GOLD DROP LOGIC ---
+                // 1. Monster's Base Gold Drop
+                if (monster.gold_drop && monster.gold_drop[1] > 0) { // Check if monster can drop gold
                     let goldDropped = Math.floor(Math.random() * (monster.gold_drop[1] - monster.gold_drop[0] + 1)) + monster.gold_drop[0];
-                    if (playerData.built_structures.mansion && Math.random() < STRUCTURE_DATA.mansion.perk_effect.value) {
-                        goldDropped *= STRUCTURE_DATA.mansion.perk_effect.multiplier;
-                        logMessage("Lavish Lifestyle proc! Gold drop doubled!", "fore-magenta");
+                    
+                    // 2. Mansion Perk: Chance to Double the Base Gold Drop
+                    if (playerData.built_structures.mansion) {
+                        const mansionGoldPerk = STRUCTURE_DATA.mansion.perks.find(p => p.type === "monster_gold_drop_multiplier_chance");
+                        if (mansionGoldPerk && Math.random() < mansionGoldPerk.value) {
+                            goldDropped *= mansionGoldPerk.multiplier;
+                            logMessage("Lavish Lifestyle proc! Gold drop doubled!", "fore-magenta");
+                        }
                     }
+
                     if (goldDropped > 0) {
                         playerData.gold += goldDropped;
                         logMessage(`The ${titleCase(currentMonsterTarget)} dropped ${goldDropped} gold!`, "fore-yellow");
+                    }
+                }
+
+                // 3. House Perk: Separate chance for small *additional* bonus gold (non-chicken)
+                if (playerData.built_structures.house && currentMonsterTarget !== "chicken") {
+                    const houseScaledGoldPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "scaled_bonus_mob_gold_drop_chance");
+                    // Ensure monster actually has a gold_drop defined before trying to scale off it
+                    if (houseScaledGoldPerk && monster.gold_drop && monster.gold_drop[1] > 0 && Math.random() < houseScaledGoldPerk.value) {
+                        // Re-roll base for this bonus to be fair and independent of the main drop's roll
+                        const baseGoldForScaling = Math.floor(Math.random() * (monster.gold_drop[1] - monster.gold_drop[0] + 1)) + monster.gold_drop[0];
+                        const bonusScaledGold = Math.floor(baseGoldForScaling * houseScaledGoldPerk.bonus_gold_percentage_of_base);
+                        if (bonusScaledGold > 0) {
+                            playerData.gold += bonusScaledGold;
+                            logMessage(`House bonus! +${bonusScaledGold} extra gold from ${titleCase(currentMonsterTarget)}!`, "fore-yellow");
+                        }
                     }
                 }
 
@@ -2385,6 +2478,16 @@
                         logMessage(`Received ${quantity} ${titleCase(drop.item_name)}!`, "fore-magenta");
                     }
                 });
+
+                // Stronghold: Heal on kill
+                if (playerData.built_structures.stronghold) {
+                    const healPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "heal_on_kill_percent");
+                    if (healPerk) {
+                        const healAmount = Math.floor(playerMaxHp * healPerk.value);
+                        playerData.hp = Math.min(playerMaxHp, playerData.hp + healAmount);
+                        if (healAmount > 0) logMessage(`Stronghold's Blessing! Healed ${healAmount} HP.`, "fore-green");
+                    }
+                }
 
                 savePlayerData();
                 updateHud();
@@ -2446,6 +2549,7 @@
             savePlayerData();
             updateHud();
         }
+        
         
         function attemptAutoEat() {
             const playerMaxHp = getMaxHp(getLevelFromXp(playerData.attack_xp));
@@ -2593,6 +2697,10 @@
             let interval = BASE_CRAFT_INTERVAL;
             if (playerData.built_structures.shed) {
                 interval *= (1 - STRUCTURE_DATA.shed.perk_effect.value);
+            }
+            if (playerData.built_structures.stronghold) {
+                const speedPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "global_skill_speed_boost");
+                if (speedPerk) interval *= (1 - speedPerk.value);
             }
             if(autoCookingInterval) clearInterval(autoCookingInterval);
             autoCookingInterval = setInterval(singleCookAction, interval);
@@ -2773,9 +2881,15 @@
             // playSound(buildStructureSound); // Add a sound effect if you have one
 
             // Special handling for Cabin HP bonus
-            if (structure.perk_effect.type === "max_hp_bonus") {
+            if (structure.perk_effect && structure.perk_effect.type === "max_hp_bonus") {
                 playerData.hp += structure.perk_effect.value; // Give the HP
                 playerData.hp = Math.min(playerData.hp, getMaxHp(getLevelFromXp(playerData.attack_xp))); // Cap it
+            }
+            // Special handling for Stronghold HP bonus
+            if (structureId === "stronghold" && structure.perks) {
+                const hpPerk = structure.perks.find(p => p.type === "max_hp_bonus_flat");
+                if (hpPerk) playerData.hp += hpPerk.value;
+                playerData.hp = Math.min(playerData.hp, getMaxHp(getLevelFromXp(playerData.attack_xp)));
             }
             
             startRentCollection(); // Check if rent system needs to start/update
@@ -2847,6 +2961,10 @@
             if (playerData.built_structures.castle && playerData.built_structures.mansion) { 
                 totalRentCollected += STRUCTURE_DATA.castle.rent_value;
                 if (STRUCTURE_DATA.castle.rent_value > 0) rentMessages.push(`${STRUCTURE_DATA.mansion.name}: ${STRUCTURE_DATA.castle.rent_value}g`);
+            }
+            if (playerData.built_structures.stronghold && playerData.built_structures.castle) { 
+                totalRentCollected += STRUCTURE_DATA.stronghold.rent_value;
+                if (STRUCTURE_DATA.stronghold.rent_value > 0) rentMessages.push(`${STRUCTURE_DATA.castle.name}: ${STRUCTURE_DATA.stronghold.rent_value}g`);
             }
 
             if (totalRentCollected > 0) {
@@ -2992,6 +3110,9 @@
                 if (playerData.built_structures.cabin) { // Adjust HP for cabin
                      playerData.hp = getMaxHp(getLevelFromXp(playerData.attack_xp));
                 }
+                if (playerData.built_structures.stronghold) { // Adjust HP for stronghold
+                     playerData.hp = getMaxHp(getLevelFromXp(playerData.attack_xp));
+                }
                 startRentCollection(); // Ensure rent starts
             }
             else {
@@ -3001,7 +3122,6 @@
             savePlayerData();
             updateHud();
         }
-
 
         // --- Game Control ---
         function quitGame() { // Not explicitly called by a button, but good practice to have
