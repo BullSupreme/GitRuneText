@@ -115,10 +115,16 @@
             padding: 8px;
             margin: 5px 0;
             background-color: #2d2d30;
-            cursor: pointer;
+            cursor: pointer; /* Existing */
+            display: flex; /* New: for layout */
+            justify-content: space-between; /* New: pushes count to the right */
+            align-items: center; /* New: vertically aligns text and count */
         }
         .item:hover, .skill-resource:hover, .perk-entry:hover:not(.disabled-perk):not(.activated-perk) {
              background-color: #3a3d41;
+        }
+        .resource-inventory-count { /* New style for the count itself */
+            background-color: #1c1c1c; padding: 2px 6px; border-radius: 4px; margin-left: 10px; font-weight: bold;
         }
         .monster-display .emoji { font-size: 2em; }
         .perk-entry.disabled-perk { cursor: not-allowed; background-color: #444; color: #888; }
@@ -337,6 +343,13 @@
         }
         #available-structures-list .item p em {
             color: #6a9955; 
+        }
+        .glow-green-temp {
+            background-color: #0e9c18 !important; /* Strong green */
+            border-color: #33ff33 !important;
+            box-shadow: 0 0 15px #33ff33, 0 0 8px #33ff33 inset !important; /* Green glow */
+            color: white !important;
+            transition: background-color 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
         }
 
     </style>
@@ -717,7 +730,7 @@
             },
             "cabin": {
                 name: "Cabin", emoji: "🏡",
-                cost: { "oak logs": 1000, "willow logs": 200, "copper bar": 50 },
+                cost: { "oak logs": 1000, "willow logs": 200, "bronze bar": 50 },
                 perk_desc: "Increases Max HP by +10.",
                 perk_effect: { type: "max_hp_bonus", value: 10 },
                 requires_structure: "shed",
@@ -726,7 +739,7 @@
             "house": {
                 name: "House", emoji: "🏠",
                 cost: { "willow logs": 2500, "iron bar": 100, "tin bar": 50 },
-                perk_desc: "Increases all Skill XP gain by +2%. Also grants a 5% chance for non-chicken monsters to drop bonus gold equal to 10% of their base gold drop.",
+                perk_desc: "Increases all Skill XP gain by +2%. Also grants a 5% chance for non-chicken monsters to drop bonus gold equal to 10% of their base gold drop (stacks with Mansion).",
                 perks: [ 
                     { type: "global_xp_boost", value: 0.02 },
                     { type: "scaled_bonus_mob_gold_drop_chance", value: 0.05, bonus_gold_percentage_of_base: 0.10 }
@@ -1294,54 +1307,90 @@
                     hasItems = true;
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'item-entry';
-                    let emoji = "&nbsp;"; // Default to a non-breaking space for alignment
 
-                    if (FOOD_DATA[itemName]) emoji = FOOD_DATA[itemName].emoji || "&nbsp;";
-                    else if (COOKABLE_ITEMS[itemName.replace(/s$/, '')]) emoji = COOKABLE_ITEMS[itemName.replace(/s$/, '')].emoji || "&nbsp;"; // Handle plural "raw meats" if needed
-                    else if (BAR_DATA[itemName]) emoji = BAR_DATA[itemName].emoji || "&nbsp;";
-                    else if (SWORD_DATA[itemName]) emoji = SWORD_DATA[itemName].emoji || "&nbsp;";
-                    else {
+                    let emoji = "&nbsp;";
+                    let displayItemName = titleCase(itemName);
+                    let itemColorClass = "fore-white";
+
+                    // 1. Specific full names / unique items
+                    if (SWORD_DATA[itemName]) {
+                        emoji = SWORD_DATA[itemName].emoji || "&nbsp;";
+                        itemColorClass = SWORD_DATA[itemName].color || "fore-white";
+                    } else if (ARMOR_DATA[itemName]) {
+                        emoji = ARMOR_DATA[itemName].emoji || "&nbsp;";
+                        itemColorClass = ARMOR_DATA[itemName].color || "fore-white";
+                    } else if (itemName === "egg") {
+                        emoji = "🥚";
+                    } else if (itemName === "goblin beads") {
+                        emoji = "📿";
+                    } else if (itemName === "dragon gem") {
+                        emoji = "<span class='fore-red'>💎</span>";
+                        itemColorClass = "fore-red";
+                    } else if (itemName === "demon heart") {
+                        emoji = "<span class='fore-magenta'>❤️‍🔥</span>";
+                        itemColorClass = "fore-magenta";
+                    } else if (itemName === "burnt meat") {
+                        emoji = " ◍ "; // New emoji for burnt meat
+                        itemColorClass = "fore-dark-grey";
+                    }
+                    // 2. Pattern-based (logs, ores)
+                    else if (itemName.endsWith(" ore")) {
                         const nameParts = itemName.toLowerCase().split(" ");
                         const baseNameFromParts = nameParts[0]; // Use this for emoji logic if needed
-                        const typeSuffix = nameParts.length > 1 ? nameParts[nameParts.length -1] : "";
-
-                        // Use baseNameFromParts for these lookups
-                        if (itemName.endsWith(" ore") && ORE_DATA[baseNameFromParts]) emoji = ORE_DATA[baseNameFromParts].emoji || "&nbsp;";
-                        else if (itemName.endsWith(" logs") && TREE_DATA[baseNameFromParts]) emoji = TREE_DATA[baseNameFromParts].emoji || "&nbsp;";
-                        // For tools like "Bronze Axe", "Iron Pickaxe"
-                        else if (itemName.endsWith(" Axe") && TOOL_DATA.axe[baseNameFromParts] && TOOL_DATA.axe[baseNameFromParts].emoji) { // Changed baseName to baseNameFromParts
-                            emoji = TOOL_DATA.axe[baseNameFromParts].emoji || "&nbsp;";
-                        } else if (itemName.endsWith(" Pickaxe") && TOOL_DATA.pickaxe[baseNameFromParts] && TOOL_DATA.pickaxe[baseNameFromParts].emoji) { // Changed baseName to baseNameFromParts
-                            emoji = TOOL_DATA.pickaxe[baseNameFromParts].emoji || "&nbsp;";
+                        if (ORE_DATA[baseNameFromParts]) {
+                            emoji = ORE_DATA[baseNameFromParts].emoji || "&nbsp;";
+                            itemColorClass = ORE_DATA[baseNameFromParts].color || "fore-white";
                         }
-                        else if (itemName === "egg") emoji = "🥚";
-                        else if (itemName === "goblin beads") emoji = "📿";
-                        else if (itemName === "dragon gem") emoji = "<span class='fore-red'>💎</span>";
-                        else if (itemName === "demon heart") emoji = "<span class='fore-magenta'>❤️‍🔥</span>";
-                        else {
-                            let itemColorClass = "fore-white"; 
-                            const baseNameForColor = itemName.toLowerCase().split(" ")[0];
-                            if (ORE_DATA[baseNameForColor] && itemName.endsWith(" ore")) itemColorClass = ORE_DATA[baseNameForColor].color || itemColorClass;
-                            else if (BAR_DATA[itemName]) itemColorClass = BAR_DATA[itemName].color || itemColorClass;
-                            
-                            if (emoji === "&nbsp;") { 
-                                emoji = `<span class='${itemColorClass}'>●</span>`; 
-                            }
-                        } 
+                    } else if (itemName.endsWith(" logs")) {
+                        const nameParts = itemName.toLowerCase().split(" ");
+                        const baseNameFromParts = nameParts[0];
+                        if (TREE_DATA[baseNameFromParts]) {
+                            emoji = TREE_DATA[baseNameFromParts].emoji || "&nbsp;";
+                            itemColorClass = TREE_DATA[baseNameFromParts].color || "fore-green";
+                        }
                     }
-                    let itemColorClass = "fore-white"; 
-                    const baseName = itemName.toLowerCase().split(" ")[0]; 
-                    if (BAR_DATA[itemName]) itemColorClass = BAR_DATA[itemName].color;
-                    else if (itemName.endsWith(" ore") && ORE_DATA[baseName]) itemColorClass = ORE_DATA[baseName].color;
-                    else if (itemName.endsWith(" logs") && TREE_DATA[baseName] && TREE_DATA[baseName].color) itemColorClass = TREE_DATA[baseName].color; 
-                    else if ((itemName.endsWith(" Axe") || (TOOL_DATA.axe[baseName] && !itemName.endsWith(" Axe"))) && TOOL_DATA.axe[baseName] && TOOL_DATA.axe[baseName].color) itemColorClass = TOOL_DATA.axe[baseName].color; // Check if just material name for tool
-                    else if ((itemName.endsWith(" Pickaxe") || (TOOL_DATA.pickaxe[baseName] && !itemName.endsWith(" Pickaxe"))) && TOOL_DATA.pickaxe[baseName] && TOOL_DATA.pickaxe[baseName].color) itemColorClass = TOOL_DATA.pickaxe[baseName].color;
-                    else if (SWORD_DATA[itemName]) itemColorClass = SWORD_DATA[itemName].color;
-                    else if (FOOD_DATA[itemName]) itemColorClass = FOOD_DATA[itemName].color || "fore-green"; 
-                    else if (COOKABLE_ITEMS[itemName.replace(/s$/, '')]) itemColorClass = COOKABLE_ITEMS[itemName.replace(/s$/, '')].color || "fore-white"; 
-                    else if (itemName === "burnt meat") itemColorClass = "fore-dark-grey";
-                    
-                    itemDiv.innerHTML = `<span class="inv-item-emoji">${emoji}</span><span class="item-name ${itemColorClass}">${titleCase(itemName)}:</span> <span class="item-quantity">${quantity.toLocaleString()}</span>`;
+                    // 3. Food data
+                    else if (FOOD_DATA[itemName]) {
+                        emoji = FOOD_DATA[itemName].emoji || "&nbsp;";
+                        itemColorClass = FOOD_DATA[itemName].color || "fore-green";
+                    }
+                    // 4. Cookable items (raw forms)
+                    else if (COOKABLE_ITEMS[itemName.replace(/s$/, '')]) {
+                        const cookableBase = itemName.replace(/s$/, '');
+                        if (COOKABLE_ITEMS[cookableBase]) {
+                             emoji = COOKABLE_ITEMS[cookableBase].emoji || "&nbsp;";
+                             itemColorClass = COOKABLE_ITEMS[cookableBase].color || "fore-white";
+                        }
+                    }
+                    // 5. Bar data
+                    else if (BAR_DATA[itemName]) {
+                        emoji = BAR_DATA[itemName].emoji || "&nbsp;";
+                        itemColorClass = BAR_DATA[itemName].color || "fore-white";
+                    }
+                    // 6. Unequipped tools (inventory key is the material, e.g., "bronze")
+                    else if (TOOL_DATA.axe[itemName]) { // itemName is "bronze", "iron" etc.
+                        const toolData = TOOL_DATA.axe[itemName];
+                        emoji = toolData.emoji || "&nbsp;";
+                        displayItemName = titleCase(itemName + " Axe");
+                        itemColorClass = toolData.color || "fore-white";
+                    } else if (TOOL_DATA.pickaxe[itemName]) { // itemName is "bronze", "iron" etc.
+                        const toolData = TOOL_DATA.pickaxe[itemName];
+                        emoji = toolData.emoji || "&nbsp;";
+                        displayItemName = titleCase(itemName + " Pickaxe");
+                        itemColorClass = toolData.color || "fore-white";
+                    }
+
+                    // 7. Default fallback emoji if still not found
+                    if (emoji === "&nbsp;") {
+                        emoji = `<span class='${itemColorClass}'>●</span>`;
+                    }
+
+                    // Final override for burnt meat color for its text, if needed
+                    if (itemName === "burnt meat") {
+                        itemColorClass = "fore-dark-grey";
+                    }
+
+                    itemDiv.innerHTML = `<span class="inv-item-emoji">${emoji}</span><span class="item-name ${itemColorClass}">${displayItemName}:</span> <span class="item-quantity">${quantity.toLocaleString()}</span>`;
                     listDiv.appendChild(itemDiv);
                 }
             }
@@ -1514,6 +1563,7 @@
                 const item = sourceData[itemName];
                 itemsAvailable = true;
                 const itemDiv = document.createElement('div');
+                itemDiv.id = `shop-item-buy-${categoryKey}-${itemName.replace(/\s+/g, '-')}`; // Add unique ID
                 itemDiv.className = 'shop-item item';
 
                 let actualPrice = item.price;
@@ -1591,37 +1641,107 @@
             const listDiv = document.getElementById('sellable-items-list');
             listDiv.innerHTML = '<div class="section-title">Your Sellable Items</div>';
             let hasSellable = false;
+            
+            for (const inventoryKey in playerData.inventory) {
+                const quantity = playerData.inventory[inventoryKey];
+                const isEquippableSlot = ["weapon", "axe", "pickaxe", "chestplate"].includes(inventoryKey);
 
-            for (const itemName in playerData.inventory) {
-                const quantity = playerData.inventory[itemName];
-                const baseSellPrice = ITEM_SELL_PRICES[itemName];
+                // Skip equipped slots and items with 0 quantity or non-numeric quantity (like equipped item names)
+                if (isEquippableSlot || typeof quantity !== 'number' || quantity <= 0) {
+                    continue;
+                }
+
+                let emoji = "&nbsp;";
+                let itemColorClass = "fore-white";
+                let displayFullName = titleCase(inventoryKey); // Default display name
+                let priceLookupKey = inventoryKey;          // Default key for ITEM_SELL_PRICES
+
+                // Handle tools that are stored by material name in inventory (e.g., "bronze" for bronze axe)
+                // These are typically unequipped tools.
+                if (TOOL_DATA.axe[inventoryKey]) {
+                    const toolData = TOOL_DATA.axe[inventoryKey];
+                    displayFullName = titleCase(inventoryKey + " axe");
+                    priceLookupKey = inventoryKey + " axe"; // ITEM_SELL_PRICES uses "bronze axe", etc.
+                    emoji = toolData.emoji || "&nbsp;";
+                    itemColorClass = toolData.color || "fore-white";
+                } else if (TOOL_DATA.pickaxe[inventoryKey]) {
+                    const toolData = TOOL_DATA.pickaxe[inventoryKey];
+                    displayFullName = titleCase(inventoryKey + " pickaxe");
+                    priceLookupKey = inventoryKey + " pickaxe";
+                    emoji = toolData.emoji || "&nbsp;";
+                    itemColorClass = toolData.color || "fore-white";
+                }
+                // Handle other item types by their direct inventoryKey
+                else if (FOOD_DATA[inventoryKey]) {
+                    emoji = FOOD_DATA[inventoryKey].emoji || "&nbsp;";
+                    itemColorClass = FOOD_DATA[inventoryKey].color || "fore-green";
+                } else if (COOKABLE_ITEMS[inventoryKey.replace(/s$/, '')]) { // Handle plural "raw meats" if needed
+                    const cookableBase = inventoryKey.replace(/s$/, '');
+                    emoji = COOKABLE_ITEMS[cookableBase].emoji || "&nbsp;";
+                    itemColorClass = COOKABLE_ITEMS[cookableBase].color || "fore-white";
+                } else if (BAR_DATA[inventoryKey]) {
+                    emoji = BAR_DATA[inventoryKey].emoji || "&nbsp;";
+                    itemColorClass = BAR_DATA[inventoryKey].color || "fore-white";
+                } else if (SWORD_DATA[inventoryKey]) { // Swords are stored by full name, e.g., "bronze 2h sword"
+                    emoji = SWORD_DATA[inventoryKey].emoji || "&nbsp;";
+                    itemColorClass = SWORD_DATA[inventoryKey].color || "fore-white";
+                } else if (ARMOR_DATA[inventoryKey]) { // Armor is stored by full name, e.g., "bronze chestplate"
+                    emoji = ARMOR_DATA[inventoryKey].emoji || "&nbsp;";
+                    itemColorClass = ARMOR_DATA[inventoryKey].color || "fore-white";
+                } else { // Generic items like logs, ores, misc drops
+                    const nameParts = inventoryKey.toLowerCase().split(" ");
+                    const baseName = nameParts[0];
+
+                    if (inventoryKey.endsWith(" ore") && ORE_DATA[baseName]) {
+                        emoji = ORE_DATA[baseName].emoji || "&nbsp;";
+                        itemColorClass = ORE_DATA[baseName].color || "fore-white";
+                    } else if (inventoryKey.endsWith(" logs") && TREE_DATA[baseName]) {
+                        emoji = TREE_DATA[baseName].emoji || "&nbsp;";
+                        itemColorClass = TREE_DATA[baseName].color || "fore-green"; // Default for logs
+                    }
+                    else if (inventoryKey === "egg") {
+                        emoji = "🥚";
+                    } else if (inventoryKey === "goblin beads") {
+                        emoji = "📿";
+                    } else if (inventoryKey === "dragon gem") {
+                        emoji = "<span class='fore-red'>💎</span>";
+                    } else if (inventoryKey === "demon heart") {
+                        emoji = "<span class='fore-magenta'>❤️‍🔥</span>";
+                    } else if (inventoryKey === "burnt meat") { // Explicitly set emoji for burnt meat in shop
+                        emoji = " ◍ ";
+                        itemColorClass = "fore-dark-grey";
+                    } else if (emoji === "&nbsp;") { // Default emoji if still not found for other generic items
+                        emoji = `<span class='${itemColorClass}'>●</span>`;
+                    }
+                }
+
+                // Determine sell price
+                let baseSellPrice = ITEM_SELL_PRICES[priceLookupKey];
+                if (typeof baseSellPrice === 'undefined') {
+                    baseSellPrice = 1; // Default sell price for items not explicitly priced
+                }
 
                 let actualSellPrice = baseSellPrice;
-                if (playerData.built_structures.castle && actualSellPrice && STRUCTURE_DATA.castle.perk_effect.type === "shop_price_modifier") { // Check perk type
+                if (playerData.built_structures.castle && typeof actualSellPrice === 'number' && STRUCTURE_DATA.castle.perk_effect.type === "shop_price_modifier") {
                     actualSellPrice *= (1 + STRUCTURE_DATA.castle.perk_effect.sell_mod);
                     actualSellPrice = Math.floor(actualSellPrice);
                 }
 
-
-                const isEquipped = (playerData.inventory.weapon === itemName || playerData.inventory.axe === itemName || playerData.inventory.pickaxe === itemName || playerData.inventory.chestplate === itemName);
-
-                if (!isEquipped && typeof quantity === 'number' && quantity > 0 && actualSellPrice !== undefined && actualSellPrice > 0) {
-                    hasSellable = true;
-                    const itemDiv = document.createElement('div');
-                    let sellItemColorClass = "fore-white"; // Default for sell list
-                    // Apply specific colors if desired, or keep default for most
-                    if (BAR_DATA[itemName]) sellItemColorClass = BAR_DATA[itemName].color;
-                    else if (itemName.endsWith(" ore") && ORE_DATA[itemName.split(" ")[0]]) sellItemColorClass = ORE_DATA[itemName.split(" ")[0]].color;
-                    // For burnt meat, we want no special color, so it will use the default .item class color or fore-white
-                    if (itemName === "burnt meat") sellItemColorClass = ""; // Let it use default text color
-
-                    itemDiv.className = 'shop-item item';
-                    itemDiv.innerHTML = `<span class="${sellItemColorClass}">${titleCase(itemName)}</span> (x${quantity}) <span class="price">${actualSellPrice}g each</span>`;
-                    itemDiv.onclick = () => sellItem(itemName, quantity, baseSellPrice); // Pass base price to sellItem
-                    listDiv.appendChild(itemDiv);
+                if (actualSellPrice < 0) { // Don't list items that would sell for negative gold
+                    continue;
                 }
+
+                hasSellable = true;
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'shop-item item'; // Using shop-item for consistency
+
+                // Mimic inventory display structure for consistency
+                itemDiv.innerHTML = `<span class="inv-item-emoji">${emoji}</span><span class="item-name ${itemColorClass}">${displayFullName}:</span> <span class="item-quantity">${quantity.toLocaleString()}</span> <span class="price">${actualSellPrice}g each</span>`;
+                itemDiv.onclick = () => sellItem(inventoryKey, quantity, baseSellPrice); // Pass original inventoryKey and baseSellPrice
+                listDiv.appendChild(itemDiv);
             }
-            if (!hasSellable) listDiv.innerHTML += "<p>You have no items to sell.</p>";
+
+            if (!hasSellable) listDiv.innerHTML += "<p>You have no items to sell (or they are worthless).</p>";
         }
 
         // MODIFIED for Castle Perk
@@ -1688,7 +1808,10 @@
                             canChopThisTree = false;
                         }
                     }
-                    treeDiv.innerHTML = treeDisplayText;
+                    // Updated display to match mining style
+                    treeDiv.innerHTML = `
+                        <span class="resource-main-text">${treeDisplayText}</span>
+                        <span class="resource-inventory-count" id="inv-count-wc-${treeName.replace(/\s+/g, '-')}">${playerData.inventory[tree.log] || 0}</span>`;
                     treeDiv.id = `tree-list-item-${treeName.replace(/\s+/g, '-')}`;
                     if (isAutoWoodcutting && currentWoodcuttingTarget === treeName) {
                         treeDiv.classList.add('active-woodcutting-item');
@@ -1830,6 +1953,12 @@
             handleLevelUp("woodcutting_xp", oldLevel);
             savePlayerData();
             updateHud();
+            // Update inventory count display for the current tree
+            const countSpan = document.getElementById(`inv-count-wc-${currentWoodcuttingTarget.replace(/\s+/g, '-')}`);
+            if (countSpan) {
+                countSpan.textContent = playerData.inventory[treeData.log] || 0;
+            }
+
         }
 
 
@@ -1847,8 +1976,11 @@
                 if (mnLvl >= ore.level_req) {
                     available = true;
                     const oreDiv = document.createElement('div');
-                    oreDiv.className = `skill-resource ${ore.color}`; // Corrected class name
-                    oreDiv.innerHTML = `${ore.emoji} ${titleCase(oreName)} (Lvl: ${ore.level_req}, XP per ore: ${ore.xp})`;
+                    oreDiv.className = `skill-resource ${ore.color}`;
+                    oreDiv.innerHTML = `
+                        <span class="resource-main-text">${ore.emoji} ${titleCase(oreName)} (Lvl: ${ore.level_req}, XP per ore: ${ore.xp})</span>
+                        <span class="resource-inventory-count" id="inv-count-mn-${oreName.replace(/\s+/g, '-')}">${playerData.inventory[ore.item_name] || 0}</span>
+                    `;
                     oreDiv.id = `ore-list-item-${oreName.replace(/\s+/g, '-')}`;
                      if (isAutoMining && currentMiningTarget === oreName) {
                         oreDiv.classList.add('active-mining-item');
@@ -1974,6 +2106,11 @@
             handleLevelUp("mining_xp", oldLevel);
             savePlayerData();
             updateHud();
+            // Update inventory count display for the current ore
+            const countSpan = document.getElementById(`inv-count-mn-${currentMiningTarget.replace(/\s+/g, '-')}`);
+            if (countSpan) {
+                countSpan.textContent = playerData.inventory[oreData.item_name] || 0;
+            }
         }
 
         // --- Action: Blacksmithing (Modified for Shed Perk & new interaction) ---
@@ -2018,14 +2155,19 @@
                 const canMakeAtLeastOne = maxCraftableNow > 0;
                 
                 const levelReqColor = bsLvl >= bar.level_req ? 'fore-green' : 'fore-red';
+                const currentStock = playerData.inventory[barName] || 0;
                 const itemDiv = document.createElement('div');
                 itemDiv.className = `smeltable-item-list item ${bar.color}`;
                 itemDiv.id = `smeltable-item-div-${barName.replace(/\s+/g, '-')}`; 
-                
+
                 itemDiv.innerHTML = `
-                    ${bar.emoji} ${titleCase(barName)} (XP: ${bar.xp_gain})
-                    <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${bar.level_req} BS</span></small>
-                    <br><small>Max craftable: <span id="max-craftable-${barName.replace(/\s+/g, '-')}">${maxCraftableNow}</span></small>
+                    <span class="item-details-left">
+                        ${bar.emoji} ${titleCase(barName)} (XP: ${bar.xp_gain})
+                        <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${bar.level_req} BS</span> - Max: <span id="max-craftable-${barName.replace(/\s+/g, '-')}">${maxCraftableNow}</span></small>
+                    </span>
+                    <span class="resource-inventory-count">
+                        <span id="inv-count-smelt-${barName.replace(/\s+/g, '-')}">${currentStock}</span>
+                    </span>
                 `;
 
                 if (isAutoSmelting && currentSmeltingTarget === barName) {
@@ -2164,11 +2306,17 @@
                 const newMaxCraftableDisplay = calculateMaxCraftableForBar(currentSmeltingTarget);
                 const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
                 const levelReqColor = bsLvl >= barData.level_req ? 'fore-green' : 'fore-red';
+                const newStockCount = playerData.inventory[currentSmeltingTarget] || 0;
 
+                // Reconstruct innerHTML matching the new structure in showSmeltingMenu
                 itemDivToUpdate.innerHTML = `
-                    ${barData.emoji} ${titleCase(currentSmeltingTarget)} (XP: ${barData.xp_gain})
-                    <br><small>Requires: ${newRecipeString} - <span class="${levelReqColor}">Lvl: ${barData.level_req} BS</span></small>
-                    <br><small>Max craftable: <span id="max-craftable-${currentSmeltingTarget.replace(/\s+/g, '-')}">${newMaxCraftableDisplay}</span></small>
+                    <span class="item-details-left">
+                        ${barData.emoji} ${titleCase(currentSmeltingTarget)} (XP: ${barData.xp_gain})
+                        <br><small>Requires: ${newRecipeString} - <span class="${levelReqColor}">Lvl: ${barData.level_req} BS</span> - Max: <span id="max-craftable-${currentSmeltingTarget.replace(/\s+/g, '-')}">${newMaxCraftableDisplay}</span></small>
+                    </span>
+                    <span class="resource-inventory-count">
+                        <span id="inv-count-smelt-${currentSmeltingTarget.replace(/\s+/g, '-')}">${newStockCount}</span>
+                    </span>
                 `;
                  if (newMaxCraftableDisplay === 0 || bsLvl < barData.level_req) {
                     itemDivToUpdate.style.cursor = 'not-allowed';
@@ -2191,6 +2339,20 @@
 
 
         // Smithing (Modified for Shed Perk & new interaction)
+        function calculateMaxCraftableForSword(swordName) {
+            const sword = SWORD_DATA[swordName];
+            if (!sword) return 0;
+            let maxSets = Infinity;
+            for (const bar in sword.recipe) {
+                const barsOnHand = playerData.inventory[bar] || 0;
+                const barsNeededPerSet = isPerkActive("masterSmith") && sword.recipe[bar] > 1 ?
+                                          Math.max(1, sword.recipe[bar] - PERK_DATA.masterSmith.value) :
+                                          sword.recipe[bar];
+                if (barsNeededPerSet === 0) continue;
+                maxSets = Math.min(maxSets, Math.floor(barsOnHand / barsNeededPerSet));
+            }
+            return maxSets === Infinity ? 0 : maxSets;
+        }
         function showSmithingMenu() {
             stopAllAutoActions();
             const listDiv = document.getElementById('available-items-to-smith');
@@ -2200,43 +2362,49 @@
             const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
             let canSmithAnything = false;
 
-            for (const swordName in SWORD_DATA) {
-                const sword = SWORD_DATA[swordName];
+            for (const itemName in SWORD_DATA) {
+                const itemData = SWORD_DATA[itemName];
                 let recipeString = "";
-                let canMake = true;
+                const maxCraftableNow = calculateMaxCraftableForSword(itemName);
+                const canMakeAtLeastOne = maxCraftableNow > 0;
                 
-                for(const bar in sword.recipe) { 
-                    const requiredAmount = isPerkActive("masterSmith") && sword.recipe[bar] > 1 ? 
-                                          Math.max(1, sword.recipe[bar] - PERK_DATA.masterSmith.value) : 
-                                          sword.recipe[bar];
+                for(const bar in itemData.recipe) {
+                    const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ?
+                                          Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) :
+                                          itemData.recipe[bar];
                     recipeString += `${requiredAmount} ${titleCase(bar)} (${playerData.inventory[bar] || 0}), `;
-                    if((playerData.inventory[bar] || 0) < requiredAmount) canMake = false;
                 }
                 recipeString = recipeString.slice(0, -2);
 
-                const levelReqColor = bsLvl >= sword.smith_level_req ? 'fore-green' : 'fore-red';
+                const levelReqColor = bsLvl >= itemData.smith_level_req ? 'fore-green' : 'fore-red';
                 const itemDiv = document.createElement('div');
                 let lifestealInfo = "";
-                if (sword.lifesteal_chance && sword.lifesteal_amount) {
-                    const lsChanceDisplay = sword.lifesteal_chance * 100;
-                    const lsAmountDisplay = Array.isArray(sword.lifesteal_amount) ? `${sword.lifesteal_amount[0]}-${sword.lifesteal_amount[1]}` : sword.lifesteal_amount;
+                if (itemData.lifesteal_chance && itemData.lifesteal_amount) {
+                    const lsChanceDisplay = itemData.lifesteal_chance * 100;
+                    const lsAmountDisplay = Array.isArray(itemData.lifesteal_amount) ? `${itemData.lifesteal_amount[0]}-${itemData.lifesteal_amount[1]}` : itemData.lifesteal_amount;
                     lifestealInfo = `<br><small class="fore-magenta">Lifesteal: ${lsChanceDisplay.toFixed(0)}% for ${lsAmountDisplay} HP</small>`;
                 }
-                itemDiv.className = `smithable-item-list item ${sword.color}`;
+                itemDiv.className = `smithable-item-list item ${itemData.color}`;
+                const currentStock = playerData.inventory[itemName] || 0;
                 itemDiv.innerHTML = `
-                    ${sword.emoji} ${titleCase(swordName)} (XP: ${sword.smith_level_req * 5}) 
-                    <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${sword.smith_level_req} BS</span></small>${lifestealInfo}
+                    <span class="item-details-left"> <!-- Details on the left -->
+                        ${itemData.emoji} ${titleCase(itemName)} (XP: ${itemData.smith_level_req * 5}) 
+                        <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${itemData.smith_level_req} BS</span> - Max: <span id="max-craftable-smith-${itemName.replace(/\s+/g, '-')}">${maxCraftableNow}</span></small>${lifestealInfo}
+                    </span>
+                    <span class="resource-inventory-count"> <!-- Count on the right -->
+                        <span id="inv-count-smith-${itemName.replace(/\s+/g, '-')}">${currentStock}</span>
+                    </span>
                 `;
-                itemDiv.id = `smithable-item-div-${swordName.replace(/\s+/g, '-')}`;
-                if (isAutoSmithing && currentSmithingTarget === swordName) {
+                itemDiv.id = `smithable-item-div-${itemName.replace(/\s+/g, '-')}`;
+                if (isAutoSmithing && currentSmithingTarget === itemName) {
                     itemDiv.classList.add('active-smithing-item');
                 }
-                if (bsLvl >= sword.smith_level_req && canMake) {
-                    itemDiv.onclick = () => selectItemForSmithing(swordName);
+                if (bsLvl >= itemData.smith_level_req && canMakeAtLeastOne) {
+                    itemDiv.onclick = () => selectItemForSmithing(itemName);
                     canSmithAnything = true;
                 } else {
                     itemDiv.style.cursor = 'not-allowed';
-                    itemDiv.title = bsLvl < sword.smith_level_req ? 'BS level too low' : 'Not enough materials';
+                    itemDiv.title = bsLvl < itemData.smith_level_req ? 'BS level too low' : 'Not enough materials';
                     itemDiv.style.opacity = "0.6";
                 }
                 listDiv.appendChild(itemDiv);
@@ -2249,12 +2417,12 @@
         
         function selectItemForSmithing(itemName) {
             if (isAutoSmithing && currentSmithingTarget === itemName) {
-                stopAutoSmithing();
+                stopAutoSmithing(); // If clicking the currently auto-smithing item, stop it.
             } else {
-                if (isAutoSmithing) {
+                if (isAutoSmithing) { // If auto-smithing something else, stop that first.
                     stopAutoSmithing();
                 }
-                startAutoSmithing(itemName);
+                startAutoSmithing(itemName); // Start (or restart) auto-smithing for the selected item.
             }
         }
 
@@ -2270,14 +2438,9 @@
                 currentSmithingTarget = null; return false;
             }
 
-            for(const bar in itemData.recipe) {
-                const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ? 
-                                      Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) : 
-                                      itemData.recipe[bar];
-                if((playerData.inventory[bar] || 0) < requiredAmount) {
-                    logMessage(`Not enough ${titleCase(bar)} to smith ${titleCase(currentSmithingTarget)}.`, "fore-red");
-                    currentSmithingTarget = null; return false;
-                }
+            if (calculateMaxCraftableForSword(currentSmithingTarget) <= 0) {
+                logMessage(`Not enough materials to smith any ${titleCase(currentSmithingTarget)}.`, "fore-red");
+                currentSmithingTarget = null; return false;
             }
 
             isAutoSmithing = true;
@@ -2315,16 +2478,11 @@
             if(!isAutoSmithing || !currentSmithingTarget) { stopAutoSmithing(); return; }
             
             const itemData = SWORD_DATA[currentSmithingTarget]; 
-            for(const bar in itemData.recipe) {
-                 const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ? 
-                                      Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) : 
-                                      itemData.recipe[bar];
-                if((playerData.inventory[bar] || 0) < requiredAmount) {
-                    logMessage(`Ran out of ${titleCase(bar)} for ${titleCase(currentSmithingTarget)}. Stopping.`, "fore-red");
-                    stopAutoSmithing();
-                    showSmithingMenu(); 
-                    return;
-                }
+            if (calculateMaxCraftableForSword(currentSmithingTarget) <= 0) {
+                logMessage(`Ran out of materials for ${titleCase(currentSmithingTarget)}. Stopping.`, "fore-red");
+                stopAutoSmithing();
+                showSmithingMenu(); // Refresh the menu to show updated counts and disable if needed
+                return;
             }
 
             for(const bar in itemData.recipe) {
@@ -2354,7 +2512,11 @@
             handleLevelUp("blacksmithing_xp", oldLevel);
             savePlayerData();
             updateHud();
-            showSmithingMenu(); // Refresh the menu to update material counts and availability
+            // Instead of full refresh, update the specific item in the list
+            updateSmithableItemDisplay(currentSmithingTarget);
+            if (!checkCanStillSmith(currentSmithingTarget)) { // If materials run out
+                stopAutoSmithing();
+            }
         }
 
         // --- Action: Combat (Modified for Monster Gold Drop & Mansion Perk) --- 
@@ -3209,6 +3371,74 @@
             populateEquipmentDisplay(); 
         }
 
+        function checkCanStillSmith(itemName) {
+            if (!itemName || !SWORD_DATA[itemName]) return false;
+            const itemData = SWORD_DATA[itemName];
+            for (const bar in itemData.recipe) {
+                const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ?
+                                      Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) :
+                                      itemData.recipe[bar];
+                if ((playerData.inventory[bar] || 0) < requiredAmount) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function updateSmithableItemDisplay(itemName) {
+            const itemDiv = document.getElementById(`smithable-item-div-${itemName.replace(/\s+/g, '-')}`);
+            if (!itemDiv || !SWORD_DATA[itemName]) return;
+
+            const itemData = SWORD_DATA[itemName];
+            let recipeString = "";
+            for (const bar in itemData.recipe) {
+                const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ?
+                                      Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) :
+                                      itemData.recipe[bar];
+                recipeString += `${requiredAmount} ${titleCase(bar)} (${playerData.inventory[bar] || 0}), `;
+            }
+            recipeString = recipeString.slice(0, -2);
+            const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
+            const levelReqColor = bsLvl >= itemData.smith_level_req ? 'fore-green' : 'fore-red';
+            const newMaxCraftableDisplay = calculateMaxCraftableForSword(itemName);
+            
+            // Update the "Requires" part within the left details span
+            const detailsSpan = itemDiv.querySelector('.item-details-left');
+            if (detailsSpan) {
+                const smallReqSpan = detailsSpan.querySelector('small'); // Assuming the "Requires" is the first/primary small tag
+                if (smallReqSpan) {
+                    // Find existing lifesteal info to preserve it
+                    let lifestealInfoHTML = "";
+                    const lifestealSpans = detailsSpan.querySelectorAll('small.fore-magenta'); // More specific selector if needed
+                    lifestealSpans.forEach(lsSpan => {
+                        if (lsSpan.textContent.includes("Lifesteal")) {
+                            lifestealInfoHTML = `<br>${lsSpan.outerHTML}`; // Keep the <br> if it was there
+                        }
+                    });
+                    smallReqSpan.innerHTML = `Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${itemData.smith_level_req} BS</span> - Max: <span id="max-craftable-smith-${itemName.replace(/\s+/g, '-')}">${newMaxCraftableDisplay}</span>`;
+                    // Re-append lifesteal info if it existed
+                    if (lifestealInfoHTML) {
+                        detailsSpan.innerHTML = detailsSpan.innerHTML.replace(/<\/small>(<br><small class="fore-magenta">Lifesteal:.*?<\/small>)?/, `</small>${lifestealInfoHTML}`);
+                    }
+                }
+            }
+            // Update the "In Stock" count
+            const stockCountSpan = itemDiv.querySelector(`#inv-count-smith-${itemName.replace(/\s+/g, '-')}`);
+            if (stockCountSpan) {
+                stockCountSpan.textContent = playerData.inventory[itemName] || 0;
+            }
+        }
+
+        function updateSmithableItemDisplay(itemName) {
+            const itemDiv = document.getElementById(`smithable-item-div-${itemName.replace(/\s+/g, '-')}`);
+            if (!itemDiv || !SWORD_DATA[itemName]) return;
+
+            // For simplicity and to ensure all parts (recipe, max craftable, stock) are updated correctly,
+            // we can just call showSmithingMenu() which rebuilds the whole list.
+            // This is less efficient if the list is very long, but safer for now.
+            // If performance becomes an issue, a more targeted update like in singleSmeltAction can be implemented.
+            showSmithingMenu();
+        }
 
         // --- Level Up ---
         function handleLevelUp(skillXpField, oldLevel) {
