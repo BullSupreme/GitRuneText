@@ -362,7 +362,7 @@
             <hr>
             <div class="section-title fore-cyan">Equipped Gear</div>
             <div id="equipment-display">
-                <div class="slot"><span class="slot-name">Weapon:</span><span class="item-name" id="eq-weapon-name">None</span><span class="item-art" id="eq-weapon-art"></span></div>
+                <div class="slot"><span class="slot-name">Weapon:</span><span class="item-name" id="eq-weapon-name">None</span><span class="item-art" id="eq-weapon-art"></span> <span id="eq-weapon-stats" style="font-size:0.9em; color:#aaa;"></span></div>
                 <div class="slot"><span class="slot-name">Axe:</span><span class="item-name" id="eq-axe-name">None</span><span class="item-art" id="eq-axe-art"></span></div>
                 <div class="slot"><span class="slot-name">Pickaxe:</span><span class="item-name" id="eq-pickaxe-name">None</span><span class="item-art" id="eq-pickaxe-art"></span></div>
                 <div class="slot"><span class="slot-name">Chestplate:</span><span class="item-name" id="eq-chestplate-name">None</span><span class="item-art" id="eq-chestplate-art"></span></div>
@@ -1254,7 +1254,14 @@
             const weaponData = SWORD_DATA[playerData.inventory.weapon];
             const weaponColorClass = weaponData ? weaponData.color : 'fore-white';
             const weaponArt = weaponData ? (weaponData.emoji || "") : "";
+            let weaponStatsDisplay = "";
+            if (weaponData && weaponData.lifesteal_chance && weaponData.lifesteal_amount) {
+                const lsChance = (weaponData.lifesteal_chance + (isPerkActive("vampiricEdge1") ? PERK_DATA.vampiricEdge1.value : 0)) * 100;
+                const lsAmount = Array.isArray(weaponData.lifesteal_amount) ? `${weaponData.lifesteal_amount[0]}-${weaponData.lifesteal_amount[1]}` : weaponData.lifesteal_amount;
+                weaponStatsDisplay = `(LS: ${lsChance.toFixed(0)}% for ${lsAmount} HP)`;
+            }
             document.getElementById('eq-weapon-name').innerHTML = `<span class="${weaponColorClass}">${weaponName}</span>`;
+            document.getElementById('eq-weapon-stats').textContent = weaponStatsDisplay;
             document.getElementById('eq-weapon-art').textContent = weaponArt;
 
             const axeKey = playerData.inventory.axe;
@@ -1995,10 +2002,16 @@
 
                 const levelReqColor = bsLvl >= sword.smith_level_req ? 'fore-green' : 'fore-red';
                 const itemDiv = document.createElement('div');
+                let lifestealInfo = "";
+                if (sword.lifesteal_chance && sword.lifesteal_amount) {
+                    const lsChanceDisplay = sword.lifesteal_chance * 100;
+                    const lsAmountDisplay = Array.isArray(sword.lifesteal_amount) ? `${sword.lifesteal_amount[0]}-${sword.lifesteal_amount[1]}` : sword.lifesteal_amount;
+                    lifestealInfo = `<br><small class="fore-magenta">Lifesteal: ${lsChanceDisplay.toFixed(0)}% for ${lsAmountDisplay} HP</small>`;
+                }
                 itemDiv.className = `smithable-item-list item ${sword.color}`;
                 itemDiv.innerHTML = `
                     ${sword.emoji} ${titleCase(swordName)} (XP: ${sword.smith_level_req * 5}) 
-                    <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${sword.smith_level_req} BS</span></small>
+                    <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${sword.smith_level_req} BS</span></small>${lifestealInfo}
                 `;
                 itemDiv.id = `smithable-item-div-${swordName.replace(/\s+/g, '-')}`;
                 if (isAutoSmithing && currentSmithingTarget === swordName) {
