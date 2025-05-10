@@ -2470,7 +2470,8 @@
                 const currentStock = playerData.inventory[itemName] || 0;
                 itemDiv.innerHTML = `
                     <span class="item-details-left"> <!-- Details on the left -->
-                        ${itemData.emoji} ${titleCase(itemName)} (XP: ${itemData.smith_level_req * 5}) 
+                        ${itemData.emoji} ${titleCase(itemName)}
+                        <br><small>XP: ${itemData.smith_level_req * 5} - Dmg: ${itemData.min_dmg}-${itemData.max_dmg}</small>
                         <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${itemData.smith_level_req} BS</span> - Max: <span id="max-craftable-smith-${itemName.replace(/\s+/g, '-')}">${maxCraftableNow}</span></small>${lifestealInfo}
                     </span>
                     <span class="resource-inventory-count"> <!-- Count on the right -->
