@@ -840,9 +840,9 @@
 
         const AXE_TIER_ORDER = ["fists", "bronze", "iron", "steel", "mithril", "adamant", "rune", "dragon"];
         const TREE_DATA = { 
-            "normal": {"exp":15, "log":"normal logs", "level":1,  "emoji": "🌲"},
-            "oak":    {"exp":30, "log":"oak logs",    "level":15, "emoji": "🌳"},
-            "willow": {"exp":60, "log":"willow logs", "level":30, "emoji": "🌿", "required_axe_tier": "steel"}
+            "normal": {"exp":10, "log":"normal logs", "level":1,  "emoji": "🌲"},
+            "oak":    {"exp":25, "log":"oak logs",    "level":15, "emoji": "🌳"},
+            "willow": {"exp":55, "log":"willow logs", "level":30, "emoji": "🌿", "required_axe_tier": "steel"}
         };
         
         const MAX_PERK_POINTS = 25;
@@ -1675,8 +1675,7 @@
                     available = true;
                     const treeDiv = document.createElement('div');
                     treeDiv.className = 'skill-resource fore-green';
-                    
-                    let treeDisplayText = `${tree.emoji} ${titleCase(treeName)} (Lvl: ${tree.level}, XP per log: 30)`;
+                    let treeDisplayText = `${tree.emoji} ${titleCase(treeName)} (Lvl: ${tree.level}, XP per log: ${tree.exp})`;
                     let canChopThisTree = true;
 
                     if (tree.required_axe_tier) {
@@ -1799,7 +1798,7 @@
             }
             if (logsGained < 0) logsGained = 0;
 
-            let xpPerLog = 30; 
+            let xpPerLog = treeData.exp; 
             let totalXpGainedThisAction = 0;
 
             if (logsGained > 0) {
@@ -1848,8 +1847,8 @@
                 if (mnLvl >= ore.level_req) {
                     available = true;
                     const oreDiv = document.createElement('div');
-                    oreDiv.className = `skill-resource ${ore.color}`;
-                    oreDiv.innerHTML = `${ore.emoji} ${titleCase(oreName)} (Lvl: ${ore.level_req}, XP per ore: 30)`; // Updated XP display
+                    oreDiv.className = `skill-resource ${ore.color}`; // Corrected class name
+                    oreDiv.innerHTML = `${ore.emoji} ${titleCase(oreName)} (Lvl: ${ore.level_req}, XP per ore: ${ore.xp})`;
                     oreDiv.id = `ore-list-item-${oreName.replace(/\s+/g, '-')}`;
                      if (isAutoMining && currentMiningTarget === oreName) {
                         oreDiv.classList.add('active-mining-item');
@@ -1943,7 +1942,7 @@
             }
             if (oreGained < 0) oreGained = 0; 
 
-            let xpPerOre = 30; 
+            let xpPerOre = oreData.xp; 
             let totalXpGainedThisAction = 0;
 
             if (oreGained > 0) {
