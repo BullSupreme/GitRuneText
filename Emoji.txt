@@ -24,15 +24,15 @@
 📜	&#x1F4DC;	Scroll	Info, Quests
 🎒	&#x1F392;	Backpack	Inventory
 🛒	&#x1F6D2;	Shopping Cart	Shop
-🌟	&#x1F31F;	Glowing Star	Perks, Special
-✨ &#x2728;	   Sparkles	Perks, Magic, Special
-▶️	&#x25B6;	Play Button	Actions
-💰	&#x1F4B0;	Money Bag / Gold	Currency
-❤️	&#x2764;	Red Heart	Health
-💀	&#x1F480;	Skull	Death, Defeat
-❓  &#x2753;	   Question Mark	Help, Info
-❗  &#x2757;	   Exclamation Mark	Alert
-✔️	 &#x2714;	Check Mark	Success, Done
+🌟  &#x1F31F;	Glowing Star	Perks, Special
+✨  &#x2728;	  Sparkles	Perks, Magic, Special
+▶️  &#x25B6;	Play Button	Actions
+💰  &#x1F4B0;	Money Bag / Gold	Currency
+❤️  &#x2764;	Red Heart	Health
+💀  &#x1F480;	Skull	Death, Defeat
+❓  &#x2753;	 Question Mark	Help, Info
+❗  &#x2757;	 Exclamation Mark	Alert
+✔️  &#x2714;	 Check Mark	Success, Done
 ❌  &#x274C;    Cross Mark	Failure, Cancel
 ⬅️	&#x2B05;	Left Arrow	Back, Navigation
 ➡️	&#x27A1;	Right Arrow	Next, Navigation
