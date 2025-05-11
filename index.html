@@ -215,9 +215,30 @@
         .inline-block { display: inline-block; }
 
         #equipment-display .slot { margin-bottom: 10px;}
-        #equipment-display .slot-name { font-weight: bold; display: inline-block; width: 80px;}
-        #equipment-display .item-name { margin-left: 10px; }
-        #equipment-display .item-art { font-size: 1.5em; margin-left: 10px;}
+        #equipment-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
+            gap: 15px; /* Space between grid items */
+            margin-top: 10px;
+        }
+        #equipment-display .slot {
+            display: flex;
+            flex-direction: column; /* Stack items vertically within the slot */
+            align-items: center;   /* Center items horizontally */
+            text-align: center;    /* Center text */
+            padding: 10px;
+            border: 1px solid #383838;
+            background-color: #2d2d30;
+            border-radius: 4px;
+        }
+        #equipment-display .slot-name { font-weight: bold; margin-bottom: 5px; color: #a0a0a0; font-size: 0.9em; }
+        #equipment-display .item-name { margin-bottom: 5px; font-size: 1.1em; min-height: 1.2em; /* Ensure space even if 'None' */ }
+        #equipment-display .item-art { font-size: 2em; margin-bottom: 5px; min-height: 1.2em; /* Ensure space even if no art */ }
+        #equipment-display .item-stats {
+            font-size: 0.85em;
+            color: #aaa;
+            margin-top: 3px;
+        }
         
         #inventory-list .item-entry {
             display: flex;
@@ -538,9 +559,7 @@
             <div class="section-title-text fore-cyan" style="margin-top:15px; padding-bottom: 5px; border-bottom: 1px solid #555; margin-bottom:10px;">Equipped Gear</div>
             <div id="equipment-display">
                 <div class="slot"><span class="slot-name">Weapon:</span><span class="item-name" id="eq-weapon-name">None</span><span class="item-art" id="eq-weapon-art"></span> <span id="eq-weapon-stats" style="font-size:0.9em; color:#aaa;"></span></div>
-                <div class="slot"><span class="slot-name">Axe:</span><span class="item-name" id="eq-axe-name">None</span><span class="item-art" id="eq-axe-art"></span></div>
-                <div class="slot"><span class="slot-name">Pickaxe:</span><span class="item-name" id="eq-pickaxe-name">None</span><span class="item-art" id="eq-pickaxe-art"></span></div>
-                <div class="slot"><span class="slot-name">Chestplate:</span><span class="item-name" id="eq-chestplate-name">None</span><span class="item-art" id="eq-chestplate-art"></span></div>
+                <!-- Slots will be populated by JavaScript -->
             </div>
             <div id="equip-options-section">
                 <div class="submenu-buttons-container">
@@ -777,15 +796,13 @@
                 "bronze":  {"emoji": "🪓",    "price":15,    "level_req":1,  "min_dmg":1,  "max_dmg":2,  "skill_type":"woodcutting", "color":"fore-yellow", "tier": "bronze",
                     "yield_config": { "base": 1, "bonuses_by_tree": {
                         "normal": [{ "chance": 0.20, "amount": 1 }],
-                        "oak":    [{ "chance": 0.05, "amount": 1 }],
-                        "willow": [{ "chance": 0.01, "amount": 1 }]
+                        "oak":    [{ "chance": 0.05, "amount": 1 }]
                     }}
                 },
                 "iron":    {"emoji": "🪓",    "price":50,    "level_req":15, "min_dmg":2,  "max_dmg":3,  "skill_type":"woodcutting", "color":"fore-lightblack_ex", "tier": "iron",
                     "yield_config": { "base": 1, "bonuses_by_tree": {
                         "normal": [{ "chance": 0.70, "amount": 1 }],
-                        "oak":    [{ "chance": 0.25, "amount": 1 }],
-                        "willow": [{ "chance": 0.05, "amount": 1 }]
+                        "oak":    [{ "chance": 0.25, "amount": 1 }]
                     }}
                 },
                 "steel":   {"emoji": "🪓",    "price":120,   "level_req":30, "min_dmg":3,  "max_dmg":5,  "skill_type":"woodcutting", "color":"fore-cyan", "tier": "steel",
@@ -1617,37 +1634,96 @@
                 }
             }
 
-            document.getElementById('eq-weapon-name').innerHTML = `<span class="${weaponColorClass}">${weaponName}</span>`;
-            document.getElementById('eq-weapon-stats').textContent = weaponStatsDisplay.trim();
-            document.getElementById('eq-weapon-art').innerHTML = weaponArt; // Use innerHTML for emojis with spans
+            const equipmentDisplayDiv = document.getElementById('equipment-display');
+            equipmentDisplayDiv.innerHTML = ''; // Clear previous slots
 
+            // Weapon Slot
+            const weaponSlotDiv = document.createElement('div');
+            weaponSlotDiv.className = 'slot';
+            weaponSlotDiv.innerHTML = `
+                <div class="slot-name">Weapon:</div>
+                <div class="item-name ${weaponColorClass}">${weaponName}</div>
+                <div class="item-art">${weaponArt}</div>
+                <div class="item-stats">${weaponStatsDisplay.trim()}</div>
+            `;
+            equipmentDisplayDiv.appendChild(weaponSlotDiv);
+
+            // Axe Slot
             const axeKey = playerData.inventory.axe;
             const axeName = axeKey === "none" ? "None" : titleCase(axeKey);
             const axeData = TOOL_DATA.axe[axeKey];
             const axeColorClass = axeData ? axeData.color : 'fore-white';
             const axeArt = axeData ? (axeData.emoji || "") : "";
-            document.getElementById('eq-axe-name').innerHTML = `<span class="${axeColorClass}">${axeName}</span>`;
-            document.getElementById('eq-axe-art').innerHTML = axeArt;
+            let axeStatsDisplay = "";
+            if (axeData && axeData.yield_config) {
+                axeStatsDisplay += `Base Yield: ${axeData.yield_config.base}`;
+                if (axeData.yield_config.bonuses_by_tree) {
+                    let treeBonusesStrings = [];
+                    for (const treeType in axeData.yield_config.bonuses_by_tree) {
+                        const bonuses = axeData.yield_config.bonuses_by_tree[treeType];
+                        if (bonuses && bonuses.length > 0) {
+                            let currentTreeBonusStrings = bonuses.map(b => `+${b.amount} (${(b.chance * 100).toFixed(0)}%)`);
+                            treeBonusesStrings.push(`${titleCase(treeType)}: ${currentTreeBonusStrings.join(', ')}`);
+                        }
+                    }
+                    if (treeBonusesStrings.length > 0) {
+                        axeStatsDisplay += `<br>${treeBonusesStrings.join('<br>')}`;
+                    }
+                }
+            }
 
+            const axeSlotDiv = document.createElement('div');
+            axeSlotDiv.className = 'slot';
+            axeSlotDiv.innerHTML = `
+                <div class="slot-name">Axe:</div>
+                <div class="item-name ${axeColorClass}">${axeName}</div>
+                <div class="item-art">${axeArt}</div>
+                <div class="item-stats">${axeStatsDisplay}</div>
+            `;
+            equipmentDisplayDiv.appendChild(axeSlotDiv);
+
+            // Pickaxe Slot
             const pickaxeKey = playerData.inventory.pickaxe;
             const pickaxeName = pickaxeKey === "none" ? "None" : titleCase(pickaxeKey);
             const pickaxeData = TOOL_DATA.pickaxe[pickaxeKey];
             const pickaxeColorClass = pickaxeData ? pickaxeData.color : 'fore-white';
             const pickaxeArt = pickaxeData ? (pickaxeData.emoji || "") : "";
-            document.getElementById('eq-pickaxe-name').innerHTML = `<span class="${pickaxeColorClass}">${pickaxeName}</span>`;
-            document.getElementById('eq-pickaxe-art').innerHTML = pickaxeArt;
+            let pickaxeStatsDisplay = "";
+            if (pickaxeData && pickaxeData.yield_config) {
+                pickaxeStatsDisplay += `Base Yield: ${pickaxeData.yield_config.base}`;
+                if (pickaxeData.yield_config.bonuses && pickaxeData.yield_config.bonuses.length > 0) {
+                    let bonusStrings = pickaxeData.yield_config.bonuses.map(b => `+${b.amount} (${(b.chance * 100).toFixed(0)}%)`);
+                    pickaxeStatsDisplay += `<br>Bonus: ${bonusStrings.join(', ')}`;
+                }
+            }
 
+            const pickaxeSlotDiv = document.createElement('div');
+            pickaxeSlotDiv.className = 'slot';
+            pickaxeSlotDiv.innerHTML = `
+                <div class="slot-name">Pickaxe:</div>
+                <div class="item-name ${pickaxeColorClass}">${pickaxeName}</div>
+                <div class="item-art">${pickaxeArt}</div>
+                <div class="item-stats">${pickaxeStatsDisplay}</div>
+            `;
+            equipmentDisplayDiv.appendChild(pickaxeSlotDiv);
+
+            // Chestplate Slot
             const chestplateKey = playerData.inventory.chestplate;
             const chestplateName = chestplateKey === "none" ? "None" : titleCase(chestplateKey);
             const armorData = ARMOR_DATA[chestplateKey];
             const chestplateColorClass = armorData ? armorData.color : 'fore-white';
             const chestplateArt = armorData ? (armorData.emoji || "") : "";
             let defenseDisplay = "";
-            if (armorData && armorData.defense) {
-                defenseDisplay = ` (-${(armorData.defense * 100).toFixed(0)}% Mob Hit)`
-            }
-            document.getElementById('eq-chestplate-name').innerHTML = `<span class="${chestplateColorClass}">${chestplateName}</span> <span class="fore-cyan">${defenseDisplay}</span>`;
-            document.getElementById('eq-chestplate-art').innerHTML = chestplateArt;
+            if (armorData && armorData.defense) defenseDisplay = `(-${(armorData.defense * 100).toFixed(0)}% Mob Hit)`;
+            const chestplateSlotDiv = document.createElement('div');
+            chestplateSlotDiv.className = 'slot';
+            chestplateSlotDiv.innerHTML = `
+                <div class="slot-name">Chestplate:</div>
+                <div class="item-name ${chestplateColorClass}">${chestplateName}</div>
+                <div class="item-art">${chestplateArt}</div>
+                <div class="item-stats fore-cyan">${defenseDisplay}</div>
+            `;
+            equipmentDisplayDiv.appendChild(chestplateSlotDiv);
         }
 
         function showEquipSelection(slot) {
