@@ -257,6 +257,17 @@
         #inventory-list .item-quantity { font-weight: bold; }
 
         #char-info-details p { margin: 5px 0; }
+        .inventory-sort-controls {
+            margin-bottom: 10px; display: flex; gap: 5px; flex-wrap: wrap;
+        }
+        .inventory-sort-button {
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+        .inventory-sort-button.active-sort {
+            background-color: #0e9c18; /* Green to indicate active */
+            border-color: #0c8314;
+        }
         .char-info-label { display: inline-block; width: 180px; font-weight: normal; color: #a0a0a0; }
         .char-info-value { font-weight: bold; }
         .char-info-xp { font-size: 0.9em; color: #b0b0b0; }
@@ -553,6 +564,13 @@
             <div class="section-title-header">
                 <button class="btn-back-header" onclick="showMainMenu()" title="Back to Main Menu">⬅️</button>
                 <div class="section-title-text fore-magenta">Inventory</div>
+            </div>
+            <div class="inventory-sort-controls" id="inventory-sort-controls">
+                <button class="inventory-sort-button" id="sort-inv-default" onclick="setInventorySort('default')">Sort</button>
+                <button class="inventory-sort-button" id="sort-inv-name" onclick="setInventorySort('name')">Name</button>
+                <button class="inventory-sort-button" id="sort-inv-quantity" onclick="setInventorySort('quantity')">Quantity</button>
+                <button class="inventory-sort-button" id="sort-inv-value_single" onclick="setInventorySort('value_single')">Value/Item</button>
+                <button class="inventory-sort-button" id="sort-inv-value_stack" onclick="setInventorySort('value_stack')">Value/Stack</button>
             </div>
             <div id="inventory-list"></div>
             <hr>
@@ -1140,6 +1158,10 @@
 
         let rentInterval = null;
 
+        // --- Global Game State for Inventory Sorting ---
+        let currentInventorySort = 'default';
+        const DEFAULT_ITEM_ORDER = Object.keys(DEFAULT_PLAYER.inventory); // For default sort order
+
 
         // --- Utility Functions ---
         function getLevelFromXp(xp) {
@@ -1484,6 +1506,20 @@
             hideEquipSelection(); 
         }
 
+        function setInventorySort(sortType) {
+            currentInventorySort = sortType;
+            // Remove active class from all sort buttons
+            document.querySelectorAll('.inventory-sort-button').forEach(btn => btn.classList.remove('active-sort'));
+            // Add active class to the clicked button
+            const activeButton = document.getElementById(`sort-inv-${sortType}`);
+            if (activeButton) {
+                activeButton.classList.add('active-sort');
+            } else {
+                console.warn(`Sort button for type '${sortType}' not found.`);
+            }
+            populateInventoryDisplay(); // Re-populate with new sort
+        }
+
         function showActionsMenu() { 
             stopAllAutoActions();
             showSection('actions-menu-section'); 
@@ -1492,37 +1528,39 @@
         function populateInventoryDisplay() {
             const listDiv = document.getElementById('inventory-list');
             listDiv.innerHTML = '';
-            let hasItems = false;
-            for (const itemName in playerData.inventory) {
+            let hasItems = false; // This will be set if we add any item to itemsToDisplay
+            // New: Create an array of item objects to sort and display
+            let itemsToDisplay = [];
+
+            for (const itemName in playerData.inventory) { // Iterate through player's inventory
                 const quantity = playerData.inventory[itemName];
                 const isEquippableSlot = ["weapon", "axe", "pickaxe", "chestplate"].includes(itemName);
 
-                if (!isEquippableSlot && quantity > 0) {
+                // Only process actual items with quantity > 0, not equipped slots
+                if (!isEquippableSlot && typeof quantity === 'number' && quantity > 0) {
                     hasItems = true;
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'item-entry';
-
                     let emoji = "&nbsp;";
                     let displayItemName = titleCase(itemName);
                     let itemColorClass = "fore-white";
+                    let priceLookupKey = itemName; // Used to find sell price for sorting
 
                     // 1. Specific full names / unique items
                     if (SWORD_DATA[itemName]) {
                         emoji = SWORD_DATA[itemName].emoji || "&nbsp;";
                         itemColorClass = SWORD_DATA[itemName].color || "fore-white";
+                        // priceLookupKey is already itemName
                     } else if (ARMOR_DATA[itemName]) {
                         emoji = ARMOR_DATA[itemName].emoji || "&nbsp;";
                         itemColorClass = ARMOR_DATA[itemName].color || "fore-white";
+                        // priceLookupKey is already itemName
                     } else if (itemName === "egg") {
                         emoji = "🥚";
                     } else if (itemName === "goblin beads") {
                         emoji = "📿";
                     } else if (itemName === "dragon gem") {
                         emoji = "<span class='fore-red'>💎</span>";
-                        itemColorClass = "fore-red";
                     } else if (itemName === "demon heart") {
                         emoji = "<span class='fore-magenta'>❤️‍🔥</span>";
-                        itemColorClass = "fore-magenta";
                     } else if (itemName === "burnt meat") {
                         emoji = " ◍ "; // New emoji for burnt meat
                         itemColorClass = "fore-dark-grey";
@@ -1530,7 +1568,7 @@
                     // 2. Pattern-based (logs, ores)
                     else if (itemName.endsWith(" ore")) {
                         const nameParts = itemName.toLowerCase().split(" ");
-                        const baseNameFromParts = nameParts[0]; // Use this for emoji logic if needed
+                        const baseNameFromParts = nameParts[0];
                         if (ORE_DATA[baseNameFromParts]) {
                             emoji = ORE_DATA[baseNameFromParts].emoji || "&nbsp;";
                             itemColorClass = ORE_DATA[baseNameFromParts].color || "fore-white";
@@ -1540,20 +1578,21 @@
                         const baseNameFromParts = nameParts[0];
                         if (TREE_DATA[baseNameFromParts]) {
                             emoji = TREE_DATA[baseNameFromParts].emoji || "&nbsp;";
-                            itemColorClass = TREE_DATA[baseNameFromParts].color || "fore-green";
+                            // Color for logs is often green, but let TREE_DATA define it if it has a color prop
+                            itemColorClass = (TREE_DATA[baseNameFromParts] && TREE_DATA[baseNameFromParts].color) ? TREE_DATA[baseNameFromParts].color : "fore-green";
                         }
                     }
                     // 3. Food data
                     else if (FOOD_DATA[itemName]) {
                         emoji = FOOD_DATA[itemName].emoji || "&nbsp;";
-                        itemColorClass = FOOD_DATA[itemName].color || "fore-green";
+                        itemColorClass = (FOOD_DATA[itemName] && FOOD_DATA[itemName].color) ? FOOD_DATA[itemName].color : "fore-green";
                     }
                     // 4. Cookable items (raw forms)
                     else if (COOKABLE_ITEMS[itemName.replace(/s$/, '')]) {
                         const cookableBase = itemName.replace(/s$/, '');
                         if (COOKABLE_ITEMS[cookableBase]) {
                              emoji = COOKABLE_ITEMS[cookableBase].emoji || "&nbsp;";
-                             itemColorClass = COOKABLE_ITEMS[cookableBase].color || "fore-white";
+                             itemColorClass = (COOKABLE_ITEMS[cookableBase] && COOKABLE_ITEMS[cookableBase].color) ? COOKABLE_ITEMS[cookableBase].color : "fore-white";
                         }
                     }
                     // 5. Bar data
@@ -1561,34 +1600,79 @@
                         emoji = BAR_DATA[itemName].emoji || "&nbsp;";
                         itemColorClass = BAR_DATA[itemName].color || "fore-white";
                     }
-                    // 6. Unequipped tools (inventory key is the material, e.g., "bronze")
+                    // 6. Unequipped tools (inventory key is the material, e.g., "bronze" for "bronze axe")
                     else if (TOOL_DATA.axe[itemName]) { // itemName is "bronze", "iron" etc.
                         const toolData = TOOL_DATA.axe[itemName];
                         emoji = toolData.emoji || "&nbsp;";
                         displayItemName = titleCase(itemName + " Axe");
                         itemColorClass = toolData.color || "fore-white";
+                        priceLookupKey = itemName + " axe"; // For ITEM_SELL_PRICES
                     } else if (TOOL_DATA.pickaxe[itemName]) { // itemName is "bronze", "iron" etc.
                         const toolData = TOOL_DATA.pickaxe[itemName];
                         emoji = toolData.emoji || "&nbsp;";
                         displayItemName = titleCase(itemName + " Pickaxe");
                         itemColorClass = toolData.color || "fore-white";
+                        priceLookupKey = itemName + " pickaxe"; // For ITEM_SELL_PRICES
                     }
 
                     // 7. Default fallback emoji if still not found
                     if (emoji === "&nbsp;") {
                         emoji = `<span class='${itemColorClass}'>●</span>`;
                     }
+                    // (Burnt meat color already handled above)
 
-                    // Final override for burnt meat color for its text, if needed
-                    if (itemName === "burnt meat") {
-                        itemColorClass = "fore-dark-grey";
-                    }
+                    const value_single = ITEM_SELL_PRICES[priceLookupKey] || 0;
+                    const value_stack = value_single * quantity;
 
-                    itemDiv.innerHTML = `<span class="inv-item-emoji">${emoji}</span><span class="item-name ${itemColorClass}">${displayItemName}:</span> <span class="item-quantity">${quantity.toLocaleString()}</span>`;
-                    listDiv.appendChild(itemDiv);
+                    itemsToDisplay.push({
+                        key: itemName, // Original key from playerData.inventory
+                        quantity: quantity,
+                        displayName: displayItemName,
+                        emoji: emoji,
+                        colorClass: itemColorClass,
+                        value_single: value_single,
+                        value_stack: value_stack
+                    });
                 }
             }
-            if (!hasItems) listDiv.innerHTML = "<p>Your inventory is empty.</p>";
+
+            // Sorting logic based on currentInventorySort
+            if (currentInventorySort === 'name') {
+                itemsToDisplay.sort((a, b) => a.displayName.localeCompare(b.displayName));
+            } else if (currentInventorySort === 'quantity') {
+                itemsToDisplay.sort((a, b) => b.quantity - a.quantity); // Descending
+            } else if (currentInventorySort === 'value_single') {
+                itemsToDisplay.sort((a, b) => { // Descending, secondary by name
+                    if (b.value_single === a.value_single) return a.displayName.localeCompare(b.displayName);
+                    return b.value_single - a.value_single;
+                });
+            } else if (currentInventorySort === 'value_stack') {
+                itemsToDisplay.sort((a, b) => { // Descending, secondary by name
+                    if (b.value_stack === a.value_stack) return a.displayName.localeCompare(b.displayName);
+                    return b.value_stack - a.value_stack;
+                });
+            } else if (currentInventorySort === 'default') {
+                itemsToDisplay.sort((a, b) => {
+                    const indexA = DEFAULT_ITEM_ORDER.indexOf(a.key);
+                    const indexB = DEFAULT_ITEM_ORDER.indexOf(b.key);
+                    if (indexA === -1 && indexB === -1) return a.displayName.localeCompare(b.displayName); // Both not in default, sort by name
+                    if (indexA === -1) return 1; // a is not in default, b is; b comes first
+                    if (indexB === -1) return -1; // b is not in default, a is; a comes first
+                    return indexA - indexB;
+                });
+            }
+
+            // Render the sorted items
+            if (!hasItems) { // If no items were ever pushed to itemsToDisplay
+                listDiv.innerHTML = "<p>Your inventory is empty.</p>";
+            } else {
+                itemsToDisplay.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'item-entry';
+                    itemDiv.innerHTML = `<span class="inv-item-emoji">${item.emoji}</span><span class="item-name ${item.colorClass}">${item.displayName}:</span> <span class="item-quantity">${item.quantity.toLocaleString()}</span>`;
+                    listDiv.appendChild(itemDiv);
+                });
+            }
         }
 
 
@@ -3908,7 +3992,13 @@
             updatePerkPoints(); // Call this to calculate initial perk points from total_skill_xp
             updateHud(); // Now updateHud can use fully initialized playerData including perk points and maxHP
             startRentCollection(); // Start rent timer if applicable based on loaded save
-            showMainMenu();
+            
+            // Set initial active sort button
+            const initialSortButton = document.getElementById(`sort-inv-${currentInventorySort}`);
+            if (initialSortButton) {
+                initialSortButton.classList.add('active-sort');
+            }
+            showMainMenu(); // This will eventually call populateInventoryDisplay if user navigates there
         }
 
         document.addEventListener('DOMContentLoaded', initGame);
