@@ -103,8 +103,19 @@
         .section-header-actions button { /* Style for buttons within this container */
             padding: 5px 10px; font-size: 0.9em; margin-left: 5px;
         }
-        .section-title-text { font-weight: bold; flex-grow: 1; font-size: 1.1em; }
-
+        .section-title-text { 
+            font-weight: bold; 
+            flex-grow: 1; 
+            font-size: 1.1em;
+            
+            /* display: flex; and justify-content: center; removed */
+        }
+        #guild-stash-total-value {
+            flex-flow: wrap;
+            display: flex;
+            justify-content: center;
+            font-size: 1.1em; 
+        }
         button {
             background-color: #0e639c;
             color: #222; 
@@ -147,15 +158,16 @@
 
 
         #button-apply-cheat {
-            background-color: #c586c0; /* A nice magenta, like your perk buttons */
-            color: white;
+            background-color: #222224; /* Very dark grey, close to #1e1e1e */
+            color: #888; /* Dimmer text color for less contrast */
             padding: 5px 10px; /* Reduced padding */
             margin-left: 8px; /* Add some space between the input and the button */
-            border-color: #b373ac;
-            font-size: 0.9em; /* Smaller font size */
+            border-color: #2d2d30; /* Border color slightly lighter than bg, or same as input's bg */
+            font-size: 0.85em; /* Even smaller font size */
         }
         #button-apply-cheat:hover {
-            background-color: #d993d3; /* Lighter magenta on hover */
+            background-color: #333335; /* A slightly lighter dark grey for hover */
+            color: #aaa; /* Slightly brighter text on hover */
         }
         #cheat-input {
             width: 12ch; /* Makes it wide enough for about 12 characters of its font. Default input 'size' is 20. 12 is 40% less than 20. */
@@ -609,6 +621,28 @@
         #main-menu-section .btn-guild { background-color: #6a0dad; border-color: #500784; color: #fff; }
         #main-menu-section .btn-guild:hover { background-color: #832db5; }
 
+        /* Guild Submenu Button Colors */
+        #guild-menu-section .btn-guild-members {
+            background-color: #4ec9b0; /* Teal/Cyan */
+            border-color: #40b39e;
+        }
+        #guild-menu-section .btn-guild-members:hover { background-color: #5cd6c0; }
+        #guild-menu-section .btn-guild-upgrades {
+            background-color: #795548; /* Brown (like build structures) */
+            border-color: #6a4a3e;
+        }
+        #guild-menu-section .btn-guild-upgrades:hover { background-color: #8d6e63; }
+        #guild-menu-section .btn-guild-stash { /* Changed to brown, like player inventory */
+            background-color: #8b7355; 
+            border-color: #7a6244;
+        }
+        #guild-menu-section .btn-guild-stash:hover { background-color: #a0886c; }
+        #guild-menu-section .btn-guild-missions {
+            background-color: #3174ad; /* Medium Blue */
+            border-color: #2a6394;
+        }
+        #guild-menu-section .btn-guild-missions:hover { background-color: #3c8bc8; }
+
         .submenu-buttons-container {
             display: flex;
             gap: 5px; 
@@ -861,6 +895,45 @@
         .member-action-button:hover .tooltip-text-guild-task {
             visibility: visible;
             opacity: 1;
+        }
+
+        /* Modal Styles for Mission Member Selection */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1070; /* Sit on top - higher than HUD tooltips */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Darker overlay */
+        }
+        .modal-content {
+            background-color: #2a2a2d; /* Slightly lighter than main container bg */
+            margin: 10% auto; /* 10% from the top and centered */
+            padding: 25px;
+            border: 1px solid #555;
+            width: 85%; 
+            max-width: 550px; /* Max width for the modal */
+            border-radius: 6px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .modal-content h3 { margin-top: 0; color: #c586c0; } /* Magenta title */
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+            margin-top: -10px; /* Adjust to align better with padding */
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
         }
         /* For Guild Stash transfer button */
         .item-entry .transfer-button {
@@ -1476,7 +1549,46 @@
         }
         .perk-item-card.disabled-perk-card { opacity: 0.7; }
 
+        .active-mission-card { opacity: 0.65; cursor: default; }
+        .active-mission-card .actions button {
+            transform: scale(1.03); /* Slight zoom effect on hover */
+        }
+        .perk-item-card.disabled-perk-card { opacity: 0.7; }
+
         /* Guild Member Card Specifics */
+        /* Active Guild Mission Progress Bar in Guild Hall */
+        .active-mission-progress-bar-container {
+            position: relative;
+            height: 28px; 
+            background-color: #3a3a3d; /* Dark background for empty part of bar */
+            border: 1px solid #555;
+            border-radius: 4px;
+            margin-bottom: 8px; 
+            overflow: hidden; 
+        }
+        .active-mission-progress-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #3174ad; /* Mission blue color for fill */
+            transition: width 0.25s linear; /* Smoother, linear transition for progress */
+            z-index: 1;
+        }
+        .active-mission-progress-bar-text {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 10px; /* Padding for text */
+            color: white;
+            font-size: 0.9em;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.6);
+        }
+        .active-mission-progress-bar-text .emoji { margin-right: 8px; }
+
         .guild-member-card {
             border: 1px solid #4a4a52;
             background-color: #2c2c32; 
@@ -1842,16 +1954,20 @@
                 <button class="btn-back-header" onclick="showMainMenu()" title="Back to Main Menu">⬅️</button>
                 <div class="section-title-text fore-magenta">Guild Hall</div>
             </div>
-            <p>Welcome, Guild Master <span id="guild-master-name" class="fore-yellow">PlayerName</span>!</p>
-            <p>Guild Name: <span id="guild-name-display" class="fore-yellow">PlayerName's Guild</span> (Level <span id="guild-level-display" class="fore-yellow">1</span>)</p>
+            <div id="active-guild-mission-display" style="margin-bottom: 10px; padding: 5px; border: 1px dashed #555;">
+                <!-- Active mission info will go here -->
+                <p><i>No active guild missions.</i></p>
+            </div>
+            <p>Welcome, Guild Master!</p>
+            <p>Guild Level: <span id="guild-level-display" class="fore-yellow">1</span></p>
             <p>Guild XP: <span id="guild-xp-display" class="fore-yellow">0</span></p>
             <p>Members: <span id="guild-member-count" class="fore-yellow">0</span> / <span id="guild-member-capacity-display" class="fore-yellow">1</span></p>
 
             <div class="submenu-buttons-container">
-                <button onclick="showGuildMembersScreen()">Manage Members</button>
-                <button onclick="showGuildUpgradesScreen()">Guild Hall Upgrades</button>
-                <button onclick="showGuildStashScreen()">View Guild Stash</button> <!-- New Button -->
-                <button onclick="showGuildMissionsScreen()">Missions</button>
+                <button class="btn-guild-members" onclick="showGuildMembersScreen()"><span class="button-icon">👥</span><span class="button-label">Manage Members</span></button>
+                <button class="btn-guild-upgrades" onclick="showGuildUpgradesScreen()"><span class="button-icon">🏛️✨</span><span class="button-label">Guild Hall Upgrades</span></button>
+                <button class="btn-guild-stash" onclick="showGuildStashScreen()"><span class="button-icon">🏦</span><span class="button-label">Guild Stash</span></button>
+                <button class="btn-guild-missions" onclick="showGuildMissionsScreen()"><span class="button-icon">🗺️</span><span class="button-label">Missions</span></button>
             </div>
             <div id="guild-details-area" style="margin-top: 15px; padding: 10px; border: 1px solid #444; background-color: #2a2a2d;">
                 <p><i>Guild management features are under construction. More to come!</i></p>
@@ -1878,11 +1994,27 @@
             </div>
         </div>
 
+        <!-- New Guild Upgrades Screen -->
+        <div id="guild-upgrades-section" class="section hidden">
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showGuildMenu()" title="Back to Guild Hall">⬅️</button>
+                <div class="section-title-text fore-magenta">Guild Hall Upgrades</div>
+            </div>
+            <div id="guild-upgrades-list">
+                <!-- Upgrades will be populated here -->
+            </div>
+            <div class="section-footer-controls">
+                <button onclick="showGuildMenu()"><span class="button-icon">⬅️</span><span class="button-label">Back to Guild Hall</span></button>
+            </div>
+        </div>
+
         <!-- New Guild Stash Screen -->
         <div id="guild-stash-section" class="section hidden">
             <div class="section-title-header">
                 <button class="btn-back-header" onclick="showGuildMenu()" title="Back to Guild Hall">⬅️</button>
-                <div class="section-title-text fore-magenta">Guild Stash</div>
+                <div class="section-title-text fore-magenta">Guild Stash
+                    <span id="guild-stash-total-value-wrapper" class="hud-icon" style="margin-left: 8px; font-size: 1.1em; font-weight: normal;"> <!-- Adjusted font-size and weight here -->
+                        <span id="guild-stash-total-value" class="fore-yellow"></span><span class="tooltip-text">Total Value of Guild Stash</span></span></div>
                 <div class="section-header-actions">
                     <button id="transfer-all-stash-btn" class="yellow" onclick="transferAllItemsFromGuildStashToPlayer()">Transfer All to Player</button>
                 </div>
@@ -1895,6 +2027,33 @@
             </div>
         </div>
 
+        <!-- New Guild Missions Screen -->
+        <div id="guild-missions-section" class="section hidden">
+            <div class="section-title-header">
+                <button class="btn-back-header" onclick="showGuildMenu()" title="Back to Guild Hall">⬅️</button>
+                <div class="section-title-text fore-magenta">Guild Missions</div>
+            </div>
+            <div id="available-guild-missions-list">
+                <!-- Missions will be populated here by showGuildMissionsScreen() -->
+            </div>
+            <div class="section-footer-controls">
+                <button onclick="showGuildMenu()"><span class="button-icon">⬅️</span><span class="button-label">Back to Guild Hall</span></button>
+            </div>
+        </div>
+
+                <!-- New Guild Mission Member Selection Modal -->
+        <div id="mission-member-selection-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="hideMissionMemberSelectionModal()">×</span>
+                <h3 id="modal-mission-name">Select Members for Mission</h3>
+                <div id="modal-mission-member-list" style="margin-bottom: 15px; max-height: 200px; overflow-y: auto;">
+                    <!-- Member checkboxes will be populated here -->
+                </div>
+                <p id="modal-mission-requirements-info" style="margin-bottom: 15px;">Selected: 0 / X members.</p>
+                <button id="btn-start-mission-with-selection" class="green" disabled>Start Mission with Selected</button>
+                <button onclick="hideMissionMemberSelectionModal()" style="margin-left: 10px;">Cancel</button>
+            </div>
+        </div>
 
         <div class="log-area" id="log-area">Welcome to the Adventure!</div>
 
@@ -2040,7 +2199,10 @@
             "mithril chestplate": {"defense":0.12, "price":600,   "level_req":45, "color":"fore-blue",          "emoji":"🛡️"},
             "adamant chestplate": {"defense":0.15, "price":1500,  "level_req":60, "color":"fore-green",         "emoji":"🛡️"},
             "rune chestplate":    {"defense":0.18, "price":5000,  "level_req":75, "color":"fore-magenta",       "emoji":"🛡️"},
-            "dragon chestplate":  {"defense":0.22, "price":20000, "level_req":90, "color":"fore-red",           "emoji":"🛡️🔥"}
+            "dragon chestplate":  {"defense":0.22, "price":20000, "level_req":90, "color":"fore-red",           "emoji":"🛡️🔥"},
+        };
+        const HELMET_DATA = { // New constant for helmets
+            "full dragon helmet": {"defense":0.10, "price": 50000, "level_req": 80, "color":"fore-red", "emoji":"👑", "slotType": "helmet"}
         };
         
         const BAR_DATA = {
@@ -2159,10 +2321,11 @@
             "name":"PlayerOne","woodcutting_xp":0,"attack_xp":0,"mining_xp":0,"cooking_xp":0, "blacksmithing_xp":0,
             "hp":10,"gold":10, "total_skill_xp": 0, "perk_points_earned": 0, "perk_points_spent": 0, "active_perks": {},
             "inventory": {
-                "weapon":"none","axe":"none","pickaxe":"none","chestplate":"none", 
+                "weapon":"none","axe":"none","pickaxe":"none","chestplate":"none", "helmet":"none", // Added helmet slot
                 "normal logs":0,"oak logs":0,"willow logs":0,
                 "copper ore":0,"tin ore":0,"iron ore":0,"coal":0,"mithril ore":0,"adamantite ore":0,"runite ore":0,"special dragon ore":0,
                 "bronze bar":0,"iron bar":0, "steel bar":0, "mithril bar":0, "adamantite bar":0, "runite bar":0, "dragon bar":0,
+                "full dragon helmet": 0, // Added helmet item
                 "egg":0,"goblin beads":0,"dragon gem":0,
                 "raw meat":0,"cooked meat":0,"bread":0,"burnt meat":0,"health potion (s)":0,
                 "wolf fang":0,"bear claw":0,"ogre club fragment":0,"troll hide":0,"giant's toe":0,"demon heart":0,
@@ -2188,9 +2351,13 @@
             "guild_member_capacity": 1,
             "guild_hall_upgrades": { "barracks_level": 0, "forge_level": 0, "mission_board_level": 0 },
             // current_task for members will be initialized when they are recruited
+            "active_guild_missions": [] // For tracking active missions
         };
         Object.keys(ARMOR_DATA).forEach(armor_name => {
             if (!(armor_name in DEFAULT_PLAYER.inventory)) DEFAULT_PLAYER.inventory[armor_name] = 0;
+        });
+        Object.keys(HELMET_DATA).forEach(helmet_name => { // Add helmets to default inventory
+            if (!(helmet_name in DEFAULT_PLAYER.inventory)) DEFAULT_PLAYER.inventory[helmet_name] = 0;
         });
         Object.keys(SWORD_DATA).forEach(sword_name => {
             if (!(sword_name in DEFAULT_PLAYER.inventory)) DEFAULT_PLAYER.inventory[sword_name] = 0;
@@ -2216,6 +2383,7 @@
         };
         for (const food_name in FOOD_DATA) ITEM_SELL_PRICES[food_name] = FOOD_DATA[food_name].sell_price;
         for (const armor_name in ARMOR_DATA) ITEM_SELL_PRICES[armor_name] = Math.floor(ARMOR_DATA[armor_name].price*0.4);
+        for (const helmet_name in HELMET_DATA) ITEM_SELL_PRICES[helmet_name] = Math.floor(HELMET_DATA[helmet_name].price*0.4); // Add sell prices for helmets
         for (const sword_name in SWORD_DATA) { 
             let totalBarCost = 0;
             for(const bar in SWORD_DATA[sword_name].recipe){
@@ -2307,19 +2475,59 @@
             },
         };
 
+        const GUILD_MISSION_DATA = {
+            "demonKingQuest": {
+                id: "demonKingQuest",
+                name: "The Demon King's Challenge",
+                emoji: "👑😈🔥",
+                description: "A perilous quest to confront the Demon King in his fiery domain. Only the bravest and strongest guilds dare attempt this.",
+                requiredMembers: 5,
+                durationHours: 12, // Duration in hours
+                rewards: {
+                    guaranteed: { "gold": 100000 },
+                    potential: [ 
+                        { item: "full dragon helmet", baseChance: 0.75, quantity: [1,1] } // Example: 75% base chance for helmet on full success
+                    ]
+                },
+                minAvgMemberLevelForAttempt: 40 // Example: minimum average level of selected members to even try
+            }
+        };
+
         const GUILD_MEMBER_NAMES = [
             "Valerius", "Lyra", "Marcus", "Seraphina", "Orion",
-            "Astrid", "Gideon", "Elara", "Jasper", "Rowena"
+            "Astrid", "Gideon", "Elara", "Jasper", "Rowena",
+            "Kael" // New Tier 2 Recruit
         ];
         const MAX_GUILD_MEMBERS = 10;
 
         // XP Progression for Guild Members (can be simpler or same as player for now)
         const GUILD_MEMBER_LEVEL_PROGRESSION = [0];
-        let _gm_points = 0;
+        let _gm_points = 0; // Moved _gm_points declaration here
         for (let _gm_lvl_idx = 1; _gm_lvl_idx < 99; _gm_lvl_idx++) { // Assuming max level 99 for progression table
             _gm_points += Math.floor(_gm_lvl_idx * 2.5 + 400 * (2**(_gm_lvl_idx / 6.0))); // Increased base and exponential factor
             GUILD_MEMBER_LEVEL_PROGRESSION.push(Math.floor(_gm_points / 3)); // Adjusted divisor
         }
+
+        const GUILD_UPGRADE_DATA = {
+            "barracks": {
+                id: "barracks",
+                name: "Barracks",
+                emoji: "🏘️",
+                maxLevel: 5, // Example max level
+                description: "Increases the maximum number of guild members you can recruit.",
+                getBenefitText: (level) => `+${level + 1} Member Capacity`, // Capacity = level + 1 (base 1)
+                getCost: (currentLevel) => {
+                    // Example cost scaling:
+                    const nextLevel = currentLevel + 1;
+                    return {
+                        "gold": 5000 * Math.pow(nextLevel, 2),
+                        "normal logs": 200 * nextLevel,
+                        "oak logs": 50 * nextLevel
+                    };
+                }
+            }
+            // Future upgrades like Forge, Mission Board can be added here
+        };
 
         const GUILD_MEMBER_TASK_DURATION_MS = 8 * 60 * 60 * 1000; // 8 hours for active task
         const GUILD_MEMBER_TASK_TICK_INTERVAL_MS = 5 * 1000; // Check for drops every 5 seconds
@@ -2391,6 +2599,8 @@
         let currentInventorySort = 'default';
         const DEFAULT_ITEM_ORDER = Object.keys(DEFAULT_PLAYER.inventory); // For default sort order
 
+        let currentMissionSelectionContext = { missionId: null, selectedMembers: new Set() };
+        let guildMissionCheckInterval = null; // New global variable for the mission check interval
 
         // --- Utility Functions ---
         function getLevelFromXp(xp) {
@@ -2560,11 +2770,15 @@
                         dataChanged = true;
                     }
                 }
-                ["weapon", "axe", "pickaxe", "chestplate"].forEach(slot => {
+                ["weapon", "axe", "pickaxe", "chestplate", "helmet"].forEach(slot => { // Added helmet to slot check
                     if (data.inventory[slot] === null || data.inventory[slot] === undefined) {
                          data.inventory[slot] = "none"; dataChanged = true;
                     }
                 });
+                if (!("full dragon helmet" in data.inventory)) { // Ensure new helmet item exists
+                    data.inventory["full dragon helmet"] = 0;
+                    dataChanged = true;
+                }
                 if (typeof data.inventory.fishing_rod === 'string') {
                     delete data.inventory.fishing_rod; dataChanged = true;
                 }
@@ -2630,6 +2844,10 @@
                         member.current_task = null; dataChanged = true;
                     }
                 });
+            }
+            if (!("active_guild_missions" in data) || !Array.isArray(data.active_guild_missions)) {
+                data.active_guild_missions = [];
+                dataChanged = true;
             }
 
 
@@ -5296,7 +5514,12 @@
                     costDisplayHtml = "<h4>Cost:</h4>";
                     for (const resourceName in structure.cost) {
                         const needed = structure.cost[resourceName];
-                        const possessed = playerData.inventory[resourceName] || 0;
+                        let possessed;
+                        if (resourceName === "gold") {
+                            possessed = playerData.gold;
+                        } else {
+                            possessed = playerData.inventory[resourceName] || 0;
+                        }
                         const color = possessed >= needed ? 'fore-green' : 'fore-red';
                         costDisplayHtml += `<p><span class="cost-item-name">${titleCase(resourceName)}:</span> ${needed.toLocaleString()} (<span class="${color}">${possessed.toLocaleString()}</span>)</p>`;
                         if (possessed < needed) {
@@ -5371,14 +5594,24 @@
             }
             for (const resourceName in structure.cost) {
                 if ((playerData.inventory[resourceName] || 0) < structure.cost[resourceName]) {
-                    logMessage(`Not enough ${titleCase(resourceName)} to build ${structure.name}.`, "fore-red", "🚫");
-                    return;
+                    if (resourceName === "gold") {
+                        if (playerData.gold < structure.cost[resourceName]) {
+                            logMessage(`Not enough Gold to build ${structure.name}.`, "fore-red", "🚫");
+                            return;
+                        }
+                    } else {
+                        logMessage(`Not enough ${titleCase(resourceName)} to build ${structure.name}.`, "fore-red", "🚫");
+                        return;
+                    }
                 }
             }
             for (const resourceName in structure.cost) {
-                playerData.inventory[resourceName] -= structure.cost[resourceName];
+                if (resourceName === "gold") {
+                    playerData.gold -= structure.cost[resourceName];
+                } else {
+                    playerData.inventory[resourceName] -= structure.cost[resourceName];
+                }
             } 
-
             playerData.built_structures[structureId] = true;
             logMessage(`Successfully built ${structure.emoji} ${structure.name}! Perk activated.`, "fore-green", structure.emoji || "🏗️");
             // playSound(buildStructureSound); // Add a sound effect if you have one
@@ -5778,6 +6011,24 @@
             return true; // Indicate success
         }
 
+        function attemptGuildMission(missionId) { // STUB
+            const mission = GUILD_MISSION_DATA[missionId];
+            if (!mission) {
+                logMessage("Error: Mission data not found.", "fore-red", "❗");
+                return;
+            }
+
+            if (playerData.guild_members.length < mission.requiredMembers) {
+                logMessage(`Not enough guild members for ${mission.name}. Requires ${mission.requiredMembers}, you have ${playerData.guild_members.length}.`, "fore-red", "👥🚫");
+                return;
+            }
+
+            // logMessage(`Sufficient members for ${mission.name}. Next: Member selection (Not yet implemented).`, "fore-blue", "⚔️🛡️");
+            showMissionMemberSelectionModal(missionId);
+            if (currentSection === 'perk-tree-section') showPerkTreeMenu();
+            return true; // Indicate success
+        }
+
         // --- Guild Management Function Stubs ---
 
         function generateTaskTooltipText(member, taskType) {
@@ -5833,8 +6084,171 @@
         }
 
         function upgradeGuildHall(upgrade_type) {
-            if (!playerData.guild_unlocked) { logMessage("Guild not yet unlocked.", "fore-red"); return; }
-            logMessage(`Upgrading Guild Hall: ${upgrade_type} (Not fully implemented).`, "fore-cyan");
+            const upgradeData = GUILD_UPGRADE_DATA[upgrade_type];
+            if (!upgradeData) {
+                logMessage("Error: Invalid guild upgrade type.", "fore-red", "❗");
+                return;
+            }
+
+            const currentLevel = playerData.guild_hall_upgrades[`${upgrade_type}_level`] || 0;
+            if (currentLevel >= upgradeData.maxLevel) {
+                logMessage(`${upgradeData.name} is already at max level (${upgradeData.maxLevel}).`, "fore-yellow", "🌟");
+                return;
+            }
+
+            const cost = upgradeData.getCost(currentLevel);
+            // Check resources
+            for (const resourceName in cost) {
+                const needed = cost[resourceName];
+                const possessed = (resourceName === 'gold') ? playerData.gold : (playerData.inventory[resourceName] || 0);
+                if (possessed < needed) {
+                    logMessage(`Not enough ${titleCase(resourceName)} to upgrade ${upgradeData.name}. Need ${needed.toLocaleString()}, have ${possessed.toLocaleString()}.`, "fore-red", "🧱🚫");
+                    return;
+                }
+            }
+
+            // Deduct resources
+            for (const resourceName in cost) {
+                const needed = cost[resourceName];
+                if (resourceName === 'gold') {
+                    playerData.gold -= needed;
+                } else {
+                    playerData.inventory[resourceName] -= needed;
+                }
+            }
+
+            // Apply upgrade
+            playerData.guild_hall_upgrades[`${upgrade_type}_level`] = currentLevel + 1;
+            if (upgrade_type === "barracks") {
+                playerData.guild_member_capacity = (playerData.guild_hall_upgrades.barracks_level || 0) + 1; // Base capacity is 1 + barracks level
+            }
+
+            logMessage(`Successfully upgraded ${upgradeData.name} to Level ${currentLevel + 1}!`, "fore-magenta", "🎉🛠️");
+            savePlayerData();
+            updateHud();
+            showGuildUpgradesScreen(); // Refresh the upgrades screen
+            if (currentSection === 'guild-menu-section') showGuildMenu(); // Refresh guild menu if viewing it (for capacity display)
+        }
+
+        // function showGuildUpgradesScreen() {
+        //     logMessage("Guild Hall Upgrades screen - Not yet implemented.", "fore-blue");
+        // }
+        function showGuildUpgradesScreen() {
+            if (!playerData.guild_unlocked) {
+                logMessage("Access denied. Guild not yet unlocked.", "fore-red", "🚫🛡️‍⚖️");
+                showGuildMenu();
+                return;
+            }
+            stopAllAutoActions();
+            const upgradesListDiv = document.getElementById('guild-upgrades-list');
+            upgradesListDiv.innerHTML = ''; // Clear previous upgrades
+
+            for (const upgradeId in GUILD_UPGRADE_DATA) {
+                const upgrade = GUILD_UPGRADE_DATA[upgradeId];
+                const currentLevel = playerData.guild_hall_upgrades[`${upgradeId}_level`] || 0;
+
+                const upgradeCard = document.createElement('div');
+                upgradeCard.className = 'structure-item-card'; // Re-use styling
+
+                let costHtml = "Max Level Reached";
+                let actionButtonHtml = "";
+
+                if (currentLevel < upgrade.maxLevel) {
+                    const cost = upgrade.getCost(currentLevel);
+                    costHtml = "Cost to Upgrade: ";
+                    costHtml += Object.entries(cost).map(([res, val]) => `${val.toLocaleString()} ${titleCase(res)}`).join(', ');
+                    actionButtonHtml = `<button onclick="upgradeGuildHall('${upgradeId}')">Upgrade to Level ${currentLevel + 1}</button>`;
+                }
+
+                upgradeCard.innerHTML = `
+                    <h3><span class="emoji">${upgrade.emoji}</span> ${upgrade.name} (Level ${currentLevel}/${upgrade.maxLevel})</h3>
+                    <p class="description">${upgrade.description}</p>
+                    <p>Current Benefit: ${upgrade.getBenefitText(currentLevel)}</p>
+                    <div class="requirements-block">
+                        <p>${costHtml}</p>
+                    </div>
+                    <div class="actions">${actionButtonHtml}</div>
+                `;
+                upgradesListDiv.appendChild(upgradeCard);
+            }
+            showSection('guild-upgrades-section');
+        }
+
+        function grantGuildXP(amount) {
+            if (!playerData.guild_unlocked) { return; }
+            const upgradesListDiv = document.getElementById('guild-upgrades-list');
+            upgradesListDiv.innerHTML = ''; // Clear previous upgrades
+
+            for (const upgradeId in GUILD_UPGRADE_DATA) {
+                const upgrade = GUILD_UPGRADE_DATA[upgradeId];
+                const currentLevel = playerData.guild_hall_upgrades[`${upgradeId}_level`] || 0;
+
+                const upgradeCard = document.createElement('div');
+                upgradeCard.className = 'structure-item-card'; // Re-use styling
+
+                let costHtml = "Max Level Reached";
+                let actionButtonHtml = "";
+
+                if (currentLevel < upgrade.maxLevel) {
+                    const cost = upgrade.getCost(currentLevel);
+                    costHtml = "Cost to Upgrade: ";
+                    costHtml += Object.entries(cost).map(([res, val]) => `${val.toLocaleString()} ${titleCase(res)}`).join(', ');
+                    actionButtonHtml = `<button onclick="upgradeGuildHall('${upgradeId}')">Upgrade to Level ${currentLevel + 1}</button>`;
+                }
+
+                upgradeCard.innerHTML = `
+                    <h3><span class="emoji">${upgrade.emoji}</span> ${upgrade.name} (Level ${currentLevel}/${upgrade.maxLevel})</h3>
+                    <p class="description">${upgrade.description}</p>
+                    <p>Current Benefit: ${upgrade.getBenefitText(currentLevel)}</p>
+                    <div class="requirements-block">
+                        <p>${costHtml}</p>
+                    </div>
+                    <div class="actions">${actionButtonHtml}</div>
+                `;
+                upgradesListDiv.appendChild(upgradeCard);
+            }
+            showSection('guild-upgrades-section');
+        }
+
+        function showGuildUpgradesScreen() {
+            if (!playerData.guild_unlocked) {
+                logMessage("Access denied. Guild not yet unlocked.", "fore-red", "🚫🛡️‍⚖️");
+                showGuildMenu();
+                return;
+            }
+            stopAllAutoActions();
+            const upgradesListDiv = document.getElementById('guild-upgrades-list');
+            upgradesListDiv.innerHTML = ''; // Clear previous upgrades
+
+            for (const upgradeId in GUILD_UPGRADE_DATA) {
+                const upgrade = GUILD_UPGRADE_DATA[upgradeId];
+                const currentLevel = playerData.guild_hall_upgrades[`${upgradeId}_level`] || 0;
+
+                const upgradeCard = document.createElement('div');
+                upgradeCard.className = 'structure-item-card'; // Re-use styling
+
+                let costHtml = "Max Level Reached";
+                let actionButtonHtml = "";
+
+                if (currentLevel < upgrade.maxLevel) {
+                    const cost = upgrade.getCost(currentLevel);
+                    costHtml = "Cost to Upgrade: ";
+                    costHtml += Object.entries(cost).map(([res, val]) => `${val.toLocaleString()} ${titleCase(res)}`).join(', ');
+                    actionButtonHtml = `<button onclick="upgradeGuildHall('${upgradeId}')">Upgrade to Level ${currentLevel + 1}</button>`;
+                }
+
+                upgradeCard.innerHTML = `
+                    <h3><span class="emoji">${upgrade.emoji}</span> ${upgrade.name} (Level ${currentLevel}/${upgrade.maxLevel})</h3>
+                    <p class="description">${upgrade.description}</p>
+                    <p>Current Benefit: ${upgrade.getBenefitText(currentLevel)}</p>
+                    <div class="requirements-block">
+                        <p>${costHtml}</p>
+                    </div>
+                    <div class="actions">${actionButtonHtml}</div>
+                `;
+                upgradesListDiv.appendChild(upgradeCard);
+            }
+            showSection('guild-upgrades-section');
         }
 
         function grantGuildXP(amount) {
@@ -5851,11 +6265,49 @@
                 return;
             }
             stopAllAutoActions();
-            document.getElementById('guild-master-name').textContent = playerData.name || "Adventurer";
-            document.getElementById('guild-name-display').textContent = playerData.guild_name || "Player's Guild";
             document.getElementById('guild-level-display').textContent = playerData.guild_level || 1;
             document.getElementById('guild-xp-display').textContent = (playerData.guild_xp || 0).toLocaleString();
             document.getElementById('guild-member-count').textContent = (playerData.guild_members || []).length;
+
+            // Display Active Missions
+            const activeMissionsDiv = document.getElementById('active-guild-mission-display');
+            activeMissionsDiv.innerHTML = ''; // Clear previous
+
+            if (playerData.active_guild_missions && playerData.active_guild_missions.length > 0) {
+                const header = document.createElement('h4');
+                header.textContent = 'Active Missions:';
+                header.style.marginBottom = '8px'; // Add some space below the header
+                activeMissionsDiv.appendChild(header);
+
+                playerData.active_guild_missions.forEach(missionEntry => {
+                    const missionData = GUILD_MISSION_DATA[missionEntry.missionId];
+                    if (!missionData) {
+                        console.warn(`Mission data not found for active mission ID: ${missionEntry.missionId}`);
+                        return; // Skip this mission if data is missing
+                    }
+                    const now = Date.now();
+                    const elapsedMs = now - missionEntry.startTime;
+                    const progressPercent = Math.min(100, (elapsedMs / missionEntry.durationMs) * 100);
+                    const timeLeftMs = Math.max(0, missionEntry.completionTime - now);
+                    const timeLeftSec = Math.ceil(timeLeftMs / 1000);
+                    const formattedTimeLeft = formatDurationHHMMSS(timeLeftSec);
+
+                    const barContainer = document.createElement('div');
+                    barContainer.className = 'active-mission-progress-bar-container';
+
+                    const fillDiv = document.createElement('div');
+                    fillDiv.className = 'active-mission-progress-bar-fill';
+                    fillDiv.style.width = `${progressPercent}%`;
+
+                    const textDiv = document.createElement('div');
+                    textDiv.className = 'active-mission-progress-bar-text';
+                    textDiv.innerHTML = `<span class="emoji">${missionData.emoji || '🗺️'}</span> ${missionEntry.missionName} - Time Left: <span class="fore-yellow">${formattedTimeLeft}</span>`;
+
+                    barContainer.appendChild(fillDiv);
+                    barContainer.appendChild(textDiv);
+                    activeMissionsDiv.appendChild(barContainer);
+                });
+            }
             document.getElementById('guild-member-capacity-display').textContent = playerData.guild_member_capacity || 1;
             showSection('guild-menu-section');
         }
@@ -6032,7 +6484,11 @@
                 const elapsedMs = Date.now() - member.current_task.startTime;
                 const timeLeftSec = Math.max(0, Math.ceil((member.current_task.durationMs - elapsedMs) / 1000));
                 const formattedTimeLeft = formatDurationHHMMSS(timeLeftSec);
-                statusText = `Task: ${titleCase(member.current_task.type)} - ${formattedTimeLeft}`;
+                if (member.current_task.type === "mission") {
+                    statusText = `On Mission: ${titleCase(member.current_task.missionName)} - ${formattedTimeLeft}`;
+                } else {
+                    statusText = `Task: ${titleCase(member.current_task.type)} - ${formattedTimeLeft}`;
+                }
             } else {
                 cardElement.classList.remove('on-task');
                 statusText = 'Idle';
@@ -6051,9 +6507,12 @@
                 const taskControlsDiv = document.createElement('div');
                 taskControlsDiv.className = 'member-task-controls'; // No longer hidden by default
                 taskControlsDiv.id = `member-task-controls-${member.id}`;
-                taskControlsDiv.innerHTML = `
-                    <button class="member-action-button red" onclick="returnMemberFromTaskEarly('${member.id}')">Return Early & Collect</button>
-                `;
+                // Only show "Return Early" for regular tasks, not missions
+                if (member.current_task.type !== "mission") {
+                    taskControlsDiv.innerHTML = `
+                        <button class="member-action-button red" onclick="returnMemberFromTaskEarly('${member.id}')">Return Early & Collect</button>
+                    `;
+                } // For missions, this div will be empty, effectively hiding the button.
                 cardElement.appendChild(taskControlsDiv);
                 updateMemberProgressDisplay(member);
             } else {
@@ -6220,6 +6679,232 @@
             grantGuildXP(Math.floor(xpGained / 2)); // Grant some XP to the guild
 
             member.current_task = null;
+            // Clear the interval ID from the member object as well
+            if (member.current_task && member.current_task.intervalId) {
+                delete member.current_task.intervalId;
+            }
+
+            const cardElement = document.getElementById(`member-card-${member.id}`);
+            if (cardElement) {
+                renderMemberCard(cardElement.parentNode, member); // Re-render the card
+            }
+            savePlayerData();
+            updateHud();
+            // showGuildMembersScreen(); // Removed: This was causing player tasks to stop. renderMemberCard handles UI update.
+        }
+
+        function showMissionMemberSelectionModal(missionId) {
+            const mission = GUILD_MISSION_DATA[missionId];
+            if (!mission) return;
+
+            currentMissionSelectionContext.missionId = missionId;
+            currentMissionSelectionContext.selectedMembers.clear();
+
+            document.getElementById('modal-mission-name').textContent = `Select Members for: ${mission.name}`;
+            const memberListDiv = document.getElementById('modal-mission-member-list');
+            memberListDiv.innerHTML = ''; // Clear previous
+
+            const idleMembers = playerData.guild_members.filter(m => !m.current_task);
+
+            if (idleMembers.length === 0) {
+                memberListDiv.innerHTML = "<p><i>No idle members available.</i></p>";
+            } else {
+                idleMembers.forEach(member => {
+                    const memberLabel = document.createElement('label');
+                    memberLabel.style.display = 'block'; // Make each member take a full line
+                    memberLabel.style.marginBottom = '5px';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = member.id;
+                    checkbox.id = `mission-member-checkbox-${member.id}`;
+                    checkbox.onchange = () => updateSelectedMissionMembersCount(mission.requiredMembers);
+                    
+                    memberLabel.appendChild(checkbox);
+                    memberLabel.appendChild(document.createTextNode(` ${member.name} (Lvl ${member.level})`));
+                    memberListDiv.appendChild(memberLabel);
+                });
+            }
+            
+            updateSelectedMissionMembersCount(mission.requiredMembers); // Initial update for "0 / X selected"
+            document.getElementById('btn-start-mission-with-selection').onclick = () => startMissionWithSelectedMembers(missionId);
+
+            document.getElementById('mission-member-selection-modal').style.display = 'block';
+        }
+
+        function updateSelectedMissionMembersCount(requiredMembers) {
+            const selectedCheckboxes = document.querySelectorAll('#modal-mission-member-list input[type="checkbox"]:checked');
+            currentMissionSelectionContext.selectedMembers.clear();
+            selectedCheckboxes.forEach(cb => currentMissionSelectionContext.selectedMembers.add(cb.value));
+
+            const countDisplay = document.getElementById('modal-mission-requirements-info');
+            countDisplay.textContent = `Selected: ${currentMissionSelectionContext.selectedMembers.size} / ${requiredMembers} members.`;
+
+            const startButton = document.getElementById('btn-start-mission-with-selection');
+            if (currentMissionSelectionContext.selectedMembers.size === requiredMembers) {
+                startButton.disabled = false;
+            } else {
+                startButton.disabled = true;
+            }
+        }
+
+        function hideMissionMemberSelectionModal() {
+            document.getElementById('mission-member-selection-modal').style.display = 'none';
+        }
+
+        function startMissionWithSelectedMembers(missionId) {
+            const mission = GUILD_MISSION_DATA[missionId];
+            if (!mission) { logMessage("Error: Mission data not found for starting.", "fore-red", "❗"); return; }
+            if (currentMissionSelectionContext.selectedMembers.size !== mission.requiredMembers) {
+                logMessage("Incorrect number of members selected for the mission.", "fore-red", "👥🚫");
+                return;
+            }
+
+            const missionStartTime = Date.now();
+            const missionDurationMs = mission.durationHours * 60 * 60 * 1000;
+            const missionCompletionTime = missionStartTime + missionDurationMs;
+
+            // Mark selected members as on this mission
+            currentMissionSelectionContext.selectedMembers.forEach(memberId => {
+                const member = playerData.guild_members.find(m => m.id === memberId);
+                if (member) {
+                    member.current_task = {
+                        type: "mission", // Specific type for missions
+                        missionId: mission.id,
+                        missionName: mission.name,
+                        startTime: missionStartTime,
+                        durationMs: missionDurationMs,
+                        completionTime: missionCompletionTime 
+                        // No intervalId here; mission completion will be checked differently or via a global timer
+                    };
+                }
+            });
+
+            // Add to active_guild_missions
+            playerData.active_guild_missions.push({
+                missionId: mission.id,
+                missionName: mission.name,
+                assignedMemberIds: Array.from(currentMissionSelectionContext.selectedMembers),
+                startTime: missionStartTime,
+                durationMs: missionDurationMs,
+                completionTime: missionCompletionTime,
+                status: "active" // Could be 'active', 'completed', 'failed' later
+            });
+
+            logMessage(`Mission "${mission.name}" has begun with ${currentMissionSelectionContext.selectedMembers.size} members! Expected completion in ${mission.durationHours} hours.`, "fore-magenta", "🚀🗺️");
+            hideMissionMemberSelectionModal();
+            savePlayerData();
+            updateHud(); // Good practice
+            // Next: Refresh guild member screen to show new status
+            if (currentSection === 'guild-members-section') {
+                showGuildMembersScreen();
+            }
+        }
+
+        // --- Guild Mission Completion Check ---
+        function checkActiveGuildMissions() {
+            if (!playerData || !playerData.active_guild_missions || playerData.active_guild_missions.length === 0) {
+                return; // No active missions to check
+            }
+
+            const now = Date.now();
+            for (let i = playerData.active_guild_missions.length - 1; i >= 0; i--) { // Iterate backwards if we plan to remove items
+                const missionEntry = playerData.active_guild_missions[i];
+                if (missionEntry.status === "active" && now >= missionEntry.completionTime) {
+                    completeGuildMission(missionEntry, i); // Call the new function
+                }
+            }
+            // If on guild menu, refresh to update progress bars and list
+            if (currentSection === 'guild-menu-section') {
+                showGuildMenu();
+            }
+        }
+
+        function completeGuildMission(missionEntry, missionIndex) {
+            logMessage(`Mission "${missionEntry.missionName}" has been completed!`, "fore-magenta", "🎉🏆");
+
+            const missionData = GUILD_MISSION_DATA[missionEntry.missionId];
+            if (!missionData) {
+                logMessage(`Error: Could not find mission data for completed mission ID: ${missionEntry.missionId}`, "fore-red", "❗");
+                // Still try to clean up members and remove the mission entry
+            } else {
+                // Grant guaranteed rewards
+                if (missionData.rewards.guaranteed.gold) {
+                    playerData.gold += missionData.rewards.guaranteed.gold;
+                    logMessage(`Received ${missionData.rewards.guaranteed.gold.toLocaleString()} gold from the mission!`, "fore-yellow", "💰");
+                }
+
+                // Process potential rewards
+                if (missionData.rewards.potential) {
+                    missionData.rewards.potential.forEach(potentialReward => {
+                        if (Math.random() < potentialReward.baseChance) {
+                            const quantity = Math.floor(Math.random() * (potentialReward.quantity[1] - potentialReward.quantity[0] + 1)) + potentialReward.quantity[0];
+                            playerData.guild_stash[potentialReward.item] = (playerData.guild_stash[potentialReward.item] || 0) + quantity;
+                            logMessage(`Found ${quantity} ${titleCase(potentialReward.item)}! (Sent to Guild Stash)`, "fore-magenta", "🎁");
+                        }
+                    });
+                }
+            }
+
+            // Set members back to idle
+            missionEntry.assignedMemberIds.forEach(memberId => {
+                const member = playerData.guild_members.find(m => m.id === memberId);
+                if (member) {
+                    member.current_task = null;
+                }
+            });
+
+            // Remove mission from active list
+            playerData.active_guild_missions.splice(missionIndex, 1);
+
+            savePlayerData();
+            updateHud();
+            if (currentSection === 'guild-members-section') showGuildMembersScreen(); // Refresh if viewing members
+            if (currentSection === 'guild-menu-section') showGuildMenu(); // Refresh guild menu if viewing it (for active mission display later)
+        }
+        function completeMemberTask(memberId, isEarlyReturn = false) {
+            const member = playerData.guild_members.find(m => m.id === memberId);
+            if (!member || !member.current_task) return;
+
+            const task = member.current_task;
+            clearInterval(task.intervalId);
+
+            let lootSummary = [];
+            for (const item in task.loot) {
+                if (task.loot[item] > 0) {
+                    playerData.guild_stash[item] = (playerData.guild_stash[item] || 0) + task.loot[item];
+                    lootSummary.push(`${task.loot[item]} ${titleCase(item)}`);
+                }
+            }
+
+            const messageAction = isEarlyReturn ? "returned early from" : "completed";
+            if (lootSummary.length > 0) {
+                logMessage(`${member.name} ${messageAction} ${titleCase(task.type)} task. Collected: ${lootSummary.join(', ')}. (Sent to Guild Stash)`, "fore-magenta", "📦");
+            } else {
+                logMessage(`${member.name} ${messageAction} ${titleCase(task.type)} task, but found nothing.`, "fore-yellow");
+            }
+
+            // Grant member XP
+            const baseXpPerFullTask = 1000; // Adjusted Base XP for a full 8-hour task
+            const bonusXpPerMemberLevel = 10; // Adjusted Additional XP per member level
+            let xpGained = baseXpPerFullTask + (member.level * bonusXpPerMemberLevel);
+            if (isEarlyReturn) {
+                xpGained = Math.floor(xpGained * 0.3); // Penalize early return significantly (e.g., 30% of full XP)
+            }
+            const oldMemberLevel = member.level;
+            member.xp += xpGained;
+            
+            // Check member level up
+            while (member.level < member.maxLevel && member.xp >= GUILD_MEMBER_LEVEL_PROGRESSION[member.level]) {
+                member.level++;
+            }
+            if (member.level > oldMemberLevel) {
+                logMessage(`${member.name} leveled up to Level ${member.level}!`, "fore-yellow", "🌟");
+            }
+
+            grantGuildXP(Math.floor(xpGained / 2)); // Grant some XP to the guild
+
+            member.current_task = null;
             const cardElement = document.getElementById(`member-card-${member.id}`);
             if (cardElement) {
                 renderMemberCard(cardElement.parentNode, member); // Re-render the card
@@ -6237,23 +6922,94 @@
             completeMemberTask(memberId, true);
         }
 
-        function showGuildUpgradesScreen() {
-            logMessage("Guild Hall Upgrades screen - Not yet implemented.", "fore-blue");
-        }
-        function showGuildMissionsScreen() {
-            logMessage("Missions screen - Not yet implemented.", "fore-blue");
-        }
-
-        function showGuildStashScreen() {
+         function showGuildMissionsScreen() {
             if (!playerData.guild_unlocked) {
                 logMessage("Access denied. Guild not yet unlocked.", "fore-red", "🚫🛡️‍⚖️");
                 showGuildMenu();
                 return;
             }
             stopAllAutoActions();
-            populateGuildStashDisplay();
-            showSection('guild-stash-section');
+            const missionsListDiv = document.getElementById('available-guild-missions-list');
+            missionsListDiv.innerHTML = ''; // Clear previous missions
+
+            let hasAvailableMissions = false;
+            for (const missionId in GUILD_MISSION_DATA) {
+                const mission = GUILD_MISSION_DATA[missionId];
+                hasAvailableMissions = true;
+                const isMissionActive = playerData.active_guild_missions.some(activeMission => activeMission.missionId === missionId);
+
+                const missionCard = document.createElement('div');
+                missionCard.className = 'structure-item-card'; // Re-use structure card styling for now
+                if (isMissionActive) {
+                    missionCard.classList.add('active-mission-card');
+                }
+
+                let rewardsHtml = `Gold: ${mission.rewards.guaranteed.gold.toLocaleString()}`;
+                if (mission.rewards.potential && mission.rewards.potential.length > 0) {
+                    rewardsHtml += "<br>Potential: " + mission.rewards.potential.map(r => `${r.quantity[0]}x ${titleCase(r.item)}`).join(', ');
+                }
+
+                let actionButtonHtml;
+                if (isMissionActive) {
+                    actionButtonHtml = `<button disabled>Mission Active</button>`;
+                } else {
+                    actionButtonHtml = `<button onclick="attemptGuildMission('${missionId}')">Attempt Mission</button>`;
+                }
+
+                missionCard.innerHTML = `
+                    <h3><span class="emoji">${mission.emoji}</span> ${mission.name}</h3>
+                    <p class="description">${mission.description}</p>
+                    <div class="requirements-block">
+                        <p>Requires: ${mission.requiredMembers} members</p>
+                        <p>Duration: ${mission.durationHours} hours</p>
+                        <p>Rewards: ${rewardsHtml}</p> 
+                        <p class="fore-yellow"><small>(Min. Avg. Member Lvl: ${mission.minAvgMemberLevelForAttempt})</small></p>
+                    </div>
+                    <div class="actions">${actionButtonHtml}</div>
+                `;
+                missionsListDiv.appendChild(missionCard);
+            }
+
+            if (!hasAvailableMissions) {
+                missionsListDiv.innerHTML = '<p><i>No guild missions currently available.</i></p>';
+            }
+            showSection('guild-missions-section');
         }
+
+            function showGuildStashScreen() {
+                if (!playerData.guild_unlocked) {
+                    logMessage("Access denied. Guild not yet unlocked.", "fore-red", "🚫🛡️‍⚖️");
+                    showGuildMenu(); // Or showMainMenu()
+                    return;
+                }
+                stopAllAutoActions(); // This is fine, keep it.
+
+                // --- MODIFICATION START ---
+                // 1. Call populateGuildStashDisplay and store its returned value.
+                //    This function populates the list of items in the guild stash.
+                const calculatedTotalStashValue = populateGuildStashDisplay();
+
+                // 2. Get the HTML span element where the total value will be displayed.
+                const totalValueSpanElement = document.getElementById('guild-stash-total-value');
+
+                // 3. Update the text content of the span.
+                if (totalValueSpanElement) {
+                    totalValueSpanElement.textContent = `(${calculatedTotalStashValue.toLocaleString()}g)`;
+                    // If you had any temporary debug styles on this span from previous attempts,
+                    // you might want to ensure they are cleared or set back to your desired default.
+                    // For example:
+                    // totalValueSpanElement.style.color = ""; // Or your theme's yellow
+                    // totalValueSpanElement.style.backgroundColor = "";
+                    // totalValueSpanElement.style.border = "";
+                } else {
+                    // This log is important. If you see this, there's a typo in the ID
+                    // or the HTML element is missing.
+                    console.error("CRITICAL: HTML element with ID 'guild-stash-total-value' was not found when trying to update stash value.");
+                }
+                // --- MODIFICATION END ---
+
+                showSection('guild-stash-section'); // This makes the section (and the updated header) visible.
+            }
 
         function populateGuildStashDisplay() {
             const listDiv = document.getElementById('guild-stash-list');
@@ -6261,6 +7017,7 @@
 
             let hasItems = false;
             const itemsToDisplay = [];
+            let totalStashValue = 0;
 
             for (const itemName in playerData.guild_stash) {
                 const quantity = playerData.guild_stash[itemName];
@@ -6270,6 +7027,17 @@
                 }
 
                 hasItems = true;
+
+                // Calculate sell value for this item stack
+                let baseSellPrice = ITEM_SELL_PRICES[itemName] || 0; // Default to 0 if not in sell prices
+                let actualSellPricePerItem = baseSellPrice;
+                if (playerData.built_structures.castle && STRUCTURE_DATA.castle.perk_effect.type === "shop_price_modifier") {
+                    actualSellPricePerItem = Math.floor(baseSellPrice * (1 + STRUCTURE_DATA.castle.perk_effect.sell_mod));
+                }
+                if (actualSellPricePerItem > 0) { // Only add to total value if it's sellable for > 0
+                    totalStashValue += actualSellPricePerItem * quantity;
+                }
+
                 let emoji = "&nbsp;";
                 let displayItemName = titleCase(itemName);
                 let itemColorClass = "fore-white"; // Default color
@@ -6346,6 +7114,7 @@
                     listDiv.appendChild(itemDiv);
                 });
             }
+            return totalStashValue;
         }
 
         // --- Cheats ---
@@ -6360,6 +7129,9 @@
             } else if (cheatCode === "rosebud-") {
                 playerData.gold -= 50000;
                 logMessage("-50,000 Gold! That's too bad", "fore-magenta", "💸");
+            } else if (cheatCode === "rosebud+") { // New cheat code
+                playerData.gold += 1000000;
+                logMessage("+1,000,000 Gold! You're rich!", "fore-magenta", "🤑💰✨");
             } else if (cheatCode === "xpboost") {
                 const xpToAdd = 10000; 
                 const skillsToBoost = ["attack_xp", "woodcutting_xp", "mining_xp", "cooking_xp", "blacksmithing_xp"];
@@ -6399,6 +7171,28 @@
                 if (playerData.built_structures.stronghold) { // Adjust HP for stronghold
                      playerData.hp = getMaxHp(getLevelFromXp(playerData.attack_xp));
                 }
+                startRentCollection(); // Ensure rent starts
+            } else if (cheatCode === "iamuptonogood" || cheatCode === "iamuptonogood-") {
+                const amount = cheatCode === "iamuptonogood" ? 500 : -500;
+                let itemsAffected = 0;
+                for (const itemKey in DEFAULT_PLAYER.inventory) {
+                    // Skip equipment slots like 'weapon', 'axe', etc.
+                    if (typeof DEFAULT_PLAYER.inventory[itemKey] === 'number') {
+                        playerData.inventory[itemKey] = (playerData.inventory[itemKey] || 0) + amount;
+                        if (playerData.inventory[itemKey] < 0) {
+                            playerData.inventory[itemKey] = 0; // Don't go below zero
+                        }
+                        itemsAffected++;
+                    }
+                }
+                if (itemsAffected > 0) {
+                    const action = amount > 0 ? "Added" : "Removed";
+                    logMessage(`${action} ${Math.abs(amount)} to all inventory items! Mischief managed!`, "fore-magenta", "😈✨");
+                } else {
+                    logMessage("No items to affect with this cheat.", "fore-yellow", "🤔");
+                }
+
+
                 startRentCollection(); // Ensure rent starts
             }
             else {
