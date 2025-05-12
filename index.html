@@ -5914,14 +5914,23 @@
                 }
                 updateHud(); 
                 
-                // Refresh current screen if it displays level-gated content
-                if (currentSection === 'woodcutting-section') showWoodcutting();
-                else if (currentSection === 'mining-section') showMining();
-                else if (currentSection === 'cook-food-section') showCookFood();
-                else if (currentSection === 'smelting-section') showSmeltingMenu();
-                else if (currentSection === 'smithing-section') showSmithingMenu();
-                else if (currentSection === 'combat-section') showCombat();
-                else if (currentSection === 'build-structures-section') showBuildStructuresMenu(); 
+                // Add this check to prevent stopping woodcutting with Lumber Mill
+                const isWoodcuttingWithLumberMill = skillName === "Woodcutting" && 
+                                                     playerData.built_structures && 
+                                                     playerData.built_structures.lumberMill && 
+                                                     isAutoWoodcutting;
+                
+                // Only refresh the screen if we're not woodcutting with a Lumber Mill
+                if (!isWoodcuttingWithLumberMill) {
+                    // Refresh current screen if it displays level-gated content
+                    if (currentSection === 'woodcutting-section') showWoodcutting();
+                    else if (currentSection === 'mining-section') showMining();
+                    else if (currentSection === 'cook-food-section') showCookFood();
+                    else if (currentSection === 'smelting-section') showSmeltingMenu();
+                    else if (currentSection === 'smithing-section') showSmithingMenu();
+                    else if (currentSection === 'combat-section') showCombat();
+                    else if (currentSection === 'build-structures-section') showBuildStructuresMenu(); 
+                }
                 
                 return true;
             }
@@ -6134,83 +6143,6 @@
         // function showGuildUpgradesScreen() {
         //     logMessage("Guild Hall Upgrades screen - Not yet implemented.", "fore-blue");
         // }
-        function showGuildUpgradesScreen() {
-            if (!playerData.guild_unlocked) {
-                logMessage("Access denied. Guild not yet unlocked.", "fore-red", "🚫🛡️‍⚖️");
-                showGuildMenu();
-                return;
-            }
-            stopAllAutoActions();
-            const upgradesListDiv = document.getElementById('guild-upgrades-list');
-            upgradesListDiv.innerHTML = ''; // Clear previous upgrades
-
-            for (const upgradeId in GUILD_UPGRADE_DATA) {
-                const upgrade = GUILD_UPGRADE_DATA[upgradeId];
-                const currentLevel = playerData.guild_hall_upgrades[`${upgradeId}_level`] || 0;
-
-                const upgradeCard = document.createElement('div');
-                upgradeCard.className = 'structure-item-card'; // Re-use styling
-
-                let costHtml = "Max Level Reached";
-                let actionButtonHtml = "";
-
-                if (currentLevel < upgrade.maxLevel) {
-                    const cost = upgrade.getCost(currentLevel);
-                    costHtml = "Cost to Upgrade: ";
-                    costHtml += Object.entries(cost).map(([res, val]) => `${val.toLocaleString()} ${titleCase(res)}`).join(', ');
-                    actionButtonHtml = `<button onclick="upgradeGuildHall('${upgradeId}')">Upgrade to Level ${currentLevel + 1}</button>`;
-                }
-
-                upgradeCard.innerHTML = `
-                    <h3><span class="emoji">${upgrade.emoji}</span> ${upgrade.name} (Level ${currentLevel}/${upgrade.maxLevel})</h3>
-                    <p class="description">${upgrade.description}</p>
-                    <p>Current Benefit: ${upgrade.getBenefitText(currentLevel)}</p>
-                    <div class="requirements-block">
-                        <p>${costHtml}</p>
-                    </div>
-                    <div class="actions">${actionButtonHtml}</div>
-                `;
-                upgradesListDiv.appendChild(upgradeCard);
-            }
-            showSection('guild-upgrades-section');
-        }
-
-        function grantGuildXP(amount) {
-            if (!playerData.guild_unlocked) { return; }
-            const upgradesListDiv = document.getElementById('guild-upgrades-list');
-            upgradesListDiv.innerHTML = ''; // Clear previous upgrades
-
-            for (const upgradeId in GUILD_UPGRADE_DATA) {
-                const upgrade = GUILD_UPGRADE_DATA[upgradeId];
-                const currentLevel = playerData.guild_hall_upgrades[`${upgradeId}_level`] || 0;
-
-                const upgradeCard = document.createElement('div');
-                upgradeCard.className = 'structure-item-card'; // Re-use styling
-
-                let costHtml = "Max Level Reached";
-                let actionButtonHtml = "";
-
-                if (currentLevel < upgrade.maxLevel) {
-                    const cost = upgrade.getCost(currentLevel);
-                    costHtml = "Cost to Upgrade: ";
-                    costHtml += Object.entries(cost).map(([res, val]) => `${val.toLocaleString()} ${titleCase(res)}`).join(', ');
-                    actionButtonHtml = `<button onclick="upgradeGuildHall('${upgradeId}')">Upgrade to Level ${currentLevel + 1}</button>`;
-                }
-
-                upgradeCard.innerHTML = `
-                    <h3><span class="emoji">${upgrade.emoji}</span> ${upgrade.name} (Level ${currentLevel}/${upgrade.maxLevel})</h3>
-                    <p class="description">${upgrade.description}</p>
-                    <p>Current Benefit: ${upgrade.getBenefitText(currentLevel)}</p>
-                    <div class="requirements-block">
-                        <p>${costHtml}</p>
-                    </div>
-                    <div class="actions">${actionButtonHtml}</div>
-                `;
-                upgradesListDiv.appendChild(upgradeCard);
-            }
-            showSection('guild-upgrades-section');
-        }
-
         function showGuildUpgradesScreen() {
             if (!playerData.guild_unlocked) {
                 logMessage("Access denied. Guild not yet unlocked.", "fore-red", "🚫🛡️‍⚖️");
