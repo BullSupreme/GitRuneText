@@ -834,6 +834,34 @@
         .member-action-button { 
             padding: 4px 8px; font-size: 0.85em; margin: 2px;
         }
+        /* Custom Tooltip for Guild Task Buttons */
+        .member-action-button {
+            position: relative; /* Needed for absolute positioning of the tooltip */
+        }
+        .tooltip-text-guild-task {
+            visibility: hidden;
+            width: max-content; /* Adjust as needed, or set a fixed width */
+            max-width: 250px;   /* Max width before wrapping */
+            background-color: #111;
+            color: #fff;
+            text-align: left; /* Usually better for multi-line tooltips */
+            border-radius: 6px;
+            padding: 8px 10px;
+            position: absolute;
+            z-index: 1060; /* Ensure it's above other elements */
+            bottom: 115%; /* Position above the button */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out; /* Snappy transition */
+            font-size: 0.85em; /* Match other tooltips or adjust */
+            pointer-events: none; /* Tooltip doesn't interfere with button clicks */
+            white-space: normal; /* Allow text to wrap if needed */
+        }
+        .member-action-button:hover .tooltip-text-guild-task {
+            visibility: visible;
+            opacity: 1;
+        }
         /* For Guild Stash transfer button */
         .item-entry .transfer-button {
             margin-left: auto; /* Pushes button to the right */
@@ -1645,6 +1673,7 @@
                 <button class="btn-back-header" onclick="showShopMenu()" title="Back to Shop Menu">⬅️</button>
                 <div class="section-title-text fore-green">Buy Items</div>
             </div>
+            <div id="buy-menu-gold-display" class="fore-yellow" style="margin-bottom: 10px;"></div>
             <div id="buy-category-selection" class="submenu-buttons-container">
                  <button onclick="populateShopItems('axe', 'Axes')">Axes</button>
                  <button onclick="populateShopItems('pickaxe', 'Pickaxes')">Pickaxes</button>
@@ -1672,6 +1701,7 @@
                 <button class="btn-back-header" onclick="showShopMenu()" title="Back to Shop Menu">⬅️</button>
                 <div class="section-title-text fore-green">Buy Permits</div>
             </div>
+            <div id="permits-menu-gold-display" class="fore-yellow" style="margin-bottom: 10px;"></div>
             <div id="permits-for-sale-list"></div>
             <div class="section-footer-controls">
                 <button onclick="showShopMenu()"><span class="button-icon">⬅️</span><span class="button-label">Back to Shop</span></button>
@@ -3359,6 +3389,7 @@
         // --- Shop Logic (Existing - modified for Castle perk) ---
         function showBuyMenu() {
             stopAllAutoActions();
+            document.getElementById('buy-menu-gold-display').textContent = `Your Gold: ${playerData.gold.toLocaleString()}`;
             // Default to showing axes, or clear if no default desired
             populateShopItems('axe', 'Axes'); // Or clear #shop-items-list
             showSection('buy-menu-section');
@@ -3458,7 +3489,8 @@
             updateHud();
             populateEquipmentDisplay(); 
             populateInventoryDisplay();
-            document.getElementById('shop-gold-display').textContent = `Your Gold: ${playerData.gold.toLocaleString()}`; 
+            document.getElementById('shop-gold-display').textContent = `Your Gold: ${playerData.gold.toLocaleString()}`;
+            document.getElementById('buy-menu-gold-display').textContent = `Your Gold: ${playerData.gold.toLocaleString()}`;
         }
 
         function showSellMenu() {
@@ -3612,6 +3644,7 @@
         // NEW: Functions for Buying Permits
         function showBuyPermitsMenu() {
             stopAllAutoActions();
+            document.getElementById('permits-menu-gold-display').textContent = `Your Gold: ${playerData.gold.toLocaleString()}`;
             populatePermitsShopList();
             showSection('buy-permits-section');
         }
@@ -3737,6 +3770,7 @@
             updateHud();
             populateInventoryDisplay(); 
             document.getElementById('shop-gold-display').textContent = `Your Gold: ${playerData.gold.toLocaleString()}`;
+            document.getElementById('permits-menu-gold-display').textContent = `Your Gold: ${playerData.gold.toLocaleString()}`;
             populatePermitsShopList(); // Refresh the permit shop list
         }
 
@@ -5746,6 +5780,38 @@
 
         // --- Guild Management Function Stubs ---
 
+        function generateTaskTooltipText(member, taskType) {
+            if (!GUILD_MEMBER_LOOT_TABLES[taskType] || !GUILD_MEMBER_LOOT_TABLES[taskType].categories) {
+                return "No loot information available for this task.";
+            }
+
+            let tooltipLines = [`Potential Loot for ${titleCase(taskType)} (Lvl ${member.level}):`];
+            const lootCategories = GUILD_MEMBER_LOOT_TABLES[taskType].categories;
+            let distinctLootItems = new Set(); // Use a Set to store distinct item names
+
+            lootCategories.forEach(category => {
+                if (member.level >= category.minMemberLevel) {
+                    category.items.forEach(itemEntry => {
+                        if (!itemEntry.minLevelReqForDrop || member.level >= itemEntry.minLevelReqForDrop) {
+                            distinctLootItems.add(titleCase(itemEntry.item)); // Add distinct item name
+                        }
+                    });
+                }
+            });
+
+            if (distinctLootItems.size > 0) {
+                distinctLootItems.forEach(item => {
+                    tooltipLines.push(`  - ${item}`); // Add each distinct item to the tooltip
+                });
+            } else {
+                tooltipLines.push("  (No specific items found for current level in this task type)");
+            }
+
+            return tooltipLines.join('<br>'); // Use <br> for HTML line breaks
+        }
+
+        // --- Guild Management Function Stubs ---
+
         function assignMissionToMember(memberId, missionDetails) {
             if (!playerData.guild_unlocked) { logMessage("Guild not yet unlocked.", "fore-red"); return; }
             logMessage(`Assigning mission to member ${memberId} (Not fully implemented).`, "fore-cyan");
@@ -5944,6 +6010,14 @@
             }
             cardElement.innerHTML = ''; // Clear previous content before re-rendering
 
+            // Set onclick for the entire card if member is idle
+            if (!member.current_task) {
+                cardElement.onclick = () => toggleMemberActions(member.id);
+                cardElement.style.cursor = 'pointer'; // Ensure pointer cursor for idle members
+            } else {
+                cardElement.onclick = null; // Remove click handler if on task
+                cardElement.style.cursor = 'default'; // Indicate not clickable when on task
+            }
             const memberInfoDiv = document.createElement('div');
             memberInfoDiv.className = 'member-info';
 
@@ -5962,7 +6036,6 @@
             } else {
                 cardElement.classList.remove('on-task');
                 statusText = 'Idle';
-                memberInfoDiv.onclick = () => toggleMemberActions(member.id); // Only clickable if idle
             }
 
             memberInfoDiv.innerHTML = `
@@ -5987,11 +6060,29 @@
                 const actionPanelDiv = document.createElement('div');
                 actionPanelDiv.className = 'member-action-panel hidden'; // Start hidden
                 actionPanelDiv.id = `member-action-panel-${member.id}`;
-                actionPanelDiv.innerHTML = `
-                    <button class="member-action-button" onclick="assignMemberTask('${member.id}', 'wood')">Gather Wood</button>
-                    <button class="member-action-button" onclick="assignMemberTask('${member.id}', 'mining')">Go Mining</button>
-                    <button class="member-action-button" onclick="assignMemberTask('${member.id}', 'hunting')">Go Hunting</button>
-                `;
+                const woodTooltip = generateTaskTooltipText(member, 'wood');
+                const miningTooltip = generateTaskTooltipText(member, 'mining');
+                const huntingTooltip = generateTaskTooltipText(member, 'hunting');
+
+                // Create buttons and add tooltips as spans
+                const woodButton = document.createElement('button');
+                woodButton.className = 'member-action-button btn-woodcutting';
+                woodButton.innerHTML = `Gather Wood<span class="tooltip-text-guild-task">${woodTooltip}</span>`;
+                woodButton.onclick = () => assignMemberTask(member.id, 'wood');
+                actionPanelDiv.appendChild(woodButton);
+
+                const miningButton = document.createElement('button');
+                miningButton.className = 'member-action-button btn-mining';
+                miningButton.innerHTML = `Go Mining<span class="tooltip-text-guild-task">${miningTooltip}</span>`;
+                miningButton.onclick = () => assignMemberTask(member.id, 'mining');
+                actionPanelDiv.appendChild(miningButton);
+
+                const huntingButton = document.createElement('button');
+                huntingButton.className = 'member-action-button btn-combat';
+                huntingButton.innerHTML = `Go Hunting<span class="tooltip-text-guild-task">${huntingTooltip}</span>`;
+                huntingButton.onclick = () => assignMemberTask(member.id, 'hunting');
+                actionPanelDiv.appendChild(huntingButton);
+                
                 cardElement.appendChild(actionPanelDiv);
             }
         }
