@@ -1560,6 +1560,10 @@
                 <div class="section-title-text fore-cyan">Character Information</div>
             </div>
             <div id="char-info-details"></div>
+            <div id="char-info-permits" style="margin-top:10px;">
+                <h4 style="margin-bottom: 5px; border-bottom: 1px solid #444; padding-bottom: 3px;">Active Permits:</h4>
+                <div id="active-permits-list"></div>
+            </div>
             <p>Total XP Gained (All Skills): <span id="total-xp-all-skills" class="fore-magenta">0</span></p>
             <div class="section-footer-controls">
                 <button onclick="showMainMenu()"><span class="button-icon">⬅️</span><span class="button-label">Back</span></button>
@@ -1680,6 +1684,9 @@
                 <button class="btn-back-header" onclick="showActionsMenu()" title="Back to Actions Menu">⬅️</button>
                 <div class="section-title-text fore-green">Woodcutting</div>
             </div>
+            <div id="woodcutting-permit-status" class="fore-cyan" style="font-size:0.9em; margin-bottom:10px;">
+                <!-- Permit status will be populated here -->
+            </div>
             <div id="available-trees"></div>
             <div class="section-footer-controls">
                 <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span><span class="button-label">Back to Actions</span></button>
@@ -1690,6 +1697,9 @@
             <div class="section-title-header">
                 <button class="btn-back-header" onclick="showActionsMenu()" title="Back to Actions Menu">⬅️</button>
                 <div class="section-title-text fore-lightblack_ex">Mining</div>
+            </div>
+            <div id="mining-permit-status" class="fore-cyan" style="font-size:0.9em; margin-bottom:10px;">
+                <!-- Permit status will be populated here -->
             </div>
             <div id="available-ores"></div>
             <div class="section-footer-controls">
@@ -1748,6 +1758,9 @@
             <div class="section-title-header">
                 <button class="btn-back-header" onclick="stopCombatAndReturn()" title="Back to Actions Menu">⬅️</button>
                 <div class="section-title-text fore-red">Combat</div>
+            </div>
+            <div id="combat-permit-status" class="fore-cyan" style="font-size:0.9em; margin-bottom:10px;">
+                <!-- Permit status will be populated here -->
             </div>
             <div id="available-monsters"></div>
             <div id="combat-arena" class="hidden">
@@ -2131,7 +2144,8 @@
             "permits": { // NEW: Added permits to DEFAULT_PLAYER
                 "hunter": false,
                 "miner": false,
-                "blacksmith": false
+                "blacksmith": false,
+                "woodcutter": false // Added for consistency, though not used yet by a permit
             },
             "last_rent_collection_time": 0,
             // Guild System - NG+
@@ -2554,6 +2568,7 @@
                 if (!("hunter" in data.permits)) { data.permits.hunter = false; dataChanged = true; }
                 if (!("miner" in data.permits)) { data.permits.miner = false; dataChanged = true; }
                 if (!("blacksmith" in data.permits)) { data.permits.blacksmith = false; dataChanged = true; }
+                if (!("woodcutter" in data.permits)) { data.permits.woodcutter = false; dataChanged = true; } // New
             }
 
             // Guild System Migration
@@ -2904,6 +2919,20 @@
                 <p><span class="char-info-label">HP:</span> <span class="char-info-value fore-lightred_ex">${playerData.hp}/${maxHp}</span></p>
                 <p class="fore-cyan" style="font-size:0.9em; margin-top:10px;">Max HP increases with Attack Level and Cabin/Stronghold. Heal by leveling Attack or eating food.</p>
             `;
+            // Populate Active Permits
+            const activePermitsListDiv = document.getElementById('active-permits-list');
+            activePermitsListDiv.innerHTML = '';
+            let hasActivePermits = false;
+            if (playerData.permits) {
+                for (const permitKey in playerData.permits) {
+                    if (playerData.permits[permitKey]) {
+                        hasActivePermits = true;
+                        activePermitsListDiv.innerHTML += `<p style="margin: 3px 0;"><span class="fore-yellow">📜 ${titleCase(permitKey)}'s Permit</span></p>`;
+                    }
+                }
+            }
+            if (!hasActivePermits) activePermitsListDiv.innerHTML = "<p><i>No active permits.</i></p>";
+
             document.getElementById('total-xp-all-skills').textContent = (playerData.total_skill_xp || 0).toLocaleString();
             showSection('character-info-section');
         }
@@ -3303,6 +3332,25 @@
         function showShopMenu() { 
             document.getElementById('shop-gold-display').textContent = `Your Gold: ${playerData.gold.toLocaleString()}`;
             showSection('shop-menu-section');
+
+            // Check if all permits are bought and hide the button if so
+            const buyPermitsButton = document.querySelector('#shop-menu-section .btn-buy-permits');
+            if (buyPermitsButton) {
+                let allPermitsBought = true;
+                // Ensure PERMIT_MASTER_LIST is not empty before checking
+                if (Object.keys(PERMIT_MASTER_LIST).length > 0) {
+                    for (const permitKey in PERMIT_MASTER_LIST) {
+                        if (!playerData.permits || !playerData.permits[permitKey]) {
+                            allPermitsBought = false;
+                            break;
+                        }
+                    }
+                } else { // If there are no permits defined, effectively all (zero) are "bought"
+                    allPermitsBought = true; 
+                }
+                if (allPermitsBought) buyPermitsButton.classList.add('hidden');
+                else buyPermitsButton.classList.remove('hidden');
+            }
         }
 
         // --- Inventory & Equipment (Existing - no major changes needed for structures here) ---
@@ -3578,7 +3626,7 @@
                     permitTypeKey: "hunter",
                     displayName: "Hunter's Permit",
                     emoji: "📜⚔️",
-                    description: "Allows continuous combat even when your Attack skill levels up. Does not prevent stopping if you die or the target is defeated.",
+                    description: "A decree from the Hunter's Guild, recognizing your prowess. This allows relentless pursuit of your chosen prey, enabling continuous combat even as your Attack skill ascends. You'll keep fighting that monster type until you choose to stop, or meet your end!",
                     goldCost: 10000,
                     resourceCosts: { "wolf fang": 50, "bear claw": 20 }
                 },
@@ -3586,9 +3634,17 @@
                     permitTypeKey: "miner",
                     displayName: "Miner's Permit",
                     emoji: "📜⛏️",
-                    description: "Allows continuous mining even when your Mining skill levels up.",
-                    goldCost: 7500,
+                    description: "Endorsed by the Deep Earth Mining Conglomerate, this permit certifies your tireless dedication. Delve ever deeper, as it allows continuous mining through Mining skill level ups. A sturdy pickaxe is, of course, essential for such endeavors!",
+                    goldCost: 12000, // Increased cost slightly
                     resourceCosts: { "coal": 200, "iron bar": 50 }
+                },
+                blacksmith: {
+                    permitTypeKey: "blacksmith",
+                    displayName: "Blacksmith's Royal Charter",
+                    emoji: "📜🛠️",
+                    description: "A Royal Charter from the King, granting authority to distribute Arms and Armor to other cities in the kingdom. This esteemed document also allows continuous blacksmithing (smelting/smithing) through level ups.",
+                    goldCost: 25000,
+                    resourceCosts: { "steel bar": 100, "mithril bar": 50, "adamantite bar": 25 } 
                 }
                 // Future permits (miner, blacksmith) will be added here
             };
@@ -3606,13 +3662,18 @@
                         .map(([name, amount]) => `${amount.toLocaleString()} ${titleCase(name)}`)
                         .join(', ');
                     
+                    // Ensure gold cost from resourceCosts is handled correctly if present
+                    let displayGoldCost = details.goldCost;
+                    if (details.resourceCosts.gold) displayGoldCost -= details.resourceCosts.gold;
+                    
                     let currentResourcesString = "";
                     if (Object.keys(details.resourceCosts).length > 0) {
                          currentResourcesString = "<br><small>You have: ";
                          currentResourcesString += Object.entries(details.resourceCosts)
                             .map(([name, reqAmount]) => {
                                 const currentAmount = playerData.inventory[name] || 0;
-                                const color = currentAmount >= reqAmount ? 'fore-green' : 'fore-red';
+                                const isGoldResource = name === 'gold'; // Special handling for gold in resource list
+                                const color = (isGoldResource ? (playerData.gold >= reqAmount) : (currentAmount >= reqAmount)) ? 'fore-green' : 'fore-red';
                                 return `<span class="${color}">${currentAmount.toLocaleString()} ${titleCase(name)}</span>`;
                             }).join(', ');
                         currentResourcesString += "</small>";
@@ -3626,9 +3687,9 @@
                             ${resourceCostString ? `<br><small class="req">Resources: ${resourceCostString}</small>` : ''}
                             ${currentResourcesString}
                         </div>
-                        <span class="price">${details.goldCost.toLocaleString()}g</span>
+                        <span class="price">${displayGoldCost.toLocaleString()}g</span>
                     `;
-                    itemDiv.onclick = () => buyPermit(details.permitTypeKey, details.goldCost, details.resourceCosts);
+                    itemDiv.onclick = () => buyPermit(details.permitTypeKey, displayGoldCost, details.resourceCosts);
                     listDiv.appendChild(itemDiv);
                 }
             }
@@ -3644,20 +3705,25 @@
                 return;
             }
 
-            if (playerData.gold < goldCost) {
-                logMessage(`Not enough gold. Need ${goldCost.toLocaleString()}g.`, "fore-red", "🪙🚫");
+            let totalGoldNeeded = goldCost; // This is the main gold cost (already adjusted if gold was in resources)
+            if (requiredResourceCosts.gold) { // If gold is also part of resourceCosts
+                totalGoldNeeded += requiredResourceCosts.gold; // Add the resource gold part
+            }
+
+            if (playerData.gold < totalGoldNeeded) {
+                logMessage(`Not enough gold. Need ${totalGoldNeeded.toLocaleString()}g.`, "fore-red", "🪙🚫");
                 return;
             }
 
             for (const resourceName in requiredResourceCosts) {
+                if (resourceName === 'gold') continue; // Gold is handled with totalGoldNeeded
                 if ((playerData.inventory[resourceName] || 0) < requiredResourceCosts[resourceName]) {
                     logMessage(`Not enough ${titleCase(resourceName)}. Need ${requiredResourceCosts[resourceName].toLocaleString()}.`, "fore-red", "🧱🚫");
                     return;
                 }
             }
-
             // Deduct costs
-            playerData.gold -= goldCost;
+            playerData.gold -= totalGoldNeeded; // Deduct the combined gold cost
             for (const resourceName in requiredResourceCosts) {
                 playerData.inventory[resourceName] -= requiredResourceCosts[resourceName];
             }
@@ -3682,6 +3748,14 @@
             treeListDiv.innerHTML = '<div class="section-title">Available Trees</div>';
             currentWoodcuttingTarget = null; // Clear target when re-entering screen unless auto-action restarts
 
+            // Display Woodcutting Permit Status
+            const wcPermitStatusDiv = document.getElementById('woodcutting-permit-status');
+            wcPermitStatusDiv.innerHTML = ''; // Clear previous
+            // Check for a generic 'woodcutter' permit, even if not purchasable yet, for consistency
+            // This could be tied to the Lumber Mill structure's effect display in the future.
+            if (playerData.built_structures && playerData.built_structures.lumberMill) {
+               wcPermitStatusDiv.innerHTML = "📜 Lumber Mill Active: Continuous chopping through level ups!";
+            }
             const wcLvl = getLevelFromXp(playerData.woodcutting_xp);
             const equippedAxeName = playerData.inventory.axe;
             const equippedAxeData = TOOL_DATA.axe[equippedAxeName] || TOOL_DATA.axe.fists;
@@ -3880,6 +3954,13 @@
             const oreListDiv = document.getElementById('available-ores');
             oreListDiv.innerHTML = '<div class="section-title">Available Ores</div>';
             currentMiningTarget = null;
+
+            // Display Mining Permit Status
+            const mnPermitStatusDiv = document.getElementById('mining-permit-status');
+            mnPermitStatusDiv.innerHTML = ''; // Clear previous
+            if (playerData.permits && playerData.permits.miner) {
+                mnPermitStatusDiv.innerHTML = "📜 Miner's Permit Active: Continuous mining through level ups!";
+            }
 
             const equippedPickaxeName = playerData.inventory.pickaxe;
             const equippedPickaxeData = TOOL_DATA.pickaxe[equippedPickaxeName] || null; // No "fists" for pickaxe
@@ -4260,16 +4341,20 @@
             playSound(skillRoundSound);
 
             // Store oldLevel before handleLevelUp modifies transientLevelUpInfo potentially
-            handleLevelUp("blacksmithing_xp", oldLevel);
+            const leveledUp = handleLevelUp("blacksmithing_xp", oldLevel); // handleLevelUp returns true if leveled up
 
-            // Check for level up and stop if permit not active (permit logic is future)
-            if (playerData.transientLevelUpInfo && 
-                playerData.transientLevelUpInfo.skillXpField === "blacksmithing_xp" &&
-                playerData.transientLevelUpInfo.activity === "smelting") {
-                stopAutoSmelting(); // This will log "stopped. level up!" and "congrats!"
-                return; // Exit early, stopAutoSmelting handles saving and HUD
+            if (leveledUp) {
+                if (playerData.permits && playerData.permits.blacksmith) {
+                    logMessage("Blacksmithing Level up! Royal Charter allows continuous smelting!", "fore-green", "📜🛠️");
+                    // Action continues
+                } else {
+                    logMessage("Blacksmithing level up! Action stopped. Get a Blacksmith's Royal Charter to continue.", "fore-blue", "🛠️🎉");
+                    stopAutoSmelting(); // This will log "Auto-smelting stopped."
+                                        // handleLevelUp already logs "Congrats!"
+                    return; // Exit early, stopAutoSmelting handles saving and HUD
+                }
             }
-
+            // If not leveled up, or leveled up with permit, continue to savePlayerData etc.
             savePlayerData();
             updateHud();
             
@@ -4492,16 +4577,20 @@
             playSound(skillRoundSound);
 
             // Store oldLevel before handleLevelUp modifies transientLevelUpInfo potentially
-            handleLevelUp("blacksmithing_xp", oldLevel);
+            const leveledUp = handleLevelUp("blacksmithing_xp", oldLevel); // handleLevelUp returns true if leveled up
 
-            // Check for level up and stop if permit not active (permit logic is future)
-            if (playerData.transientLevelUpInfo &&
-                playerData.transientLevelUpInfo.skillXpField === "blacksmithing_xp" &&
-                playerData.transientLevelUpInfo.activity === "smithing") {
-                stopAutoSmithing(); // This will log "stopped. level up!" and "congrats!"
-                return; // Exit early, stopAutoSmithing handles saving and HUD
+            if (leveledUp) {
+                if (playerData.permits && playerData.permits.blacksmith) {
+                    logMessage("Blacksmithing Level up! Royal Charter allows continuous smithing!", "fore-green", "📜🛠️");
+                    // Action continues
+                } else {
+                    logMessage("Blacksmithing level up! Action stopped. Get a Blacksmith's Royal Charter to continue.", "fore-blue", "🛠️🎉");
+                    stopAutoSmithing(); // This will log "Auto-smithing stopped."
+                                        // handleLevelUp already logs "Congrats!"
+                    return; // Exit early, stopAutoSmithing handles saving and HUD
+                }
             }
-
+            // If not leveled up, or leveled up with permit, continue to savePlayerData etc.
             savePlayerData();
             updateHud();
             // Instead of full refresh, update the specific item in the list
@@ -4517,6 +4606,13 @@
             const monsterListDiv = document.getElementById('available-monsters');
             monsterListDiv.innerHTML = '<div class="section-title">Attackable Monsters</div>';
             document.getElementById('combat-arena').classList.add('hidden');
+
+            // Display Combat Permit Status
+            const combatPermitStatusDiv = document.getElementById('combat-permit-status');
+            combatPermitStatusDiv.innerHTML = ''; // Clear previous
+            if (playerData.permits && playerData.permits.hunter) {
+                combatPermitStatusDiv.innerHTML = "📜 Hunter's Permit Active: Continuous combat through Attack level ups!";
+            }
 
             const atkLvl = getLevelFromXp(playerData.attack_xp);
             let available = false;
@@ -6012,8 +6108,13 @@
                 logMessage(`${member.name} ${messageAction} ${titleCase(task.type)} task, but found nothing.`, "fore-yellow");
             }
 
-            // Grant member XP (simplified for now)
-            const xpGained = isEarlyReturn ? Math.floor(task.durationMs / 10000) : Math.floor(task.durationMs / 5000); // e.g. 1xp per 10s or 5s
+            // Grant member XP
+            const baseXpPerFullTask = 1000; // Adjusted Base XP for a full 8-hour task
+            const bonusXpPerMemberLevel = 10; // Adjusted Additional XP per member level
+            let xpGained = baseXpPerFullTask + (member.level * bonusXpPerMemberLevel);
+            if (isEarlyReturn) {
+                xpGained = Math.floor(xpGained * 0.3); // Penalize early return significantly (e.g., 30% of full XP)
+            }
             const oldMemberLevel = member.level;
             member.xp += xpGained;
             
