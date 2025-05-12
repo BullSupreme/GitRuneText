@@ -4181,7 +4181,8 @@
             if (leveledUp) { // If a level up occurred
                 if (playerData.built_structures && playerData.built_structures.lumberMill) {
                     logMessage("Woodcutting level up! The Lumber Mill keeps you chopping!", "fore-green", "🏭🌲");
-                    // Action continues, no need to call stopAutoWoodcutting()
+                    // Action continues, ensure isAutoWoodcutting remains true
+                    isAutoWoodcutting = true; // Add this line to make sure it stays true
                 } else {
                     logMessage("Woodcutting level up! Action stopped. Build the Lumber Mill to continue chopping through level ups.", "fore-blue", "🌲🎉");
                     stopAutoWoodcutting(); // Stop if no Lumber Mill
