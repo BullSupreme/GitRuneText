@@ -594,7 +594,7 @@
             margin-bottom: 10px; 
         }
         .main-menu-buttons-container button {
-            flex: 1; 
+            flex: 1;
             margin: 0; 
             padding: 10px 12px; 
             text-align: center; 
@@ -5096,31 +5096,24 @@
                 playSound(monsterKillSound);
 
                 if (barTextDiv) {
-                    barTextDiv.innerHTML = `<span class="emoji">💀</span> ${titleCase(currentMonsterTarget)} Defeated!`;
+                    barTextDiv.innerHTML = `<span class="emoji">💀</span> ${titleCase(currentMonsterTarget)} Defeated! Respawning...`;
                 }
                 // barFillDiv width is already handled by the hpPercent calculation above, will be 0%
                 const oldAtkLvl = playerAtkLvl;
+
                 let xpGainedRaw = monster.attack_xp;
                 let xpGainedDisplay = xpGainedRaw; 
-
                 if (playerData.built_structures.house) {
                     const houseXpPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "global_xp_boost");
                     if (houseXpPerk) {
                         xpGainedDisplay *= (1 + houseXpPerk.value);
                     }
                 }
-                playerData.attack_xp += Math.floor(xpGainedDisplay);
+                playerData.attack_xp += Math.floor(xpGainedDisplay); // Add XP
                 grantUniversalXP(xpGainedRaw); 
-
-                logMessage(`Gained ${Math.floor(xpGainedDisplay)} Attack XP!`, "fore-green", "⬆️");
-                
-                handleLevelUp("attack_xp", oldAtkLvl);
-                playerAtkLvl = getLevelFromXp(playerData.attack_xp); 
-
                 // --- GOLD DROP LOGIC ---
                 if (monster.gold_drop && monster.gold_drop[1] > 0) { 
                     let goldDropped = Math.floor(Math.random() * (monster.gold_drop[1] - monster.gold_drop[0] + 1)) + monster.gold_drop[0];
-                    
                     if (playerData.built_structures.mansion) {
                         const mansionGoldPerk = STRUCTURE_DATA.mansion.perks.find(p => p.type === "monster_gold_drop_multiplier_chance");
                         if (mansionGoldPerk && Math.random() < mansionGoldPerk.value) {
@@ -5128,7 +5121,6 @@
                             logMessage("Lavish Lifestyle proc! Gold drop doubled!", "fore-magenta", "✨💰");
                         }
                     }
-
                     if (goldDropped > 0) {
                         playerData.gold += goldDropped;
                         logMessage(`The ${titleCase(currentMonsterTarget)} dropped ${goldDropped} gold!`, "fore-yellow", "💰");
@@ -5136,7 +5128,6 @@
                 }
 
                 if (playerData.built_structures.house && currentMonsterTarget !== "chicken") {
-                    const houseScaledGoldPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "scaled_bonus_mob_gold_drop_chance");
                     if (houseScaledGoldPerk && monster.gold_drop && monster.gold_drop[1] > 0 && Math.random() < houseScaledGoldPerk.value) {
                         const baseGoldForScaling = Math.floor(Math.random() * (monster.gold_drop[1] - monster.gold_drop[0] + 1)) + monster.gold_drop[0];
                         const bonusScaledGold = Math.floor(baseGoldForScaling * houseScaledGoldPerk.bonus_gold_percentage_of_base);
@@ -5178,6 +5169,18 @@
                     }
                 }
 
+                const leveledUpFromKill = handleLevelUp("attack_xp", oldAtkLvl); // Call after XP and other rewards
+                // playerAtkLvl = getLevelFromXp(playerData.attack_xp); // Update playerAtkLvl if needed for subsequent logic
+
+                if (leveledUpFromKill) {
+                    if (playerData.permits && playerData.permits.hunter) {
+                        logMessage("Hunter's Permit keeps you fighting through the level up!", "fore-green", "📜⚔️");
+                    } else {
+                        logMessage("Attack level up! Stopping combat. Get a Hunter's Permit to continue fighting through level ups.", "fore-blue", "⚔️🎉");
+                        stopAutoAttack();
+                    }
+                }
+
                 savePlayerData();
                 updateHud();
 
@@ -5185,7 +5188,10 @@
                     currentMonsterTarget = null; 
                     const monsterNameForID = monster.name ? monster.name : currentMonsterTarget; // Fallback if monster.name isn't defined for some reason
                     const defeatedMonsterListItem = document.getElementById(`monster-list-item-${monsterNameForID.replace(/\s+/g, '-').toLowerCase()}`);
-                    if (defeatedMonsterListItem) defeatedMonsterListItem.classList.remove('attacking-monster-list-item');
+                    // Check if monsterNameForID is not null before trying to get element
+                    if (monsterNameForID && defeatedMonsterListItem) {
+                        defeatedMonsterListItem.classList.remove('attacking-monster-list-item');
+                    }
                     setTimeout(() => {
                         document.getElementById('combat-arena').classList.add('hidden'); 
                         showCombat(); 
@@ -5912,26 +5918,13 @@
                     playerData.hp = Math.min(playerData.hp, newMaxHpVal); // Cap at new max
                     logMessage("HP increased and restored!", "fore-green");
                 }
-                updateHud(); 
-                
-                // Add this check to prevent stopping woodcutting with Lumber Mill
-                const isWoodcuttingWithLumberMill = skillName === "Woodcutting" && 
-                                                     playerData.built_structures && 
-                                                     playerData.built_structures.lumberMill && 
-                                                     isAutoWoodcutting;
-                
-                // Only refresh the screen if we're not woodcutting with a Lumber Mill
-                if (!isWoodcuttingWithLumberMill) {
-                    // Refresh current screen if it displays level-gated content
-                    if (currentSection === 'woodcutting-section') showWoodcutting();
-                    else if (currentSection === 'mining-section') showMining();
-                    else if (currentSection === 'cook-food-section') showCookFood();
-                    else if (currentSection === 'smelting-section') showSmeltingMenu();
-                    else if (currentSection === 'smithing-section') showSmithingMenu();
-                    else if (currentSection === 'combat-section') showCombat();
-                    else if (currentSection === 'build-structures-section') showBuildStructuresMenu(); 
-                }
-                
+                updateHud(); // Update HUD is important here
+
+                // The decision to stop/continue action and refresh specific UI parts
+                // should be handled by the calling single...Action function.
+                // Removing general screen refreshes from here, as they call stopAllAutoActions().
+                // Individual action loops will now be solely responsible for checking their permits
+                // and deciding whether to stop or continue.
                 return true;
             }
             return false;
