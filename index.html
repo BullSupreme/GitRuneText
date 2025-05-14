@@ -5119,15 +5119,24 @@
                     }
                 }
                 playerData.attack_xp += Math.floor(xpGainedDisplay); // Add XP
+                logMessage(`Gained ${Math.floor(xpGainedDisplay)} Attack XP!`, "fore-yellow", "✨");
                 grantUniversalXP(xpGainedRaw); 
                 // --- GOLD DROP LOGIC ---                // Process monster drops first
                 monster.drops.forEach(drop => {
-                    if (Math.random() < drop.chance) {
+                    const isRare = drop.item_name?.includes("gem") || drop.item_name?.includes("heart") || ARMOR_DATA[drop.item_name || ""];
+                    const bonus = (playerAtkLvl * (isRare ? 0.001 : 0.005));
+                    const capBonus = isRare ? 0.05 : 0.20;
+                    const effBonus = Math.min(bonus, capBonus);
+                    const dropChance = Math.min(0.95, (drop.base_chance || drop.chance) + effBonus);
+
+                    if (Math.random() < dropChance || drop.always_drop_one) {
                         const quantity = drop.quantity ? (Math.floor(Math.random() * (drop.quantity[1] - drop.quantity[0] + 1)) + drop.quantity[0]) : 1;
-                        if (quantity > 0) {
-                            playerData.inventory[drop.item] = (playerData.inventory[drop.item] || 0) + quantity;
-                            logMessage(`The ${titleCase(currentMonsterTarget)} dropped ${quantity} ${titleCase(drop.item)}!`, drop.color || "fore-yellow", drop.emoji || "🔰");
+                        if (ARMOR_DATA[drop.item_name || ""] && (playerData.inventory[drop.item_name] > 0 || playerData.inventory.chestplate === drop.item_name)) {
+                            return;
                         }
+                        const itemName = drop.item_name || drop.item;
+                        playerData.inventory[itemName] = (playerData.inventory[itemName] || 0) + quantity;
+                        logMessage(`The ${titleCase(currentMonsterTarget)} dropped ${quantity} ${titleCase(itemName)}!`, drop.color || "fore-yellow", drop.emoji || "🔰");
                     }
                 });
 
@@ -5136,7 +5145,7 @@
                     let goldDropped = Math.floor(Math.random() * (monster.gold_drop[1] - monster.gold_drop[0] + 1)) + monster.gold_drop[0];
                     if (playerData.built_structures.mansion) {
                         const mansionGoldPerk = STRUCTURE_DATA.mansion.perks.find(p => p.type === "monster_gold_drop_multiplier_chance");
-                        if (mansionGoldPerk && Math.random() < mansionGoldPerk.value) {
+                        if (mansionGoldPerk && typeof mansionGoldPerk.value === 'number' && Math.random() < mansionGoldPerk.value) {
                             goldDropped *= mansionGoldPerk.multiplier;
                             logMessage("Lavish Lifestyle proc! Gold drop doubled!", "fore-magenta", "✨💰");
                         }
@@ -5157,23 +5166,6 @@
                         }
                     }
                 }
-
-                monster.drops.forEach(drop => {
-                    const isRare = drop.item_name.includes("gem") || drop.item_name.includes("heart") || ARMOR_DATA[drop.item_name];
-                    const bonus = (playerAtkLvl * (isRare ? 0.001 : 0.005));
-                    const capBonus = isRare ? 0.05 : 0.20;
-                    const effBonus = Math.min(bonus, capBonus);
-                    const dropChance = Math.min(0.95, drop.base_chance + effBonus);
-
-                    if (Math.random() < dropChance || drop.always_drop_one) {
-                        const quantity = Math.floor(Math.random() * (drop.quantity[1] - drop.quantity[0] + 1)) + drop.quantity[0];
-                        if ( ARMOR_DATA[drop.item_name] && (playerData.inventory[drop.item_name] > 0 || playerData.inventory.chestplate === drop.item_name) ) {
-                             return; 
-                        }
-                        playerData.inventory[drop.item_name] = (playerData.inventory[drop.item_name] || 0) + quantity;
-                        logMessage(`Received ${quantity} ${titleCase(drop.item_name)}!`, "fore-magenta", "🎁");
-                    }
-                });
 
                 if (playerData.built_structures.stronghold) {
                     const healPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "heal_on_kill_percent");
