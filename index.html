@@ -1357,7 +1357,7 @@
         }
         .main-menu-buttons-container button {
             flex: 1; 
-            margin: 0; 
+            margin: 0;
             padding: 10px 12px; 
             text-align: center; 
             min-width: 0; /* Allow buttons to shrink */
@@ -1879,7 +1879,16 @@
                 <button class="btn-back-header" onclick="showBlacksmithingMenu()" title="Back to Blacksmithing Menu">⬅️</button>
                 <div class="section-title-text fore-orange">Smith Items</div>
             </div>
-            <div id="available-items-to-smith"></div>
+            <div class="smithing-tabs">
+                <div class="tab" id="smithing-weapons-tab" onclick="showSmithingCategory('weapons')">Weapons</div>
+                <div class="tab" id="smithing-armor-tab" onclick="showSmithingCategory('armor')">Armor</div>
+            </div>
+            <div id="smithing-weapons-category" class="smithing-category">
+                <div id="available-weapons-to-smith"></div>
+            </div>
+            <div id="smithing-armor-category" class="smithing-category hidden">
+                <div id="available-armor-to-smith"></div>
+            </div>
             <div class="section-footer-controls">
                 <button onclick="showBlacksmithingMenu()"><span class="button-icon">⬅️</span><span class="button-label">Back to Blacksmithing</span></button>
             </div>
@@ -1930,11 +1939,11 @@
                 <button class="btn-back-header" onclick="showActionsMenu()" title="Back to Actions Menu">⬅️</button>
                 <div class="section-title-text fore-yellow">Cook Food</div>
             </div>
-            <div id="cookable-items-list"></div>
+                <div id="cookable-items-list"></div>
             <div class="section-footer-controls">
                 <button onclick="showActionsMenu()"><span class="button-icon">⬅️</span><span class="button-label">Back to Actions</span></button>
             </div>
-        </div>
+            </div>
 
         <div id="perk-tree-section" class="section hidden">
             <div class="section-title-header">
@@ -5111,7 +5120,18 @@
                 }
                 playerData.attack_xp += Math.floor(xpGainedDisplay); // Add XP
                 grantUniversalXP(xpGainedRaw); 
-                // --- GOLD DROP LOGIC ---
+                // --- GOLD DROP LOGIC ---                // Process monster drops first
+                monster.drops.forEach(drop => {
+                    if (Math.random() < drop.chance) {
+                        const quantity = drop.quantity ? (Math.floor(Math.random() * (drop.quantity[1] - drop.quantity[0] + 1)) + drop.quantity[0]) : 1;
+                        if (quantity > 0) {
+                            playerData.inventory[drop.item] = (playerData.inventory[drop.item] || 0) + quantity;
+                            logMessage(`The ${titleCase(currentMonsterTarget)} dropped ${quantity} ${titleCase(drop.item)}!`, drop.color || "fore-yellow", drop.emoji || "🔰");
+                        }
+                    }
+                });
+
+                // Then process gold drops
                 if (monster.gold_drop && monster.gold_drop[1] > 0) { 
                     let goldDropped = Math.floor(Math.random() * (monster.gold_drop[1] - monster.gold_drop[0] + 1)) + monster.gold_drop[0];
                     if (playerData.built_structures.mansion) {
