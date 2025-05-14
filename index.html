@@ -2213,7 +2213,7 @@
         };
         
         const SWORD_DATA = {
-            "bronze 2h sword":   {"emoji": "🗡️",   "smith_level_req":1,  "wield_level_req":1,  "min_dmg":5,   "max_dmg":8,   "skill_type":"attack", "color":"fore-yellow",        "lifesteal_chance": 0.02, "lifesteal_amount": 1,     "recipe": {"bronze bar": 5}},
+            "bronze 2h sword":   {"emoji": "🗡️",   "smith_level_req":1,  "wield_level_req":1,  "min_dmg":5,   "max_dmg":8,   "skill_type":"attack", "color":"fore-yellow",        "lifesteal_chance": 0.02, "lifesteal_amount": 1,     "recipe": {"bronze bar": 5}, "xp_gain": 15},
             "iron 2h sword":     {"emoji": "🗡️",   "smith_level_req":15, "wield_level_req":15, "min_dmg":10,  "max_dmg":16,  "skill_type":"attack", "color":"fore-lightblack_ex", "lifesteal_chance": 0.03, "lifesteal_amount": [1,2], "recipe": {"iron bar": 5}},
             "steel 2h sword":    {"emoji": "🗡️",   "smith_level_req":30, "wield_level_req":30, "min_dmg":18,  "max_dmg":28,  "skill_type":"attack", "color":"fore-cyan",          "lifesteal_chance": 0.04, "lifesteal_amount": [2,3], "recipe": {"steel bar": 5}},
             "mithril 2h sword":  {"emoji": "🗡️",   "smith_level_req":45, "wield_level_req":45, "min_dmg":30,  "max_dmg":45,  "skill_type":"attack", "color":"fore-blue",          "lifesteal_chance": 0.05, "lifesteal_amount": [2,4], "recipe": {"mithril bar": 5}},
@@ -4950,7 +4950,7 @@
             
             playerData.inventory[currentSmithingTarget] = (playerData.inventory[currentSmithingTarget] || 0) + 1;
             
-            let xpGainRaw = itemData.smith_level_req * 5;
+            let xpGainRaw = itemData.xp_gain !== undefined ? itemData.xp_gain : itemData.smith_level_req * 5;
             let xpGainedDisplay = xpGainRaw;
             if (playerData.built_structures.house) {
                 const houseXpPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "global_xp_boost");
@@ -5279,6 +5279,7 @@
                 }
 
                 if (playerData.built_structures.house && currentMonsterTarget !== "chicken") {
+                    const houseScaledGoldPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "scaled_bonus_mob_gold_drop_chance");
                     if (houseScaledGoldPerk && monster.gold_drop && monster.gold_drop[1] > 0 && Math.random() < houseScaledGoldPerk.value) {
                         const baseGoldForScaling = Math.floor(Math.random() * (monster.gold_drop[1] - monster.gold_drop[0] + 1)) + monster.gold_drop[0];
                         const bonusScaledGold = Math.floor(baseGoldForScaling * houseScaledGoldPerk.bonus_gold_percentage_of_base);
@@ -5333,7 +5334,7 @@
                 } else {
                     setTimeout(() => {
                          prepareCombatArena(currentMonsterTarget, true); 
-                    }, 1200); 
+                    }, 1700);
                 }
                 return; 
             }
