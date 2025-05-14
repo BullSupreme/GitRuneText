@@ -1069,6 +1069,38 @@
             box-shadow: 0 0 8px #ffcc00;
         }
 
+        /* Smithing Tabs */
+        .smithing-tabs {
+            display: flex;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #555;
+        }
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: 1px solid transparent; /* For spacing, becomes border of active */
+            border-bottom: none;
+            margin-right: 5px;
+            background-color: #252526; /* Slightly lighter than section bg */
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            top: 1px; /* To make it align with the bottom border of the container */
+        }
+        .tab:hover {
+            background-color: #3a3d41;
+        }
+        .tab.active-tab {
+            background-color: #2d2d30; /* Same as item background */
+            border-color: #555;
+            border-bottom: 1px solid #2d2d30; /* To make it look connected to content */
+            color: #ff8c1a; /* Orange to match smithing theme */
+            font-weight: bold;
+        }
+        .smithing-category {
+            /* Styles for the content area of each tab, if needed */
+            padding-top: 10px;
+        }
+
         .button-icon {
             display: inline-block; 
             transition: transform 0.2s ease-out, filter 0.2s ease-out;
@@ -2581,6 +2613,7 @@
         let currentMonsterHP = 0;
         
         let isAutoWoodcutting = false;
+        let currentSmithingCategory = 'weapons'; // To track 'weapons' or 'armor'
         let autoWoodcuttingInterval = null;
         let currentWoodcuttingTarget = null;
 
@@ -4663,35 +4696,82 @@
 
 
         // Smithing (Modified for Shed Perk & new interaction)
-        function calculateMaxCraftableForSword(swordName) {
-            const sword = SWORD_DATA[swordName];
-            if (!sword) return 0;
+        function calculateMaxCraftableForItem(itemName, category) {
+            const dataCollection = category === 'weapons' ? SWORD_DATA : ARMOR_DATA;
+            const item = dataCollection[itemName];
+            if (!item || !item.recipe) return 0; // Armor might not have recipes yet
+
             let maxSets = Infinity;
-            for (const bar in sword.recipe) {
+            for (const bar in item.recipe) {
                 const barsOnHand = playerData.inventory[bar] || 0;
-                const barsNeededPerSet = isPerkActive("masterSmith") && sword.recipe[bar] > 1 ?
-                                          Math.max(1, sword.recipe[bar] - PERK_DATA.masterSmith.value) :
-                                          sword.recipe[bar];
-                if (barsNeededPerSet === 0) continue;
+                const barsNeededPerSet = isPerkActive("masterSmith") && item.recipe[bar] > 1 ?
+                                          Math.max(1, item.recipe[bar] - PERK_DATA.masterSmith.value) :
+                                          item.recipe[bar];
+                if (barsNeededPerSet === 0) continue; // Should not happen with valid recipes
                 maxSets = Math.min(maxSets, Math.floor(barsOnHand / barsNeededPerSet));
             }
             return maxSets === Infinity ? 0 : maxSets;
         }
+
         function showSmithingMenu() {
-            if (!isAutoSmithing) { // Only stop if not currently auto-smithing (i.e., user navigated here)
+            if (!isAutoSmithing) {
                 stopAllAutoActions();
                 currentSmithingTarget = null;
             }
-            const listDiv = document.getElementById('available-items-to-smith');
-            listDiv.innerHTML = '<div class="section-title">Available Items to Smith</div>';
+            showSection('smithing-section');
+            showSmithingCategory(currentSmithingCategory || 'weapons'); // Default to weapons or last category
+        }
+
+        function showSmithingCategory(categoryName) {
+            currentSmithingCategory = categoryName;
+
+            const weaponsTab = document.getElementById('smithing-weapons-tab');
+            const armorTab = document.getElementById('smithing-armor-tab');
+            const weaponsCategoryDiv = document.getElementById('smithing-weapons-category');
+            const armorCategoryDiv = document.getElementById('smithing-armor-category');
+
+            let listDiv;
+            let dataObject;
+            let titleText;
+
+            if (categoryName === 'weapons') {
+                listDiv = document.getElementById('available-weapons-to-smith');
+                dataObject = SWORD_DATA;
+                titleText = 'Available Weapons to Smith';
+                weaponsTab.classList.add('active-tab');
+                armorTab.classList.remove('active-tab');
+                weaponsCategoryDiv.classList.remove('hidden');
+                armorCategoryDiv.classList.add('hidden');
+            } else { // armor
+                listDiv = document.getElementById('available-armor-to-smith');
+                dataObject = ARMOR_DATA; // ARMOR_DATA might not have recipes/smith_level_req yet
+                titleText = 'Available Armor to Smith';
+                armorTab.classList.add('active-tab');
+                weaponsTab.classList.remove('active-tab');
+                armorCategoryDiv.classList.remove('hidden');
+                weaponsCategoryDiv.classList.add('hidden');
+            }
+
+            listDiv.innerHTML = ''; // Clear previous items
 
             const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
             let canSmithAnything = false;
 
-            for (const itemName in SWORD_DATA) {
-                const itemData = SWORD_DATA[itemName];
+            for (const itemName in dataObject) {
+                const itemData = dataObject[itemName];
+
+                // Skip if itemData is not suitable for smithing (e.g. armor without recipe)
+                if (!itemData.recipe || typeof itemData.smith_level_req === 'undefined') {
+                    // Optionally, display these items differently or log a warning
+                    // For now, we just skip them in the smithing list if they lack essential properties
+                    if (categoryName === 'armor') { // ARMOR_DATA items might not be smithable yet
+                        // console.log(`Item ${itemName} from ARMOR_DATA is not configured for smithing.`);
+                    }
+                    continue;
+                }
+
                 let recipeString = "";
-                const maxCraftableNow = calculateMaxCraftableForSword(itemName);
+                const maxCraftableNow = calculateMaxCraftableForItem(itemName, categoryName);
                 const canMakeAtLeastOne = maxCraftableNow > 0;
                 
                 for(const bar in itemData.recipe) {
@@ -4704,30 +4784,41 @@
 
                 const levelReqColor = bsLvl >= itemData.smith_level_req ? 'fore-green' : 'fore-red';
                 const itemDiv = document.createElement('div');
-                let lifestealInfo = "";
-                if (itemData.lifesteal_chance && itemData.lifesteal_amount) {
+                let lifestealInfo = ""; // Specific to swords, might need to generalize or conditionalize
+                if (categoryName === 'weapons' && itemData.lifesteal_chance && itemData.lifesteal_amount) {
                     const lsChanceDisplay = itemData.lifesteal_chance * 100;
                     const lsAmountDisplay = Array.isArray(itemData.lifesteal_amount) ? `${itemData.lifesteal_amount[0]}-${itemData.lifesteal_amount[1]}` : itemData.lifesteal_amount;
                     lifestealInfo = `<br><small class="fore-magenta">Lifesteal: ${lsChanceDisplay.toFixed(0)}% for ${lsAmountDisplay} HP</small>`;
                 }
-                itemDiv.className = `smithable-item-list item ${itemData.color}`;
+                // Generalize damage display or make it conditional
+                let damageInfo = "";
+                if (itemData.min_dmg !== undefined && itemData.max_dmg !== undefined) {
+                     damageInfo = ` - Dmg: ${itemData.min_dmg}-${itemData.max_dmg}`;
+                } else if (itemData.defense !== undefined) { // For armor
+                     damageInfo = ` - Def: ${Math.round(itemData.defense * 100)}%`;
+                }
+
+
+                itemDiv.className = `smithable-item-list item ${itemData.color || 'fore-white'}`;
                 const currentStock = playerData.inventory[itemName] || 0;
                 itemDiv.innerHTML = `
-                    <span class="item-details-left"> <!-- Details on the left -->
+                    <span class="item-details-left">
                         ${itemData.emoji} ${titleCase(itemName)}
-                        <br><small>XP: ${itemData.smith_level_req * 5} - Dmg: ${itemData.min_dmg}-${itemData.max_dmg}</small>
-                        <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${itemData.smith_level_req} BS</span> - Max: <span id="max-craftable-smith-${itemName.replace(/\s+/g, '-')}">${maxCraftableNow}</span></small>${lifestealInfo}
+                        <br><small>XP: ${itemData.smith_level_req * 5}${damageInfo}</small>
+                        <br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${itemData.smith_level_req} BS</span> - Max: <span id="max-craftable-${categoryName}-${itemName.replace(/\s+/g, '-')}">${maxCraftableNow}</span></small>${lifestealInfo}
                     </span>
-                    <span class="resource-inventory-count"> <!-- Count on the right -->
-                        <span id="inv-count-smith-${itemName.replace(/\s+/g, '-')}">${currentStock}</span>
+                    <span class="resource-inventory-count">
+                        <span id="inv-count-${categoryName}-${itemName.replace(/\s+/g, '-')}">${currentStock}</span>
                     </span>
                 `;
-                itemDiv.id = `smithable-item-div-${itemName.replace(/\s+/g, '-')}`;
-                if (isAutoSmithing && currentSmithingTarget === itemName) {
+                itemDiv.id = `smithable-item-div-${categoryName}-${itemName.replace(/\s+/g, '-')}`;
+
+                if (isAutoSmithing && currentSmithingTarget === itemName && currentSmithingCategory === categoryName) {
                     itemDiv.classList.add('active-smithing-item');
                 }
+
                 if (bsLvl >= itemData.smith_level_req && canMakeAtLeastOne) {
-                    itemDiv.onclick = () => selectItemForSmithing(itemName);
+                    itemDiv.onclick = () => selectItemForSmithing(itemName, categoryName);
                     canSmithAnything = true;
                 } else {
                     itemDiv.style.cursor = 'not-allowed';
@@ -4736,53 +4827,75 @@
                 }
                 listDiv.appendChild(itemDiv);
             }
-             if (!canSmithAnything && Object.keys(SWORD_DATA).length > 0) listDiv.innerHTML += "<p>No items you can currently smith (check level & materials).</p>";
-            else if (Object.keys(SWORD_DATA).length === 0) listDiv.innerHTML += "<p>No item recipes known for smithing.</p>";
-            
-            showSection('smithing-section');
+
+            if (!canSmithAnything && Object.keys(dataObject).some(key => dataObject[key].recipe && typeof dataObject[key].smith_level_req !== 'undefined')) {
+                 listDiv.innerHTML += `<p>No ${categoryName} you can currently smith (check level & materials).</p>`;
+            } else if (!Object.keys(dataObject).some(key => dataObject[key].recipe && typeof dataObject[key].smith_level_req !== 'undefined')) {
+                 listDiv.innerHTML += `<p>No ${categoryName} recipes known or configured for smithing.</p>`;
+            }
         }
         
-        function selectItemForSmithing(itemName) {
-            if (isAutoSmithing && currentSmithingTarget === itemName) {
-                stopAutoSmithing(); // If clicking the currently auto-smithing item, stop it.
+        function selectItemForSmithing(itemName, categoryName) {
+            // Ensure categoryName is passed; if not, try to use currentSmithingCategory
+            const effectiveCategory = categoryName || currentSmithingCategory;
+
+            if (isAutoSmithing && currentSmithingTarget === itemName && currentSmithingCategory === effectiveCategory) {
+                stopAutoSmithing();
             } else {
-                if (isAutoSmithing) { // If auto-smithing something else, stop that first.
+                if (isAutoSmithing) {
                     stopAutoSmithing();
                 }
-                startAutoSmithing(itemName); // Start (or restart) auto-smithing for the selected item.
+                startAutoSmithing(itemName, effectiveCategory);
             }
         }
 
-        function startAutoSmithing(itemName) {
+        function startAutoSmithing(itemName, categoryName) {
             if(!itemName) { logMessage("No item selected to smith.", "fore-red", "⚠️"); return false; }
+            if(!categoryName) { logMessage("Smithing category not specified.", "fore-red", "⚠️"); return false; }
+
+            // Clear any active item from *any* category first
             document.querySelectorAll('.active-smithing-item').forEach(el => el.classList.remove('active-smithing-item'));
-            currentSmithingTarget = itemName; 
             
-            const itemData = SWORD_DATA[currentSmithingTarget]; 
+            currentSmithingTarget = itemName;
+            currentSmithingCategory = categoryName; // Ensure this is set
+            
+            const dataCollection = categoryName === 'weapons' ? SWORD_DATA : ARMOR_DATA;
+            const itemData = dataCollection[currentSmithingTarget];
+
+            if (!itemData || !itemData.recipe || typeof itemData.smith_level_req === 'undefined') {
+                logMessage(`Item ${titleCase(currentSmithingTarget)} cannot be smithed (missing data/recipe).`, "fore-red", "🚫");
+                currentSmithingTarget = null; return false;
+            }
+            
             const currentBsLvl = getLevelFromXp(playerData.blacksmithing_xp);
             if(currentBsLvl < itemData.smith_level_req) {
                 logMessage(`BS Lvl (${currentBsLvl}) too low for ${titleCase(currentSmithingTarget)}. Req: ${itemData.smith_level_req}`, "fore-red", "📊🚫");
                 currentSmithingTarget = null; return false;
             }
 
-            if (calculateMaxCraftableForSword(currentSmithingTarget) <= 0) {
+            if (calculateMaxCraftableForItem(currentSmithingTarget, categoryName) <= 0) {
                 logMessage(`Not enough materials to smith any ${titleCase(currentSmithingTarget)}.`, "fore-red", "🚫");
                 currentSmithingTarget = null; return false;
             }
  
             isAutoSmithing = true;
-            const smithListItem = document.getElementById(`smithable-item-div-${currentSmithingTarget.replace(/\s+/g, '-')}`);
+            const smithListItemId = `smithable-item-div-${categoryName}-${currentSmithingTarget.replace(/\s+/g, '-')}`;
+            const smithListItem = document.getElementById(smithListItemId);
             if (smithListItem) smithListItem.classList.add('active-smithing-item');
-            logMessage(`Auto-smithing ${titleCase(currentSmithingTarget)}...`, "fore-cyan");
+            
+            logMessage(`Auto-smithing ${titleCase(currentSmithingTarget)} (${categoryName})...`, "fore-cyan");
 
             let interval = BASE_CRAFT_INTERVAL;
-            if (playerData.built_structures.shed && STRUCTURE_DATA.shed.perk_effect.type === "crafting_speed_boost") { // Specific check for shed
+            if (playerData.built_structures.shed && STRUCTURE_DATA.shed.perk_effect.type === "crafting_speed_boost") {
                 interval *= (1 - STRUCTURE_DATA.shed.perk_effect.value);
             }
+            // Note: Stronghold perk was "global_skill_speed_boost", check if it applies to crafting
+            // For now, assuming it does if it was intended before.
             if (playerData.built_structures.stronghold) {
                 const speedPerk = STRUCTURE_DATA.stronghold.perks.find(p => p.type === "global_skill_speed_boost");
                 if (speedPerk) interval *= (1 - speedPerk.value);
             }
+
             if(autoSmithingInterval) clearInterval(autoSmithingInterval);
             autoSmithingInterval = setInterval(singleSmithAction, interval);
             return true;
@@ -4793,38 +4906,52 @@
                 isAutoSmithing = false;
                 clearInterval(autoSmithingInterval);
                 autoSmithingInterval = null;
-                if(currentSmithingTarget) {
-                    const smithListItem = document.getElementById(`smithable-item-div-${currentSmithingTarget.replace(/\s+/g, '-')}`);
-                    if (smithListItem) { // Check if the element exists
+                if(currentSmithingTarget && currentSmithingCategory) { // Check both
+                    const smithListItemId = `smithable-item-div-${currentSmithingCategory}-${currentSmithingTarget.replace(/\s+/g, '-')}`;
+                    const smithListItem = document.getElementById(smithListItemId);
+                    if (smithListItem) {
                         smithListItem.classList.remove('active-smithing-item');
                     }
                 }
                 logMessage("Auto-smithing stopped.", "fore-yellow", "🛑");
+                // currentSmithingTarget = null; // Keep target for potential UI updates, but action is stopped
             }
         }
 
         function singleSmithAction() {
-            if(!isAutoSmithing || !currentSmithingTarget) { stopAutoSmithing(); return; }
+            if(!isAutoSmithing || !currentSmithingTarget || !currentSmithingCategory) {
+                stopAutoSmithing();
+                return;
+            }
             
-            const itemData = SWORD_DATA[currentSmithingTarget]; 
-            if (calculateMaxCraftableForSword(currentSmithingTarget) <= 0) {
+            const dataCollection = currentSmithingCategory === 'weapons' ? SWORD_DATA : ARMOR_DATA;
+            const itemData = dataCollection[currentSmithingTarget];
+
+            if (!itemData || !itemData.recipe) { // Ensure item and recipe exist
+                logMessage(`Error: Smithing target ${titleCase(currentSmithingTarget)} in category ${currentSmithingCategory} has no data or recipe. Stopping.`, "fore-red", "🚫");
+                stopAutoSmithing();
+                showSmithingCategory(currentSmithingCategory); // Refresh current category
+                return;
+            }
+
+            if (calculateMaxCraftableForItem(currentSmithingTarget, currentSmithingCategory) <= 0) {
                 logMessage(`Ran out of materials for ${titleCase(currentSmithingTarget)}. Stopping.`, "fore-red", "🚫");
                 stopAutoSmithing();
-                showSmithingMenu(); // Refresh the menu to show updated counts and disable if needed
+                showSmithingCategory(currentSmithingCategory); // Refresh current category
                 return;
             }
 
             for(const bar in itemData.recipe) {
-                const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ? 
-                                      Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) : 
+                const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ?
+                                      Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) :
                                       itemData.recipe[bar];
                 playerData.inventory[bar] -= requiredAmount;
             }
             
             playerData.inventory[currentSmithingTarget] = (playerData.inventory[currentSmithingTarget] || 0) + 1;
             
-            let xpGainRaw = itemData.smith_level_req * 5; 
-            let xpGainedDisplay = xpGainRaw; 
+            let xpGainRaw = itemData.smith_level_req * 5;
+            let xpGainedDisplay = xpGainRaw;
             if (playerData.built_structures.house) {
                 const houseXpPerk = STRUCTURE_DATA.house.perks.find(p => p.type === "global_xp_boost");
                 if(houseXpPerk) xpGainedDisplay *= (1 + houseXpPerk.value);
@@ -4833,31 +4960,26 @@
 
             const oldLevel = getLevelFromXp(playerData.blacksmithing_xp);
             playerData.blacksmithing_xp += xpGainedDisplay;
-            grantUniversalXP(xpGainRaw); 
+            grantUniversalXP(xpGainRaw);
 
-            logMessage(`Smithed 1 ${titleCase(currentSmithingTarget)}! (+${xpGainedDisplay} BS XP)`, itemData.color, "🛠️");
+            logMessage(`Smithed 1 ${titleCase(currentSmithingTarget)}! (+${xpGainedDisplay} BS XP)`, itemData.color || 'fore-white', "🛠️");
             playSound(skillRoundSound);
 
-            // Store oldLevel before handleLevelUp modifies transientLevelUpInfo potentially
-            const leveledUp = handleLevelUp("blacksmithing_xp", oldLevel); // handleLevelUp returns true if leveled up
+            const leveledUp = handleLevelUp("blacksmithing_xp", oldLevel);
 
             if (leveledUp) {
                 if (playerData.permits && playerData.permits.blacksmith) {
                     logMessage("Blacksmithing Level up! Royal Charter allows continuous smithing!", "fore-green", "📜🛠️");
-                    // Action continues
                 } else {
                     logMessage("Blacksmithing level up! Action stopped. Get a Blacksmith's Royal Charter to continue.", "fore-blue", "🛠️🎉");
-                    stopAutoSmithing(); // This will log "Auto-smithing stopped."
-                                        // handleLevelUp already logs "Congrats!"
-                    return; // Exit early, stopAutoSmithing handles saving and HUD
+                    stopAutoSmithing();
+                    return;
                 }
             }
-            // If not leveled up, or leveled up with permit, continue to savePlayerData etc.
             savePlayerData();
             updateHud();
-            // Instead of full refresh, update the specific item in the list
-            updateSmithableItemDisplay(currentSmithingTarget);
-            if (!checkCanStillSmith(currentSmithingTarget)) { // If materials run out
+            updateSmithableItemDisplay(currentSmithingTarget, currentSmithingCategory);
+            if (!checkCanStillSmith(currentSmithingTarget, currentSmithingCategory)) {
                 stopAutoSmithing();
             }
         }
@@ -5847,9 +5969,13 @@
             showPerkTreeMenu(); // Refresh the perk tree menu in all cases (unless page reloaded by charter)
         }
 
-        function checkCanStillSmith(itemName) {
-            if (!itemName || !SWORD_DATA[itemName]) return false;
-            const itemData = SWORD_DATA[itemName];
+        function checkCanStillSmith(itemName, categoryName) {
+            if (!itemName || !categoryName) return false;
+            const dataCollection = categoryName === 'weapons' ? SWORD_DATA : ARMOR_DATA;
+            const itemData = dataCollection[itemName];
+
+            if (!itemData || !itemData.recipe) return false; // Cannot smith if no recipe
+
             for (const bar in itemData.recipe) {
                 const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ?
                                       Math.max(1, itemData.recipe[bar] - PERK_DATA.masterSmith.value) :
@@ -5861,11 +5987,23 @@
             return true;
         }
 
-        function updateSmithableItemDisplay(itemName) {
-            const itemDiv = document.getElementById(`smithable-item-div-${itemName.replace(/\s+/g, '-')}`);
-            if (!itemDiv || !SWORD_DATA[itemName]) return;
+        function updateSmithableItemDisplay(itemName, categoryName) {
+            if (!itemName || !categoryName) return;
 
-            const itemData = SWORD_DATA[itemName];
+            const itemDivId = `smithable-item-div-${categoryName}-${itemName.replace(/\s+/g, '-')}`;
+            const itemDiv = document.getElementById(itemDivId);
+            
+            const dataCollection = categoryName === 'weapons' ? SWORD_DATA : ARMOR_DATA;
+            const itemData = dataCollection[itemName];
+
+            if (!itemDiv || !itemData || !itemData.recipe || typeof itemData.smith_level_req === 'undefined') {
+                // If item is no longer smithable or data is missing, refresh the whole category list
+                // This can happen if ARMOR_DATA items are not yet fully configured for smithing
+                // console.warn(`Cannot update display for ${itemName} in ${categoryName}, data incomplete or div missing. Refreshing category.`);
+                // showSmithingCategory(categoryName); // This might be too disruptive if called frequently
+                return;
+            }
+
             let recipeString = "";
             for (const bar in itemData.recipe) {
                 const requiredAmount = isPerkActive("masterSmith") && itemData.recipe[bar] > 1 ?
@@ -5874,37 +6012,55 @@
                 recipeString += `${requiredAmount} ${titleCase(bar)} (${playerData.inventory[bar] || 0}), `;
             }
             recipeString = recipeString.slice(0, -2);
+
             const bsLvl = getLevelFromXp(playerData.blacksmithing_xp);
             const levelReqColor = bsLvl >= itemData.smith_level_req ? 'fore-green' : 'fore-red';
-            const newMaxCraftableDisplay = calculateMaxCraftableForSword(itemName);
+            const newMaxCraftableDisplay = calculateMaxCraftableForItem(itemName, categoryName);
             
-            // Update the "Requires" part within the left details span
             const detailsSpan = itemDiv.querySelector('.item-details-left');
             if (detailsSpan) {
-                const smallReqSpan = detailsSpan.querySelector('small'); // Assuming the "Requires" is the first/primary small tag
-                if (smallReqSpan) {
-                    // Find existing lifesteal info to preserve it
-                    let lifestealInfoHTML = "";
-                    const lifestealSpans = detailsSpan.querySelectorAll('small.fore-magenta'); // More specific selector if needed
-                    lifestealSpans.forEach(lsSpan => {
-                        if (lsSpan.textContent.includes("Lifesteal")) {
-                            lifestealInfoHTML = `<br>${lsSpan.outerHTML}`; // Keep the <br> if it was there
-                        }
-                    });
-                    smallReqSpan.innerHTML = `Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${itemData.smith_level_req} BS</span> - Max: <span id="max-craftable-smith-${itemName.replace(/\s+/g, '-')}">${newMaxCraftableDisplay}</span>`;
-                    // Re-append lifesteal info if it existed
-                    if (lifestealInfoHTML) {
-                        detailsSpan.innerHTML = detailsSpan.innerHTML.replace(/<\/small>(<br><small class="fore-magenta">Lifesteal:.*?<\/small>)?/, `</small>${lifestealInfoHTML}`);
-                    }
+                // Rebuild the small tags for clarity and to ensure correct structure
+                let lifestealInfoHTML = "";
+                if (categoryName === 'weapons' && itemData.lifesteal_chance && itemData.lifesteal_amount) {
+                    const lsChanceDisplay = itemData.lifesteal_chance * 100;
+                    const lsAmountDisplay = Array.isArray(itemData.lifesteal_amount) ? `${itemData.lifesteal_amount[0]}-${itemData.lifesteal_amount[1]}` : itemData.lifesteal_amount;
+                    lifestealInfoHTML = `<br><small class="fore-magenta">Lifesteal: ${lsChanceDisplay.toFixed(0)}% for ${lsAmountDisplay} HP</small>`;
                 }
+                let damageInfo = "";
+                if (itemData.min_dmg !== undefined && itemData.max_dmg !== undefined) {
+                     damageInfo = ` - Dmg: ${itemData.min_dmg}-${itemData.max_dmg}`;
+                } else if (itemData.defense !== undefined) {
+                     damageInfo = ` - Def: ${Math.round(itemData.defense * 100)}%`;
+                }
+
+                const primaryInfoHTML = `${itemData.emoji} ${titleCase(itemName)}`;
+                const secondaryInfoHTML = `<br><small>XP: ${itemData.smith_level_req * 5}${damageInfo}</small>`;
+                const tertiaryInfoHTML = `<br><small>Requires: ${recipeString} - <span class="${levelReqColor}">Lvl: ${itemData.smith_level_req} BS</span> - Max: <span id="max-craftable-${categoryName}-${itemName.replace(/\s+/g, '-')}">${newMaxCraftableDisplay}</span></small>`;
+                
+                detailsSpan.innerHTML = primaryInfoHTML + secondaryInfoHTML + tertiaryInfoHTML + lifestealInfoHTML;
             }
-            // Update the "In Stock" count
-            const stockCountSpan = itemDiv.querySelector(`#inv-count-smith-${itemName.replace(/\s+/g, '-')}`);
+            
+            const stockCountSpanId = `inv-count-${categoryName}-${itemName.replace(/\s+/g, '-')}`;
+            const stockCountSpan = itemDiv.querySelector(`#${stockCountSpanId}`);
             if (stockCountSpan) {
                 stockCountSpan.textContent = playerData.inventory[itemName] || 0;
             }
-        }
 
+            // Update clickable status
+            if (bsLvl >= itemData.smith_level_req && newMaxCraftableDisplay > 0) {
+                itemDiv.onclick = () => selectItemForSmithing(itemName, categoryName);
+                itemDiv.style.cursor = 'pointer';
+                itemDiv.title = '';
+                itemDiv.style.opacity = "1";
+            } else {
+                itemDiv.onclick = null;
+                itemDiv.style.cursor = 'not-allowed';
+                itemDiv.title = bsLvl < itemData.smith_level_req ? 'BS level too low' : 'Not enough materials';
+                itemDiv.style.opacity = "0.6";
+            }
+        }
+        // Remove the duplicate/simpler version of updateSmithableItemDisplay
+        /*
         function updateSmithableItemDisplay(itemName) {
             const itemDiv = document.getElementById(`smithable-item-div-${itemName.replace(/\s+/g, '-')}`);
             if (!itemDiv || !SWORD_DATA[itemName]) return;
@@ -5915,6 +6071,7 @@
             // If performance becomes an issue, a more targeted update like in singleSmeltAction can be implemented.
             showSmithingMenu();
         }
+        */
 
         // --- Level Up ---
         function handleLevelUp(skillXpField, oldLevel) {
